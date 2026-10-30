@@ -658,8 +658,9 @@ mark.qhl sup{font-family:var(--f);font-size:10px;font-weight:800;color:#fff;back
 mark.qhl.on{background:var(--sun-soft);border-bottom-color:var(--sun);animation:flash 1.2s ease-out 2}
 mark.qhl.on sup{background:var(--sun-ink)}
 /* v9.4: từ khóa trong câu hỏi */
-.kwbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;display:flex;gap:6px;align-items:center;padding:6px;border:1px solid var(--line-2);border-radius:16px;background:var(--card);box-shadow:0 6px 24px rgba(0,0,0,.22);max-width:calc(100vw - 20px)}
+.kwbar{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;padding:6px;border:1px solid var(--line-2);border-radius:16px;background:var(--card);box-shadow:0 6px 24px rgba(0,0,0,.22);max-width:calc(100vw - 20px)}
 .kwbar .btn{min-height:44px;padding:0 14px;white-space:nowrap}
+.kwbar .kwapply{background:var(--sun);color:#1a1300;border-color:var(--sun);font-weight:800}
 .kwbar .kwtip{font-size:11px;color:var(--ink-3);max-width:150px;line-height:1.2}
 .rd-q.kw-pad{padding-bottom:90px}
 @media (max-width:520px){.kwbar .kwtip{display:none}}
@@ -3018,7 +3019,7 @@ function kwText(key,text,ctr){
 }
 function kwBar(){
   const n=kwSet().size,tip=kwMode==="bold"?"Chạm từ hoặc kéo chọn để in đậm":kwMode==="erase"?"Chạm hoặc kéo chọn để bỏ đậm":"Bật Bold rồi chạm vào từ";
-  return `<div class="kwbar" id="kwbar"><button type="button" class="btn" data-kwmode="bold" aria-pressed="${kwMode==="bold"}"><b>B</b>&nbsp;Bold</button><button type="button" class="btn" data-kwmode="erase" aria-pressed="${kwMode==="erase"}">⌫&nbsp;Tẩy</button><button type="button" class="btn" data-kwclear ${n?"":"disabled"}>Xóa${n?" ("+n+")":""}</button><span class="kwtip">${tip}</span></div>`;
+  return `<div class="kwbar" id="kwbar"><button type="button" class="btn" data-kwmode="bold" aria-pressed="${kwMode==="bold"}"><b>B</b>&nbsp;Bold</button><button type="button" class="btn" data-kwmode="erase" aria-pressed="${kwMode==="erase"}">⌫&nbsp;Tẩy</button><button type="button" class="btn" data-kwclear ${n?"":"disabled"}>Xóa${n?" ("+n+")":""}</button><button type="button" class="btn kwapply" data-kwapply hidden></button><span class="kwtip">${tip}</span></div>`;
 }
 let kwT=null;
 function kwApply(ids,on){
@@ -3032,12 +3033,20 @@ function kwApply(ids,on){
 }
 document.addEventListener("click",e=>{
   if(!RD)return;
-  const mb=e.target.closest("[data-kwmode]");if(mb){const m=mb.dataset.kwmode;kwMode=kwMode===m?"":m;ls.set("ielts-kwmode",kwMode);drawReading(true);return}
+  const mb=e.target.closest("[data-kwmode]");if(mb){const m=mb.dataset.kwmode;kwMode=kwMode===m?"":m;kwPend=[];ls.set("ielts-kwmode",kwMode);drawReading(true);return}
   if(e.target.closest("[data-kwclear]")){const n=kwSet().size;if(!n)return;if(confirm(`Xóa hết ${n} từ khóa trong bài này?`))kwApply([...kwSet()],false);return}
   const w=e.target.closest(".kww");
   if(w&&kwMode&&!String(window.getSelection()||"").trim()){const id=w.dataset.kw;kwApply([id],kwMode==="bold"?!kwSet().has(id):false)}
 });
-let kwSelT=null;
+let kwSelT=null,kwPend=[];
+/* Điện thoại cảm ứng: kéo tay cầm chọn chữ mất thời gian nên không tự áp dụng; hiện nút "Áp dụng" để bấm khi chọn xong.
+   Máy tính bảng/bút/chuột: vẫn tự áp dụng ngay khi chọn xong. */
+const kwPhone=()=>matchMedia("(pointer:coarse)").matches&&Math.min(screen.width,screen.height)<700;
+function kwShowApply(){
+  const b=document.querySelector("[data-kwapply]");if(!b)return;
+  if(!kwPend.length||!kwMode){b.hidden=true;return}
+  b.hidden=false;b.textContent=(kwMode==="bold"?"B Bold ":"⌫ Tẩy ")+"("+kwPend.length+" từ)";
+}
 document.addEventListener("selectionchange",()=>{
   if(!RD||!kwMode)return;
   clearTimeout(kwSelT);
@@ -3047,9 +3056,16 @@ document.addEventListener("selectionchange",()=>{
     if(!host||!host.contains(r.commonAncestorContainer))return;
     const ids=[...host.querySelectorAll(".kww")].filter(x=>{try{return r.intersectsNode(x)}catch(err){return false}}).map(x=>x.dataset.kw);
     if(!ids.length)return;
+    if(kwPhone()){kwPend=ids;kwShowApply();return}
     try{sel.removeAllRanges()}catch(err){}
     const set=kwSet();kwApply(ids,kwMode==="bold"?!ids.every(i=>set.has(i)):false);
-  },450);
+  },kwPhone()?150:450);
+});
+document.addEventListener("click",e=>{
+  if(!RD||!e.target.closest("[data-kwapply]"))return;
+  const ids=kwPend.slice();kwPend=[];
+  try{window.getSelection().removeAllRanges()}catch(err){}
+  const set=kwSet();kwApply(ids,kwMode==="bold"?!ids.every(i=>set.has(i)):false);
 });
 
 /* ---------- bôi đen: tra nghĩa / lưu từ ---------- */
