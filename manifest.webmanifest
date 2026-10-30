@@ -1,0 +1,17 @@
+{
+  "name": "Climbing the Rock · IELTS",
+  "short_name": "Climb",
+  "description": "Lộ trình IELTS cá nhân: từ vựng, ngữ pháp, viết và tiến độ.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#151d47",
+  "theme_color": "#151d47",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
