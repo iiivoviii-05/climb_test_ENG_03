@@ -5581,6 +5581,17 @@ function mgRefItems(){
     _pm(kind);
   };
 })();
+
+/* tab "Từ vựng" của Vật liệu: liệt kê cả 12 unit cũ lẫn 14 chương từ điển */
+(function(){
+  const _mv=matVocab;
+  matVocab=function(){
+    const base=_mv();
+    if(!VIDX||!matgUnits().length)return base;
+    const us=matgUnits(),tot=us.reduce((s,t)=>s+(t.n||0),0),ch=us.reduce((s,t)=>s+matUnitStat(t).n,0);
+    return base+`<div class="hd" style="margin-top:18px"><div><h2 class="h2">Từ điển Vật liệu & ODS</h2><p class="hint">${us.length} chương · ${fmt(tot)} thuật ngữ · ${ch} chặng, học như các unit ở trên. Tra cứu và luyện phụ lục ở tab Từ điển.</p></div></div>${mgLearn().replace(/^<div class="mg-bar">.*?<\/div>\s*/s,"")}`;
+  };
+})();
 </script>
 </body>
 </html>
