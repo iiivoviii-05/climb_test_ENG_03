@@ -1146,6 +1146,27 @@ body:not([data-rank="0"]):not([data-rank=""]) #altchip{box-shadow:0 0 0 1.5px va
 .gb-ana{display:flex;flex-direction:column;gap:10px;font-size:14px}
 .gb-ana p{margin:2px 0}.gb-ana ul{margin:2px 0 0 18px;padding:0}
 select.inp{width:100%}
+/* Từ điển Vật liệu · ODS */
+.mg-q{margin:2px 0 8px}
+.mg-secs{display:flex;gap:6px;overflow-x:auto;max-width:100%;scrollbar-width:none;padding:2px 0 6px;-webkit-overflow-scrolling:touch}
+.mg-secs::-webkit-scrollbar{display:none}
+.mg-secs .chip{white-space:nowrap;cursor:pointer;font:inherit;font-size:12.5px;font-weight:600}
+.mg-secs .chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.mg-secs .chip small{opacity:.7;font-weight:700}
+.mgcard{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.mgcard b{font-size:15.5px}
+.mgcard .mg-eq{font-family:Georgia,serif;font-size:16px;background:var(--sunk);border-radius:9px;padding:6px 10px;overflow-x:auto}
+.mgcard .mg-warn{font-size:13px;color:var(--ink-2)}
+.mgcard .mg-vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mgcard .mg-vs div{background:var(--sunk);border-radius:10px;padding:7px 10px;font-size:13.5px}
+.mgcard .mg-vs div span{display:block;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.mg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.mg-abbr{display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:4px 12px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surface);align-items:baseline}
+.mg-abbr b{font-size:15px}
+.mg-ipa{font-family:"Segoe UI","Noto Sans",sans-serif;color:var(--ink-3);font-size:12.5px}
+.mg-note{grid-column:1;font-size:12.5px;color:var(--ink-3)}
+.mg-bar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:4px 0 8px}
+@media(max-width:560px){.mgcard .mg-vs{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1498,7 +1519,7 @@ function loadVIndex(force){
   if(VIDX||vIdxLoading||(!force&&Date.now()-vIdxFail<20000))return;
   vIdxLoading=true;
   // bộ chính + bộ Vật liệu (file riêng _index-mat.json, thiếu thì bỏ qua); bộ chính lỗi thì để trống và thử lại, không khoá danh sách bộ từ
-  call("getPacks",["vocab/_index.json","vocab/_index-mat.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);try{if(a[1]){const m=JSON.parse(a[1]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
+  call("getPacks",["vocab/_index.json","vocab/_index-mat.json","vocab/_index-matg.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);[a[1],a[2]].forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
 }
 const vSets=()=>(VIDX&&VIDX.sets)||[];
 function extTopic(u,set){return VU[u.id]||(VU[u.id]={id:u.id,en:u.title,vi:u.vi||"",desc:u.vi||"",ext:true,set:set.id,setName:set.name,n:u.n,words:null})}
@@ -1685,7 +1706,7 @@ function renderHome(){
     const t=L.kind==="vocab"?L.topic:null, ti=t?TOPICS.indexOf(t):L.unit.n-1;
     const pr=progress[L.key];
     return `<div class="card cont"><div style="display:flex;gap:14px;align-items:center"><span class="badge" style="background:${TINT[ti%6]}">${t?pad(ti+1):"U"+L.unit.n}</span><div style="min-width:0"><div class="kicker">${label}${t?": "+esc(t.en):""}</div><div class="ttl">${esc(t?L.title:L.unit.en)}</div></div></div>
-     <div class="meta">${t&&newToday()>=1?`<span class="chip ok">Đủ 1 chặng mới cho hôm nay</span>`:""}${t?`<span class="chip">${L.words.length} mục từ</span><span class="chip">16 câu kiểm tra</span>`:`<span class="chip">${esc(L.unit.vi)}</span><span class="chip">Tuần ${Math.ceil(L.unit.n/2)}</span>`}${pr?`<span class="chip bad">Lần trước ${pr.best}%</span>`:""}</div>
+     <div class="meta">${t&&newToday()>=1?`<span class="chip ok">Đủ 1 chặng mới cho hôm nay</span>`:""}${t?`<span class="chip">${L.n||L.words.length} mục từ</span><span class="chip">16 câu kiểm tra</span>`:`<span class="chip">${esc(L.unit.vi)}</span><span class="chip">Tuần ${Math.ceil(L.unit.n/2)}</span>`}${pr?`<span class="chip bad">Lần trước ${pr.best}%</span>`:""}</div>
      <button class="btn ${t&&newToday()>=1?"":"primary"}" data-open="${L.key}">${t&&newToday()>=1?"Học thêm (không bắt buộc)":"Bắt đầu học "+I.arrow}</button></div>`};
   $("v-home").innerHTML=`
    <div><span class="eyebrow">${DOWF[d.getDay()]}, ${d.getDate()} tháng ${d.getMonth()+1}</span></div>
@@ -4470,10 +4491,10 @@ function matNext(){
   const us=matUnits();if(!us.length)return null;
   const cu=ls.get("ielts-vunit-mat",""),order=[us.find(t=>t.id===cu),...us].filter(Boolean);
   for(const t of order){const L=topicLessons(t).find(l=>!passed(l.key)&&lessonUnlocked(l));if(L)return L}
-  return null;
+  return typeof matgNext==="function"?matgNext():null;
 }
 function matUnitStat(t){const ls_=topicLessons(t),d=ls_.filter(l=>passed(l.key)).length;return {d,n:ls_.length,next:ls_.find(l=>!passed(l.key)&&lessonUnlocked(l))||null}}
-const matTitles=()=>new Set(matUnits().map(t=>t.en));
+const matTitles=()=>new Set([...matUnits(),...extTopics("matg")].map(t=>t.en));
 function matDue(){const T=[...matTitles()];return dueWords().filter(v=>v.source.startsWith("R:mat-")||T.some(t=>v.source.startsWith(t+" ")))}
 const matReadToday=()=>Object.entries(rstats.latest||{}).some(([id,v])=>id.startsWith("mat-")&&v.date===todayISO);
 function matNextReading(){const s=matRSet();if(!s)return null;const it=s.items.find(i=>rBest(i.id)==null);return it?it.id:null}
@@ -4565,11 +4586,11 @@ const matParas=t=>String(t||"").split(/\n\s*\n/).map(p=>`<p>${esc(p).replace(/\n
 
 /* ---- trang Vật liệu ---- */
 function renderMat(){
-  loadVIndex();loadRIndex();loadMatW();loadLab();
+  loadVIndex();loadRIndex();loadMatW();loadLab();if(typeof loadMatRef==="function")loadMatRef();
   const el=$("sk-mat");if(!el)return;
-  const tabs=[["today","Hôm nay","Hôm nay"],["vocab","Từ vựng","Từ"],["read","Reading","Đọc"],["write","Writing","Viết"],["drill","Bài tập","Bài tập"]];
+  const tabs=[["today","Hôm nay","Hôm nay"],["vocab","Từ vựng","Từ"],["dict","Từ điển","Tra"],["read","Reading","Đọc"],["write","Writing","Viết"],["drill","Bài tập","Bài tập"]];
   el.innerHTML=`<div class="seg rnav">${tabs.map(([k,n,m])=>`<button data-matv="${k}" aria-pressed="${matV===k}"><span class="lg">${n}</span><span class="sm">${m}</span></button>`).join("")}</div>
-   <div id="mat-body">${({today:matToday,vocab:matVocab,read:matRead,write:matWrite,drill:matDrill}[matV]||matToday)()}</div>`;
+   <div id="mat-body">${({today:matToday,vocab:matVocab,dict:(typeof matDict==="function"?matDict:matToday),read:matRead,write:matWrite,drill:matDrill}[matV]||matToday)()}</div>`;
 }
 function matMissing(what){return `<div class="card"><p class="hint">Chưa thấy ${what} Vật liệu trên Drive. Đưa file <b>climb-content-vatlieu.zip</b> vào thư mục climb-data, mở Apps Script và chạy hàm <b>napNoiDung</b>, rồi bấm thử lại.</p><button class="btn sm" data-matreload>Thử lại</button></div>`}
 function matToday(){
@@ -4629,7 +4650,7 @@ function matWrite(){
 const MAT_DK=[["mix","10 câu trộn","Mỗi dạng 2 câu, ưu tiên câu đến hạn"],["def","Định nghĩa → thuật ngữ","Đọc định nghĩa tiếng Anh, chọn đúng thuật ngữ"],["col","Giới từ & kết hợp từ","attribute to, result from/in, consistent with…"],["fam","Dạng từ","precipitate / precipitation, soluble / solubility…"],["para","Paraphrase học thuật","Cụm thường ↔ cụm trong bài báo"],["con","Bẫy T/F/NG khoa học","most ↔ all, suggested ↔ proven…"]];
 function matDrill(){
   if(!WL.pk.mat){loadWLPack("mat").then(()=>{if(tab==="skills"&&skill==="mat")renderMat()}).catch(()=>{WL.matFail=1;if(tab==="skills"&&skill==="mat")renderMat()});return WL.matFail?matMissing("bài tập"):skelHTML()}
-  const st=wlStats("mat"),by=k=>WL.pk.mat.items.filter(x=>x.k===k).length;
+  const st=wlStats("mat"),by=k=>wlItems("mat").filter(x=>x.k===k).length;
   return `<div class="card wl-hero"><div class="grow"><div class="kicker">Mỗi ngày ~7 phút</div><div class="h2">Câu học thuật Vật liệu</div><p class="hint">${st.n} câu · đã làm ${st.seen} · đã thuộc ${st.known}${st.due?` · ${st.due} câu đến hạn`:""}. Tiến độ lưu chung với Xưởng từ (ôn cách quãng).</p></div><button class="btn sun" data-matdrill="mix">Bắt đầu ${I.arrow}</button></div>
    <div class="typegrid">${MAT_DK.slice(1).map(([k,n,d])=>`<div class="typec"><div class="tt"><b>${esc(n)}</b><span class="hint">${esc(d)} · ${by(k)} câu</span></div><div class="row" style="gap:6px"><button class="btn sm primary" data-matdrill="${k}">Luyện 10 câu</button></div></div>`).join("")}</div>`;
 }
@@ -5425,6 +5446,140 @@ function camPick(){
   updateWriteForm=function(){loadCam();camPicker();const nt=$("w-camnote");if(nt&&!nt.hidden&&nt.dataset.p!==$("w-prompt").value)nt.hidden=true;return _uw.apply(this,arguments)};
   const _rs=renderSpeaking;
   renderSpeaking=function(){loadCam();return _rs.apply(this,arguments)};
+})();
+
+/* ================= Từ điển Vật liệu & ODS (bộ "matg": 14 chương + phụ lục) =================
+   Nội dung trên Drive: vocab/_index-matg.json, vocab/matg/matg-b0N.json (từ theo chương), vocab/matg/_ref.json (viết tắt, từ đa nghĩa, cặp dễ nhầm, công thức).
+   Thiếu file nào thì mục đó báo "chưa nạp", phần còn lại của web vẫn chạy. */
+const MG={ref:null,refLoading:false,refFail:0,all:null,allLoading:false,allFail:0,sec:ls.get("ielts-mgsec","term"),q:"",ch:"all",show:30};
+const MG_SHORT=["Nền tảng","Khuyết tật","Pha & nhiệt động","Hóa bền","Fe–Cr & ODS","Bột & MA–HIP","Hiển vi & phân tích","Thử kéo","Creep & mỏi","Hạt nhân","In 3D","Machine learning","Viết bài báo","Nâng cao"];
+const MG_SECS=[["learn","Học theo chương"],["term","Thuật ngữ"],["abbr","Viết tắt"],["poly","Đa nghĩa"],["dist","Dễ nhầm"],["form","Công thức"]];
+const mgNorm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/Đ/g,"d").toLowerCase();
+const matgUnits=()=>extTopics("matg");
+function mgRerender(){if(S||RD||DT||SP)return;if(tab==="skills"&&skill==="mat"&&matV==="dict"){const q=$("mg-q"),keep=q&&document.activeElement===q;renderMat();if(keep){const n=$("mg-q");if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length)}catch(e){}}}}}
+function loadMatRef(force){
+  if(MG.ref)return Promise.resolve(MG.ref);
+  if(MG.refLoading)return MG.refLoading;
+  if(!force&&Date.now()-MG.refFail<20000)return Promise.resolve(null);
+  MG.refLoading=callRaw("getPack",["vocab/matg/_ref.json",packVer],true).then(s=>{MG.ref=JSON.parse(s);MG.refLoading=false;mgRerender();return MG.ref}).catch(()=>{MG.refLoading=false;MG.refFail=Date.now();return null});
+  return MG.refLoading;
+}
+function loadMatAll(force){
+  if(MG.all||MG.allLoading||!VIDX)return;
+  const us=matgUnits();if(!us.length)return;
+  if(!force&&Date.now()-MG.allFail<20000)return;
+  MG.allLoading=true;
+  Promise.all(us.map(loadUnit)).then(ts=>{
+    MG.all=ts.flatMap(t=>(t.words||[]).map(w=>({...w,ch:t,_w:mgNorm(w.w),_a:mgNorm(w.syn),_v:mgNorm(w.vi),_n:mgNorm((w.use||"")+" "+(w.ex||[]).join(" "))})));
+    MG.allLoading=false;mgRerender();
+  }).catch(()=>{MG.allLoading=false;MG.allFail=Date.now();mgRerender()});
+}
+function matgNext(){
+  const us=matgUnits();if(!us.length)return null;
+  const cu=ls.get("ielts-vunit-matg",""),order=[us.find(t=>t.id===cu),...us].filter(Boolean);
+  for(const t of order){const L=topicLessons(t).find(l=>!passed(l.key)&&lessonUnlocked(l));if(L)return L}
+  return null;
+}
+/* ---- lọc theo ô tìm ---- */
+function mgMatchTerms(){
+  const q=mgNorm(MG.q).trim();let L=MG.all||[];
+  if(MG.ch!=="all")L=L.filter(x=>x.ch.id===MG.ch);
+  if(!q)return L;
+  const sc=x=>{const w=x._w;return w===q?0:w.startsWith(q)?1:(x._a&&x._a.split(/[\s\/,]+/).includes(q))?2:w.includes(q)?3:x._a&&x._a.includes(q)?3:x._v.includes(q)?4:x._n.includes(q)?5:9};
+  return L.map(x=>[sc(x),x]).filter(a=>a[0]<9).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
+}
+function mgMatchRef(sec){
+  const R=MG.ref;if(!R)return [];const q=mgNorm(MG.q).trim();
+  const F={abbr:R.abbr,poly:R.poly,dist:R.distinct,form:R.formulas}[sec]||[];
+  if(!q)return F;
+  const T={abbr:x=>x.abbr+" "+x.full,poly:x=>[x.w,x.plain,x.tech,x.warn].join(" "),dist:x=>x.pair+" "+x.note,form:x=>[x.name,x.expr,x.cond].join(" ")}[sec];
+  return F.filter(x=>mgNorm(T(x)).includes(q));
+}
+function mgCount(sec){
+  if(sec==="learn")return null;
+  if(sec==="term"){const q=mgNorm(MG.q).trim();if(!MG.all)return null;if(!q)return MG.all.length;const keep=MG.ch;MG.ch="all";const n=mgMatchTerms().length;MG.ch=keep;return n}
+  return MG.ref?mgMatchRef(sec).length:null;
+}
+function mgSecsHTML(){return MG_SECS.map(([k,n])=>{const c=mgCount(k);return `<button class="chip" data-mgsec="${k}" aria-pressed="${MG.sec===k}">${n}${c!=null&&k!=="learn"?` <small>${c}</small>`:""}</button>`}).join("")}
+const mgSay=t=>`<button class="say-mini dark" data-say="${esc(t)}" aria-label="Nghe">${I.sound.replace('viewBox','width="14" height="14" viewBox')}</button>`;
+function mgTermRows(list){
+  if(!list.length)return `<p class="hint">Không có thuật ngữ nào khớp.</p>`;
+  const have=new Set(vocab.map(v=>v.word.toLowerCase()));
+  const more=list.length-MG.show;
+  return `<div class="vlist">${list.slice(0,MG.show).map((w,i)=>{const idx=MG.all.indexOf(w);return `<div class="vrow"><div class="vw"><b>${esc(w.w)}</b> <span class="tiny muted">${esc(w.pos||"")}</span>${w.ipa&&w.ipa!=="//"?`<span class="mg-ipa">${esc(w.ipa)}</span>`:""}${mgSay(w.w)}${w.syn?`<span class="tchip">${esc(w.syn)}</span>`:""}</div>
+    <div class="vm">${esc(w.vi)}</div>${w.use?`<div class="mg-note">${esc(w.use)}</div>`:""}${w.ex&&w.ex[0]?`<div class="vx">${hiWord(w.ex[0],w.w.split(/\s*[\/(]/)[0])}</div>`:""}
+    ${have.has(w.w.toLowerCase())?`<span class="chip ok vbtn">Đang ôn</span>`:`<button class="btn sm vbtn" data-mgadd="${idx}">+ Học</button>`}</div>`}).join("")}</div>${more>0?`<button class="btn" style="margin-top:8px" data-mgmore="1">Xem thêm ${Math.min(more,30)} (còn ${more})</button>`:""}`;
+}
+function mgLearn(){
+  const us=matgUnits(),due=matDue().length;
+  const tot=us.reduce((s,t)=>s+(t.n||0),0),ld=us.map(matUnitStat);
+  return `<div class="mg-bar"><span class="hint">${us.length} chương · ${fmt(tot)} thuật ngữ · mỗi chặng khoảng 8 từ, đúng 80% thì mở chặng sau</span>${due?`<button class="btn sm" data-matreview>Ôn ${due} từ đến hạn</button>`:""}</div>
+   <div class="card pad0">${us.map((t,i)=>{const s=ld[i];return `<div class="rrow" style="cursor:default"><span class="rno num">${pad(i+1)}</span><span style="min-width:0"><b>${esc(t.vi||t.en)}</b><span class="tiny muted" style="display:block">${esc(t.en)} · ${t.n||"?"} từ</span><span class="sbar" style="margin-top:6px"><i style="width:${s.n?s.d/s.n*100:0}%"></i></span><span class="tiny muted">${s.d}/${s.n} chặng</span></span>
+     <span class="rscore">${s.next?`<button class="btn sm ${s.d?"primary":""}" data-mgunit="${t.id}" data-key="${s.next.key}">${s.d?"Học tiếp":"Bắt đầu"}</button>`:`<span class="chip ok">Xong</span>`}</span></div>`}).join("")}</div>`;
+}
+function mgBody(){
+  const sec=MG.sec;
+  if(sec==="learn")return mgLearn();
+  if(sec==="term"){
+    if(!MG.all)return MG.allFail&&!MG.allLoading?matMissing("từ điển"):skelHTML();
+    const us=matgUnits(),L=mgMatchTerms();
+    return `<div class="rfilters"><button class="chip" data-mgch="all" aria-pressed="${MG.ch==="all"}">Mọi chương</button>${us.map((t,i)=>`<button class="chip" data-mgch="${t.id}" aria-pressed="${MG.ch===t.id}" title="${esc(t.vi||"")}">${pad(i+1)} · ${esc(MG_SHORT[i]||(t.vi||t.en).slice(0,24))}</button>`).join("")}</div>
+     <div class="mg-bar"><span class="hint">${fmt(L.length)} thuật ngữ${MG.q.trim()?` khớp “${esc(MG.q.trim())}”`:""}. Tìm bằng tiếng Anh hoặc tiếng Việt (không cần gõ dấu).</span></div>${mgTermRows(L)}`;
+  }
+  if(!MG.ref)return MG.refFail&&!MG.refLoading?matMissing("phụ lục từ điển"):skelHTML();
+  const L=mgMatchRef(sec),drill=`<button class="btn sm primary" data-matdrill="${sec}">Luyện 10 câu</button>`;
+  if(sec==="abbr")return `<div class="mg-bar"><span class="hint">${L.length} từ viết tắt thường gặp trong bài báo vật liệu</span>${drill}</div><div class="mg-grid">${L.map(x=>`<div class="mg-abbr"><b>${esc(x.abbr)}</b><span>${esc(x.full)}</span></div>`).join("")||`<p class="hint">Không khớp.</p>`}</div>`;
+  if(sec==="poly")return `<div class="mg-bar"><span class="hint">${L.length} từ nghĩa đời thường khác hẳn nghĩa chuyên ngành: dễ dịch sai khi đọc paper</span>${drill}</div><div class="mg-grid">${L.map(x=>`<div class="mgcard"><b>${esc(x.w)} ${mgSay(x.w)}</b><div class="mg-vs"><div><span>Nghĩa thường</span>${esc(x.plain)}</div><div><span>Trong vật liệu</span><b style="font-size:14px">${esc(x.tech)}</b></div></div><div class="mg-warn">⚠ ${esc(x.warn)}</div></div>`).join("")||`<p class="hint">Không khớp.</p>`}</div>`;
+  if(sec==="dist")return `<div class="mg-bar"><span class="hint">${L.length} cặp khái niệm hay bị nhầm khi đọc và viết bài báo</span>${drill}</div><div class="mg-grid">${L.map(x=>`<div class="mgcard"><b>${esc(x.pair)}</b><div class="mg-warn">${esc(x.note)}</div></div>`).join("")||`<p class="hint">Không khớp.</p>`}</div>`;
+  return `<div class="mg-bar"><span class="hint">${L.length} công thức ở mức ghi nhớ; luôn kiểm tra định nghĩa, đơn vị và giả thiết của bài báo</span>${drill}</div><div class="mg-grid">${L.map(x=>`<div class="mgcard"><b>${esc(x.name)}</b><div class="mg-eq">${esc(x.expr)}</div><div class="mg-warn">${esc(x.cond)}</div></div>`).join("")||`<p class="hint">Không khớp.</p>`}</div>`;
+}
+function matgMissing(){return `<div class="card"><p class="hint">Chưa thấy từ điển Vật liệu & ODS trên Drive. Đưa file <b>climb-content-tudien-vatlieu.zip</b> vào thư mục climb-data, mở Apps Script và chạy hàm <b>napNoiDung</b>, rồi bấm thử lại.</p><button class="btn sm" data-matreload>Thử lại</button></div>`}
+function matDict(){
+  if(!VIDX)return vIdxFail?matMissing("bộ từ"):skelHTML();
+  if(!matgUnits().length)return matgMissing();
+  loadMatRef();loadMatAll();
+  return `<input id="mg-q" class="inp mg-q" type="search" placeholder="Tra thuật ngữ, viết tắt, công thức… (vd: burgers, kéo, KAM)" value="${esc(MG.q)}" autocomplete="off" aria-label="Tra từ điển Vật liệu">
+   <div class="mg-secs" id="mg-secs">${mgSecsHTML()}</div><div id="mg-body">${mgBody()}</div>`;
+}
+document.addEventListener("input",e=>{
+  if(e.target.id!=="mg-q")return;
+  MG.q=e.target.value;MG.show=30;
+  if(MG.q.trim()&&MG.sec==="learn"){MG.sec="term";ls.set("ielts-mgsec","term")}
+  const b=$("mg-body");if(b)b.innerHTML=mgBody();const c=$("mg-secs");if(c)c.innerHTML=mgSecsHTML();
+});
+document.addEventListener("click",e=>{
+  const s=e.target.closest("[data-mgsec]");if(s){MG.sec=s.dataset.mgsec;MG.show=30;ls.set("ielts-mgsec",MG.sec);const b=$("mg-body");if(b)b.innerHTML=mgBody();const c=$("mg-secs");if(c)c.innerHTML=mgSecsHTML();return}
+  const ch=e.target.closest("[data-mgch]");if(ch){MG.ch=ch.dataset.mgch;MG.show=30;const b=$("mg-body");if(b)b.innerHTML=mgBody();return}
+  if(e.target.closest("[data-mgmore]")){MG.show+=30;const b=$("mg-body");if(b)b.innerHTML=mgBody();return}
+  const u=e.target.closest("[data-mgunit]");if(u){ls.set("ielts-vunit-matg",u.dataset.mgunit);return openLessonDialog(u.dataset.key)}
+  const a=e.target.closest("[data-mgadd]");if(a){
+    const w=MG.all&&MG.all[+a.dataset.mgadd];if(!w)return;a.disabled=true;
+    call("addWords",[{word:w.w,meaning:w.vi+(w.pos?` (${w.pos})`:""),example:(w.ex&&w.ex[0])||"",source:`${w.ch.en} +`}]).then(l=>{vocab=l;toast(`Đã thêm “${w.w}” vào sổ ôn tập`);const b=$("mg-body");if(b)b.innerHTML=mgBody()}).catch(()=>{a.disabled=false});return}
+});
+
+/* ---- câu luyện từ phụ lục: viết tắt, từ đa nghĩa, cặp dễ nhầm, công thức (dùng chung kho ôn cách quãng của "Bài tập") ---- */
+MAT_DK.push(["abbr","Viết tắt","ODS, EBSD, KAM, HIP… → tên đầy đủ"],["poly","Từ đa nghĩa","strength, matrix, yield… hiểu đúng trong vật liệu"],["dist","Phân biệt dễ nhầm","Orowan vs Zener, KAM vs GOS, UTS vs YS…"],["form","Công thức","Hall–Petch, Taylor, Arrhenius, Bragg…"]);
+const mgUniq=a=>[...new Set(a)];
+const mgPick=(arr,n,not)=>shuffle(mgUniq(arr).filter(x=>x!==not)).slice(0,n);
+function mgRefItems(){
+  const R=MG.ref;if(!R)return [];const out=[];
+  R.abbr.forEach(x=>{const id="g:ab:"+x.abbr;out.push({id,k:"abbr",mk:()=>mcq(id,`<span class="tiny muted">Viết tắt trong bài báo vật liệu</span><br><b>${esc(x.abbr)}</b> là gì?`,[x.full,...mgPick(R.abbr.map(y=>y.full),3,x.full)],x.full,`${x.abbr} = ${x.full}`,25)})});
+  R.poly.forEach(x=>{const id="g:po:"+x.w;out.push({id,k:"poly",mk:()=>mcq(id,`<span class="tiny muted">Trong khoa học vật liệu</span><br><b>“${esc(x.w)}”</b> thường nghĩa là gì?`,mgUniq([x.tech,x.plain,...mgPick(R.poly.map(y=>y.tech),2,x.tech)]),x.tech,`${x.w} = ${x.tech}. Nghĩa đời thường (${x.plain}) dễ làm dịch sai. ⚠ ${x.warn}`,25)})});
+  R.distinct.forEach((x,i)=>{
+    const a="g:di:"+i,b="g:dj:"+i;
+    out.push({id:a,k:"dist",mk:()=>mcq(a,`<span class="tiny muted">Phân biệt</span><br><b>${esc(x.pair)}</b><br>Ý nào đúng?`,[x.note,...mgPick(R.distinct.map(y=>y.note),3,x.note)],x.note,`${x.pair}: ${x.note}`,40)});
+    out.push({id:b,k:"dist",mk:()=>mcq(b,`<span class="tiny muted">Ý này nói về cặp nào?</span><br><i>${esc(x.note)}</i>`,[x.pair,...mgPick(R.distinct.map(y=>y.pair),3,x.pair)],x.pair,`${x.pair}: ${x.note}`,40)});
+  });
+  R.formulas.forEach((x,i)=>{const id="g:fo:"+i;out.push({id,k:"form",mk:()=>mcq(id,`<span class="tiny muted">Công thức</span><br>Biểu thức nào là <b>${esc(x.name)}</b>?`,[x.expr,...mgPick(R.formulas.map(y=>y.expr),3,x.expr)],x.expr,`${x.name}: ${x.expr}. ${x.cond}`,30)})});
+  return out;
+}
+(function(){
+  const _wi=wlItems;wlItems=function(mode){const b=_wi(mode);return mode==="mat"?b.concat(mgRefItems()):b};
+  const _pm=practiceMat,NEW=["abbr","poly","dist","form"];
+  practiceMat=function(kind){
+    if(NEW.includes(kind)){loadMatRef(true).then(r=>{if(!r)return toast("Chưa tải được phụ lục từ điển Vật liệu. Nạp climb-content-tudien-vatlieu.zip rồi thử lại.",true);_pm(kind)});return}
+    _pm(kind);
+  };
 })();
 </script>
 </body>
