@@ -1104,6 +1104,25 @@ body:not([data-rank="0"]):not([data-rank=""]) #altchip{box-shadow:0 0 0 1.5px va
 .wt-prompt{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
 .wt-live{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:12px;background:var(--sunk);border:1px solid var(--line)}
 @media (max-width:520px){.wt-day{grid-template-columns:1fr}.wt-prompt{flex-direction:column;align-items:stretch}}
+
+.wt-must{display:flex;flex-direction:column;gap:10px;border-width:2px}
+.wt-must.hot{border-color:var(--sun,#e0a030)}.wt-must.cool{border-color:var(--ok,#2a9d6a)}
+.wt-mh{display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.wt-mh .h2{margin:2px 0 0}.wt-cnt{font-size:13px;color:var(--ink-3)}.wt-cnt b{font-size:24px;color:var(--ink)}
+.wt-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wt-dot{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--ink-3)}
+.wt-dot i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:13px;background:var(--sunk);border:2px solid var(--line)}
+.wt-dot.ok i{background:var(--ok);border-color:var(--ok);color:#fff}
+.wt-dot.today i{border-color:var(--night);background:#fff}.wt-dot.today{color:var(--ink)}
+.wt-dot.late i{background:var(--bad);border-color:var(--bad);color:#fff}.wt-dot.late{color:var(--bad)}
+.wt-warn{padding:8px 12px;border-radius:10px;background:var(--bad-soft);color:var(--bad);font-size:13.5px;font-weight:600}
+.wt-warn.ok{background:var(--ok-soft);color:var(--ok)}
+.wt-mrow{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--sunk)}
+.wt-mrow.today{background:var(--sun-soft)}.wt-mrow.late{background:var(--bad-soft)}
+.wt-mrow b{display:block;font-size:14.5px}.wt-mrow small{display:block;color:var(--ink-3);font-size:12.5px;margin-top:2px}
+.wt-mrow .btn{flex:none}
+.linkbtn{background:none;border:0;padding:0;color:var(--night);text-decoration:underline;font:inherit;cursor:pointer}
+.wt-lock .task{opacity:.5}
 .gb-entry{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
 .gb-prompt{background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;display:flex;flex-direction:column;gap:4px}
 .gb-prompt ul{margin:2px 0 0 18px;padding:0}
@@ -1612,7 +1631,6 @@ function dailyPlan(){
   const nv=nextVocab();
   if(!weekend&&nv)items.push({time:"Từ vựng mới",min:15,title:newToday()>=1?"Đã xong 1 chặng mới hôm nay":`${nv.title} · ${nv.topic.en}`,how:newToday()>=1?"Đủ mức gợi ý cho hôm nay. Muốn học thêm vẫn được, nhưng ôn lại từ cũ thường lợi hơn học dồn, nên ôn tập thay vì học mới.":`${nv.words.length||nv.n} từ mới, thẻ lật rồi kiểm tra`,done:newToday()>=1,btn:`data-open="${nv.key}"`,label:"Học",primary:true});
   items.push({time:"Ôn tập",min:Math.max(3,Math.round(due*.4)),title:due?`Ôn ${due} từ đến hạn`:"Không có từ đến hạn",how:dueWords().length>REVIEW_CAP?`Còn ${dueWords().length-REVIEW_CAP} từ dời sang ngày mai để không quá tải.`:"",done:!due,btn:due>=1?'data-review="start"':"",label:"Ôn"});
-  items.push(...(typeof wtHomeItems==="function"?wtHomeItems():[]));
   items.push({time:"Xưởng từ",min:10,title:"Lượt trộn 17 câu",how:"Gốc từ, dạng từ, kết hợp từ, nâng cấp, paraphrase, bẫy T/F/NG và từ trong sổ phim",done:ls.get("ielts-wl-day","")===todayISO,btn:'data-wlmix="1"',label:"Luyện"});
   if(day&&wk&&wk.n>=1){const i=wk.days.indexOf(day);
     const gu=i===0?2*wk.n-1:i===3?2*wk.n:null;
@@ -1670,11 +1688,12 @@ function renderHome(){
      </div>
      ${mountainSVG(m)}
    </section>
+   ${typeof wtMustHTML==="function"?wtMustHTML():""}
    ${focusHTML()}
    ${buddyHTML()}
    <div class="grid2">${cont(nv,"Từ vựng")}${cont(ng,"Ngữ pháp")}</div>
    <div class="hd"><h2 class="h2">Kế hoạch hôm nay</h2><span class="small muted">${P.weekend?"Cuối tuần: chỉ ôn và bù":"Phần trên web khoảng "+P.min+" phút, nằm trong 2 ca học"}</span></div>
-   <div class="card pad0"><div class="todo">${todo}</div>${day?`<input class="note" id="t-note" data-note="${day.k}" placeholder="Ghi điểm, ví dụ: L U1 14/20" value="${esc(dayRec(day.k).note||"")}">`:""}</div>
+   <div class="card pad0 ${typeof wtPending==="function"&&wtPending()?"wt-lock":""}"><div class="todo">${todo}</div>${day?`<input class="note" id="t-note" data-note="${day.k}" placeholder="Ghi điểm, ví dụ: L U1 14/20" value="${esc(dayRec(day.k).note||"")}">`:""}</div>
    ${owed.length?`<div class="card"><div class="hd"><h3 class="h3">Còn nợ ${owed.length} ngày</h3><span class="hint">Học bù rồi tick đúng ngày đó ở Lộ trình, mục Lịch học</span></div><div class="row" style="gap:8px;margin-top:10px">${owed.slice(-8).map(x=>`<button class="chip bad" style="flex:none" data-owe="${x.k}">${DOW[x.date.getDay()]} ${dm(x.k)}</button>`).join("")}</div></div>`:""}`;
   requestAnimationFrame(()=>placeOnRoute(m));
 }
@@ -4818,7 +4837,7 @@ function puCheck(){
 }
 function puNext(){S.ti++;if(S.ti>=S.tasks.length)puFinish();else puShow()}
 function puFinish(){
-  S.phase="result";if(S.mission)ls.set("ielts-wt-"+todayISO,"1");
+  S.phase="result";if(S.mission)ls.set("ielts-wt-"+(S.mday||todayISO),"1");
   const words=[...new Map(S.tasks.filter(t=>t.k!=="see").map(t=>[t.x.w.w,t.x.w])).values()];
   const rows=words.map(w=>{const r=S.res[w.w]||[],good=r.filter(Boolean).length;return {w,r,ok:good>=Math.ceil(r.length*2/3)}});
   const results=rows.map(x=>({id:puId(x.w),ok:x.ok}));
@@ -4882,6 +4901,7 @@ function wtStartDay(i){
   const fresh=th.words.filter(x=>x.li===i);
   if(!fresh.length)return toast("Hôm nay không có từ mới, luyện cả bộ từ của tuần.");
   puStart(Math.min(10,fresh.length+3),th.words.filter(x=>x.li<=i),fresh);
+  if(S&&S.pu&&S.mission){const pw=PLAN[w];if(pw&&pw.days&&pw.days[0])S.mday=addISO(pw.days[0].k,i)}
 }
 function weekHTML(){
   loadLab();
@@ -4956,6 +4976,45 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-wtspeak]")){skill="speaking";ls.set("ielts-skill","speaking");spView="practice";ls.set("ielts-spview","practice");setTab("skills")}
 });
 document.addEventListener("input",e=>{if(e.target.id==="w-ans")wtLive()});
+
+/* ================= Nhiệm vụ tuần bắt buộc trên Trang chủ ================= */
+function wtMust(){
+  const wi=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
+  if(wi<1)return null;
+  const th=weekTheme(wi);wtLoad(wi);const mon=PLAN[wi].days[0].k;
+  const seen=(id,d)=>{const x=(rstats.latest||{})[id];return !!(x&&x.date===d)};
+  const subOn=(d,sp)=>subs.some(s=>String(s.created).slice(0,10)===d&&(sp?s.type==="speaking":s.type!=="speaking"));
+  const rd=wtReads(th)[0],rids=[rd&&rd.id,"rcol-"+pad(wi)].filter(Boolean);
+  const days=[];
+  for(let i=0;i<7;i++){
+    const d=addISO(mon,i),t=[];
+    if(i<5){const nw=th.words.filter(x=>x.li===i);
+      t.push({done:!!ls.get("ielts-wt-"+d,""),title:th.loaded?`Học ${nw.length} từ mới và luyện dùng`:"Đang tải từ của tuần…",sub:nw.map(x=>x.w).join(", "),btn:th.loaded?`data-wtday="${i}"`:"",label:"Học"})}
+    else if(i===5){
+      t.push({done:rids.some(id=>seen(id,d)),title:rd?`Reading cùng chủ đề: ${rd.title}`:"Làm lại bài đọc Collins của tuần",sub:"Ôn từ mục tiêu qua bài đọc",btn:`data-ropen="${rids[0]}"`,label:"Làm"});
+      t.push({done:subOn(d,false),title:`Viết về chủ đề: ${th.name}`,sub:"Viết từng câu theo khung, có bảng kiểm",btn:'data-gbw="0"',label:"Viết"})}
+    else t.push({done:subOn(d,true),title:`Nói về chủ đề: ${th.name}`,sub:"Nói từng câu theo khung, rồi đối chiếu bài mẫu",btn:'data-gbs="1"',label:"Nói"});
+    days.push({i,d,t,ok:t.every(x=>x.done)});
+  }
+  return {wi,th,days};
+}
+function wtPending(){const m=wtMust();if(!m)return false;return m.days.some(x=>x.d<=todayISO&&!x.ok)}
+function wtMustHTML(){
+  const m=wtMust();if(!m)return "";
+  const DN=["T2","T3","T4","T5","T6","T7","CN"],total=m.days.reduce((a,x)=>a+x.t.length,0),done=m.days.reduce((a,x)=>a+x.t.filter(y=>y.done).length,0);
+  const late=m.days.filter(x=>x.d<todayISO&&!x.ok),today=m.days.find(x=>x.d===todayISO);
+  const row=(x,d,tag)=>x.t.filter(y=>!y.done).map(y=>`<div class="wt-mrow ${tag}"><div class="grow"><b>${tag==="late"?DN[d.i]+" · ":""}${esc(y.title)}</b>${y.sub?`<small>${esc(y.sub)}</small>`:""}</div>${y.btn?`<button class="btn ${tag==="late"?"":"primary"}" ${y.btn}>${y.label}${tag==="late"?" bù":""}</button>`:`<span class="hint">Đang tải…</span>`}</div>`).join("");
+  const pend=(today?today.t.filter(y=>!y.done).length:0)+late.reduce((a,x)=>a+x.t.filter(y=>!y.done).length,0);
+  return `<section class="card wt-must ${pend?"hot":"cool"}">
+   <div class="wt-mh"><div><span class="eyebrow">Nhiệm vụ bắt buộc · Tuần ${m.wi}</span><h2 class="h2">${esc(m.th.name)}</h2></div><div class="wt-cnt"><b>${done}</b>/${total}</div></div>
+   <div class="bar"><i style="width:${done/total*100}%"></i></div>
+   <div class="wt-strip">${m.days.map(x=>{const st=x.ok?"ok":x.d===todayISO?"today":x.d<todayISO?"late":"fut";return `<span class="wt-dot ${st}" title="${DN[x.i]}"><i>${x.ok?"✓":st==="late"?"!":""}</i>${DN[x.i]}</span>`}).join("")}</div>
+   ${pend?`<div class="wt-warn">${late.length?`Còn nợ ${late.length} ngày. Bù xong mới được coi là hoàn thành tuần.`:"Phải xong hôm nay. Phần bổ trợ bên dưới tạm làm mờ cho tới khi làm xong."}</div>`:`<div class="wt-warn ok">Đã xong hết nhiệm vụ tuần tính tới hôm nay.</div>`}
+   ${late.map(x=>row(x,x,"late")).join("")}
+   ${today?row(today,today,"today"):""}
+   <p class="hint" style="margin:4px 0 0">Muốn xem cả tuần: <button class="linkbtn" data-wtopen="1">Mở trang Chủ đề tuần</button></p>
+  </section>`;
+}
 
 /* ================= Luyện có kèm cặp: Viết và Nói theo từng câu ================= */
 const GB_ST={
