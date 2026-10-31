@@ -3,8 +3,6 @@
 <head>
 <base target="_top">
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Climb</title>
 <meta name="theme-color" content="#151d47">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -658,9 +656,8 @@ mark.qhl sup{font-family:var(--f);font-size:10px;font-weight:800;color:#fff;back
 mark.qhl.on{background:var(--sun-soft);border-bottom-color:var(--sun);animation:flash 1.2s ease-out 2}
 mark.qhl.on sup{background:var(--sun-ink)}
 /* v9.4: từ khóa trong câu hỏi */
-.kwbar{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;padding:6px;border:1px solid var(--line-2);border-radius:16px;background:var(--card);box-shadow:0 6px 24px rgba(0,0,0,.22);max-width:calc(100vw - 20px)}
+.kwbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));z-index:40;display:flex;gap:6px;align-items:center;padding:6px;border:1px solid var(--line-2);border-radius:16px;background:var(--card);box-shadow:0 6px 24px rgba(0,0,0,.22);max-width:calc(100vw - 20px)}
 .kwbar .btn{min-height:44px;padding:0 14px;white-space:nowrap}
-.kwbar .kwapply{background:var(--sun);color:#1a1300;border-color:var(--sun);font-weight:800}
 .kwbar .kwtip{font-size:11px;color:var(--ink-3);max-width:150px;line-height:1.2}
 .rd-q.kw-pad{padding-bottom:90px}
 @media (max-width:520px){.kwbar .kwtip{display:none}}
@@ -1034,6 +1031,102 @@ mark.uhl{background:color-mix(in srgb,var(--link) 18%,transparent);color:inherit
 mark.rw.uhl{background:var(--sun-soft);border-bottom-color:var(--link)}
 .hardchip{font-size:11px;font-weight:800;padding:1px 7px;border-radius:7px;background:var(--bad-soft);color:var(--bad);margin-left:6px;vertical-align:1px}
 .cmpline{font-size:13px;color:var(--ink-2);background:var(--sunk);border-radius:10px;padding:8px 10px}
+
+/* ===== Hạng Sắt → Thách đấu, luyện dùng từ ===== */
+.rkpill{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--rc);vertical-align:middle}
+.rke{flex:none;display:block}
+.rk-frame{position:relative;border-radius:var(--r-lg);padding:18px;margin-bottom:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--rc) 14%,var(--surface)),var(--surface));border:1.5px solid color-mix(in srgb,var(--rc) 55%,var(--line))}
+.rk-frame::before,.rk-frame::after{content:"";position:absolute;width:22px;height:22px;border:2px solid var(--rc);opacity:.8;pointer-events:none}
+.rk-frame::before{top:7px;left:7px;border-right:0;border-bottom:0;border-radius:8px 0 0 0}
+.rk-frame::after{bottom:7px;right:7px;border-left:0;border-top:0;border-radius:0 0 8px 0}
+.rk-top{display:flex;gap:14px;align-items:center}
+.rk-name{font-size:24px;font-weight:800;color:color-mix(in srgb,var(--rc) 65%,var(--ink));line-height:1.15}
+.rk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;margin-top:14px}
+.rk-cell{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:12px;background:var(--sunk);border:1px solid var(--line);font-size:11px;font-weight:600;color:var(--ink-2)}
+.rk-cell.on{border-color:var(--rc)}
+.lvl-pick{display:flex;flex-direction:column;gap:6px}
+.lvl-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lvl{padding:10px 6px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);display:flex;flex-direction:column;gap:2px;align-items:center}
+.lvl.on{border-color:var(--link);background:var(--sunk)}
+.lvl:disabled{opacity:.5}
+.lvl small{font-size:11px;color:var(--ink-3)}
+#rankfx{position:fixed;inset:0;pointer-events:none;z-index:9990}
+#rankfx::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,transparent,var(--rank,#999),transparent);opacity:0;transition:opacity .6s}
+#rankfx i{position:absolute;width:30px;height:30px;border:2px solid var(--rank,#999);opacity:0;transition:opacity .6s}
+#rankfx i:nth-child(1){top:6px;left:6px;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
+#rankfx i:nth-child(2){top:6px;right:6px;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+#rankfx i:nth-child(3){bottom:6px;left:6px;border-right:0;border-top:0;border-radius:0 0 0 10px}
+#rankfx i:nth-child(4){bottom:6px;right:6px;border-left:0;border-top:0;border-radius:0 0 10px 0}
+body:not([data-rank="0"]):not([data-rank=""]) #rankfx::before{opacity:.9}
+body:is([data-rank="2"],[data-rank="3"],[data-rank="4"],[data-rank="5"],[data-rank="6"],[data-rank="7"]) #rankfx i:nth-child(-n+2){opacity:.75}
+body:is([data-rank="4"],[data-rank="5"],[data-rank="6"],[data-rank="7"]) #rankfx i:nth-child(n+3){opacity:.75}
+body:is([data-rank="5"],[data-rank="6"],[data-rank="7"]) #rankfx::before{animation:rkshim 3.2s ease-in-out infinite alternate}
+body:is([data-rank="6"],[data-rank="7"]) #rankfx i{filter:drop-shadow(0 0 6px var(--rank))}
+@keyframes rkshim{from{opacity:.45}to{opacity:1}}
+@media (max-width:899px){#rankfx i:nth-child(n+3){display:none}}
+body:not([data-rank="0"]):not([data-rank=""]) #altchip{box-shadow:0 0 0 1.5px var(--rank),0 0 14px -4px var(--rank)}
+.rkchip{display:inline-flex;margin-right:2px}
+.rankup{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(8,12,24,.8);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:rkfade .25s}
+.rankup .box{text-align:center;color:#fff;padding:28px;animation:rkpop .6s cubic-bezier(.2,1.4,.4,1)}
+.rankup .em{display:inline-block;animation:rkglow 1.6s ease-in-out infinite alternate}
+.rankup .t1{letter-spacing:.3em;font-size:12px;font-weight:800;opacity:.8;margin-top:8px}
+.rankup .t2{font-size:36px;font-weight:800;color:var(--rc);margin:4px 0}
+.rankup .t3{opacity:.85;font-size:14px}
+.rankup .sp{position:absolute;left:50%;top:44%;width:7px;height:7px;border-radius:50%;background:var(--rc);animation:rkspark 1.3s ease-out forwards}
+@keyframes rkpop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes rkfade{from{opacity:0}}
+@keyframes rkglow{from{filter:drop-shadow(0 0 8px var(--rc))}to{filter:drop-shadow(0 0 30px var(--rc))}}
+@keyframes rkspark{to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.pu-hero{display:flex;flex-direction:column;gap:12px}
+.pu-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pu-stats div{background:var(--sunk);border-radius:12px;padding:10px;text-align:center;display:flex;flex-direction:column}
+.pu-stats b{font-size:22px}.pu-stats span{font-size:11.5px;color:var(--ink-3)}
+.pu-form{display:flex;flex-direction:column;gap:10px}
+.pu-form textarea.inp{min-height:86px;resize:vertical;font-family:inherit}
+@media (max-width:520px){.seg[aria-label="Loại lộ trình"]{grid-template-columns:repeat(5,1fr)!important}.seg[aria-label="Loại lộ trình"] button{font-size:12px!important;padding:9px 1px!important}}
+.wt-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.wt-hero{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.wt-chips{display:flex;flex-wrap:wrap;gap:8px}
+.wt-chip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;padding:7px 11px;border-radius:12px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);position:relative;text-align:left}
+.wt-chip b{font-size:14px}.wt-chip small{font-size:11.5px;color:var(--ink-3)}
+.wt-chip.used{border-color:var(--ok);background:var(--ok-soft)}
+.wt-chip i{position:absolute;right:8px;top:6px;font-style:normal;color:var(--ok);font-weight:800}
+.wt-days{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.wt-day{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px}
+.wt-day.is-today{border-color:var(--link);box-shadow:0 0 0 2px color-mix(in srgb,var(--link) 25%,transparent)}
+.wt-day .dl{font-weight:700;display:flex;flex-direction:column}.wt-day .dl small{font-weight:500;color:var(--ink-3)}
+.wt-tasks{display:flex;flex-direction:column;gap:6px}
+.wt-task{display:flex;gap:9px;align-items:center;text-align:left;padding:8px 10px;border-radius:10px;background:var(--sunk);border:1px solid transparent;color:var(--ink);font-size:14px}
+.wt-task:hover{border-color:var(--line-2)}
+.wt-task .ck{flex:none;width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line-2);display:grid;place-items:center;font-size:13px;color:#fff}
+.wt-day.done .wt-task:first-child .ck{background:var(--ok);border-color:var(--ok)}
+.wt-end{display:flex;flex-direction:column;gap:16px}
+.wt-prompt{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.wt-live{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:12px;background:var(--sunk);border:1px solid var(--line)}
+@media (max-width:520px){.wt-day{grid-template-columns:1fr}.wt-prompt{flex-direction:column;align-items:stretch}}
+.gb-entry{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.gb-prompt{background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.gb-prompt ul{margin:2px 0 0 18px;padding:0}
+.gb-map{display:flex;flex-direction:column;gap:6px}
+.gb-row{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;background:var(--sunk)}
+.gb-row .n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--night);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.gb-row small{display:block;color:var(--ink-3);font-size:12px}
+.gb-chk{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.gb-chk div{display:flex;gap:8px;padding:6px 10px;border-radius:8px}
+.gb-chk .ok{background:var(--ok-soft)}.gb-chk .bad{background:var(--bad-soft)}.gb-chk .soft{background:var(--sunk)}
+.gb-ex{padding:10px 12px;border-radius:10px;background:var(--sun-soft);color:var(--sun-ink);font-size:14px}
+.gb-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gb-stats div{background:var(--sunk);border-radius:12px;padding:10px;text-align:center;display:flex;flex-direction:column}
+.gb-stats b{font-size:22px}.gb-stats span{font-size:11.5px;color:var(--ink-3)}
+.gb-essay{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.6}
+.gb-essay p{margin:0 0 10px}
+.gb-fig{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);background:#fff;align-self:flex-start}
+.gb-det{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surface)}
+.gb-det summary{cursor:pointer;font-weight:600;font-size:14px}
+.gb-data{font-size:14px;line-height:1.6;margin-top:6px}
+.gb-ana{display:flex;flex-direction:column;gap:10px;font-size:14px}
+.gb-ana p{margin:2px 0}.gb-ana ul{margin:2px 0 0 18px;padding:0}
+select.inp{width:100%}
 </style>
 </head>
 <body>
@@ -1131,28 +1224,19 @@ mark.rw.uhl{background:var(--sun-soft);border-bottom-color:var(--link)}
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
-/* Chạy ngoài Apps Script (GitHub Pages): giả lập google.script.run bằng fetch tới /exec.
-   Giới hạn 3 yêu cầu cùng lúc (Apps Script trả lỗi không đọc được khi bị dồn) và tự thử lại các hàm đọc (get*) khi lỗi mạng. */
+/* Chạy ngoài Apps Script (GitHub Pages): giả lập google.script.run bằng fetch tới /exec */
 (function(){
 if(window.google&&google.script&&google.script.run)return;
 var GAS_URL="https://script.google.com/macros/s/AKfycbwqzxKYLcWDHG9j8cmkfMk_yHWtOXfEqKRUqf0BRimSriXFXGi-n68ii0LtHW6dELdDmg/exec";
-var MAXC=3,active=0,queue=[];
-function pump(){while(active<MAXC&&queue.length){var j=queue.shift();active++;j()}}
-function post(fn,a,tryN){
- return fetch(GAS_URL,{method:"POST",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:fn,args:a})})
- .then(function(r){return r.json()})
- .catch(function(e){
-   if(/^get/.test(fn)&&tryN<3)return new Promise(function(ok){setTimeout(ok,600*tryN)}).then(function(){return post(fn,a,tryN+1)});
-   throw e})}
 function mk(){var ok=function(){},fail=function(){};
  var p=new Proxy({},{get:function(_,k){
   if(k==="withSuccessHandler")return function(f){ok=f;return p};
   if(k==="withFailureHandler")return function(f){fail=f;return p};
-  return function(){var a=[].slice.call(arguments),fn=String(k);
-   queue.push(function(){post(fn,a,1)
-    .then(function(j){active--;pump();if(j&&j.err)fail(new Error(j.err));else ok(j?j.ok:null)})
-    .catch(function(e){active--;pump();fail(new Error("MANG: "+((e&&e.message)||e)))})});
-   pump()}}});
+  return function(){var a=[].slice.call(arguments);
+   fetch(GAS_URL,{method:"POST",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({fn:String(k),args:a})})
+   .then(function(r){return r.json()})
+   .then(function(j){if(j&&j.err)fail(new Error(j.err));else ok(j?j.ok:null)})
+   .catch(function(e){fail(new Error("MANG: "+((e&&e.message)||e)))})}}});
  return p}
 window.google={script:{get run(){return mk()}}};
 })();
@@ -1346,7 +1430,7 @@ let goal=+ls.get("ielts-goal","400")||400;if(goal<200)goal=400;
 let skill=ls.get("ielts-skill","reading");
 let readings=[],rCache={};
 let tab=ls.get("ielts-tab6","home");if(tab==="write"){tab="skills";skill="write"}
-let pathMode=ls.get("ielts-pathmode","vocab");
+let pathMode=ls.get("ielts-pathmode","week");if(pathMode==="use")pathMode="week";
 let curTopic=ls.get("ielts-topic",TOPICS[0].id);
 let wKind=ls.get("ielts-kind","all");
 let openSub=null;
@@ -1486,7 +1570,7 @@ function renderShell(){
   const m=totalXp();
   const sk=streakDays();
   $("altchip").innerHTML=`<span class="dot">${I.peak}</span><b>${fmt(m)} m</b><span class="campn">${CAMPS[campOf(m)].n}</span>${sk.n?`<span class="streak ${sk.today?"":"cold"}" title="${sk.n} ngày học liên tiếp">🔥${sk.n}</span>`:""}`;
-  fxMilestones();
+  fxMilestones();if(typeof applyRankTheme==="function")applyRankTheme();
 }
 function setTab(t){tab=t;ls.set("ielts-tab6",t);document.querySelectorAll(".view").forEach(v=>v.hidden=v.id!=="v-"+t);render();window.scrollTo({top:0})}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)setTab(b.dataset.tab)});
@@ -1528,6 +1612,7 @@ function dailyPlan(){
   const nv=nextVocab();
   if(!weekend&&nv)items.push({time:"Từ vựng mới",min:15,title:newToday()>=1?"Đã xong 1 chặng mới hôm nay":`${nv.title} · ${nv.topic.en}`,how:newToday()>=1?"Đủ mức gợi ý cho hôm nay. Muốn học thêm vẫn được, nhưng ôn lại từ cũ thường lợi hơn học dồn, nên ôn tập thay vì học mới.":`${nv.words.length||nv.n} từ mới, thẻ lật rồi kiểm tra`,done:newToday()>=1,btn:`data-open="${nv.key}"`,label:"Học",primary:true});
   items.push({time:"Ôn tập",min:Math.max(3,Math.round(due*.4)),title:due?`Ôn ${due} từ đến hạn`:"Không có từ đến hạn",how:dueWords().length>REVIEW_CAP?`Còn ${dueWords().length-REVIEW_CAP} từ dời sang ngày mai để không quá tải.`:"",done:!due,btn:due>=1?'data-review="start"':"",label:"Ôn"});
+  items.push(...(typeof wtHomeItems==="function"?wtHomeItems():[]));
   items.push({time:"Xưởng từ",min:10,title:"Lượt trộn 17 câu",how:"Gốc từ, dạng từ, kết hợp từ, nâng cấp, paraphrase, bẫy T/F/NG và từ trong sổ phim",done:ls.get("ielts-wl-day","")===todayISO,btn:'data-wlmix="1"',label:"Luyện"});
   if(day&&wk&&wk.n>=1){const i=wk.days.indexOf(day);
     const gu=i===0?2*wk.n-1:i===3?2*wk.n:null;
@@ -1644,10 +1729,11 @@ document.addEventListener("input",e=>{const t=e.target;if(!t.dataset.note)return
 /* ================= Lộ trình ================= */
 let openWeek=null;
 function renderPath(){
-  const segs=[["vocab","Từ vựng"],["words","Xưởng từ"],["grammar","Ngữ pháp"],["plan","Lịch học"]];
+  const segs=[["week","Tuần này"],["vocab","Từ vựng"],["words","Xưởng từ"],["grammar","Ngữ pháp"],["plan","Lịch học"]];
   const head={vocab:["Lộ trình từ vựng",vset!=="core"&&vSets().find(x=>x.id===vset)?vSets().find(x=>x.id===vset).name:(TOPICS.find(t=>t.id===curTopic)||TOPICS[0]).en,"Chọn chủ đề, học từng bài theo thứ tự. Mỗi bài gồm phần học bằng thẻ lật và bài kiểm tra, cần đúng 80% để mở bài tiếp theo."],
    words:["Xưởng từ","Hiểu sâu và dùng đúng từ","Sổ từ phim & sách, dạng từ, kết hợp từ, nâng cấp từ, paraphrase và bẫy True/False/Not Given. Mỗi câu luyện có lịch ôn riêng."],
-   grammar:["Lộ trình ngữ pháp","Collins Grammar, 20 unit","Mỗi unit: tóm tắt lý thuyết bằng tiếng Việt, lỗi hay gặp, rồi 16 câu kiểm tra. Unit đã tick xong trong sách được mở sẵn."],
+   week:["Chủ đề tuần","Mỗi tuần một chủ điểm","Học từ vựng, luyện dùng, viết và nói quanh cùng một chủ đề. Ngữ pháp và sách vẫn theo lịch học."],
+   grammar:["Lộ trình ngữ pháp","Collins Grammar, 20 unit","Mỗi unit: tóm tắt lý thuyết bằng tiếng Việt, lỗi hay gặp, rồi 16 câu kiểm tra ở 3 mức Dễ, Vừa, Khó để lên hạng từ Sắt tới Kim cương. Unit đã tick xong trong sách được mở sẵn."],
    plan:["Lịch học Stage 1","12 tuần · 2/11/2026 → 22/1/2027","Lộ trình bắt buộc theo sách: Collins Grammar (20 unit), Collins Listening và Collins Reading (12 unit mỗi cuốn), mỗi tuần 1 bài viết và luyện nói. Tài liệu trên web là phần bổ trợ. Tick từng ca sau khi học; ngày đỏ là ngày còn nợ, học bù rồi tick lại. Tuần 0 là khởi động tự chọn."]}[pathMode];
   let body="";
   if(pathMode==="vocab"){loadVIndex();
@@ -1673,8 +1759,10 @@ function renderPath(){
      </div></div>`;}
   }else if(pathMode==="words"){
     body=wordLabHTML();
+  }else if(pathMode==="week"){
+    body=weekHTML();
   }else if(pathMode==="grammar"){
-    body=routeHTML(GUNITS.map(u=>{const L=grammarLesson(u);return {L,kick:`Tuần ${Math.ceil(u.n/2)} · ${u.points.length} ý chính · 16 câu`,desc:u.vi+(u.ielts?". "+u.ielts:"")}}));
+    body=rankCardHTML()+routeHTML(GUNITS.map(u=>{const L=grammarLesson(u);return {L,kick:`Tuần ${Math.ceil(u.n/2)} · ${u.points.length} ý chính · 16 câu`,desc:u.vi+(u.ielts?". "+u.ielts:"")}}));
   }else{
     const cur=PLAN.findIndex(w=>w.days.some(d=>d.k>=todayISO));
     if(openWeek===null)openWeek=Math.max(0,cur);
@@ -1698,7 +1786,7 @@ function routeHTML(items){
     const pr=progress[L.key];
     const nodeTxt=L.checkpoint?`<b>${I.peak.replace('viewBox','width="34" height="34" viewBox')}</b><small>${ok?"Đã qua":"Trại"}</small>`:`<b>${L.kind==="grammar"?L.unit.n:pad(L.no)}</b><small>${ok?pr.best+"%":st==="cur"?"Học":st==="lock"?"Khóa":"Mở"}</small>`;
     return `<div class="stop ${i%2?"r":""} ${st}"><div class="node ${st==="cur"?"cur":st} ${L.checkpoint?"camp":""}">${nodeTxt}</div>
-     <button class="box" data-open="${L.key}"><span class="kick">${esc(it.kick)}</span><span class="ttl">${esc(L.kind==="grammar"?`Unit ${L.unit.n} · ${L.unit.en}`:L.title)}</span><span class="desc">${esc(it.desc)}</span>
+     <button class="box" data-open="${L.key}"><span class="kick">${esc(it.kick)}${L.kind==="grammar"&&gRank(L.unit.n)?" "+rankPill(L.unit.n):""}</span><span class="ttl">${esc(L.kind==="grammar"?`Unit ${L.unit.n} · ${L.unit.en}`:L.title)}</span><span class="desc">${esc(it.desc)}</span>
      <span class="more">${ok?`Đã đạt ${pr.best}% · học lại`:st==="lock"?"Hoàn thành chặng trước để mở":"Xem thông tin bài học →"}</span></button></div>`}).join("")}</div>`;
 }
 function drawLinks(){
@@ -1732,15 +1820,15 @@ document.addEventListener("click",e=>{if(e.target.id==="scrim"||e.target.closest
 function openLessonDialog(key){
   const L=findLesson(key);if(!L)return;
   if(L.topic&&L.topic.ext&&!L.topic.words){toast("Đang tải từ…");return loadUnit(L.topic).then(()=>openLessonDialog(key)).catch(e=>toast("Không tải được unit này. "+String((e&&e.message)||e).replace(/^Error:\s*/,"").slice(0,90),true))}
-  const ok=passed(key),open=lessonUnlocked(L),pr=progress[key];
-  const g=L.kind==="grammar";
+  const g=L.kind==="grammar";const lv=g?gLevel(L.unit.n):1,pk=g?gKey(L.unit.n,lv):key;const ok=passed(pk),open=lessonUnlocked(L)&&(!g||gLvOpen(L.unit.n,lv)),pr=progress[pk];
   const nLearn=g?L.unit.points.length+1:L.checkpoint?0:L.words.length, nQ=L.checkpoint?20:16;
   const status=ok?`<b>Đã đạt ${pr.best}%</b><span class="hint">Làm lại để ôn, điểm cao nhất được giữ.</span>`:pr?`<b>Lần trước đạt ${pr.best}%, chưa qua</b><span class="hint">Cần 80% để mở chặng tiếp theo. Ôn lại phần học rồi làm lại.</span>`:open?`<b>Chưa làm bài</b><span class="hint">Bắt đầu phần học, sau đó hoàn thành bài kiểm tra để lưu điểm.</span>`:`<b>Đang khóa</b><span class="hint">${g?"Hoàn thành unit trước, hoặc tick unit này đã học trong sách ở Lịch học.":"Hoàn thành bài trước để mở bài này."}</span>`;
   dlg(`<div class="dlg-hd"><span class="badge">${g?L.unit.n:L.checkpoint?"★":pad(L.no)}</span><div class="grow"><div class="tiny muted" style="font-weight:700">${g?"Ngữ pháp · "+esc(L.unit.vi):"Từ vựng · "+esc(L.topic.en)}</div><div class="h2">${esc(g?L.unit.en:L.title)}</div></div><button class="x" data-close aria-label="Đóng">${I.x.replace('viewBox','width="16" height="16" viewBox')}</button></div>
-   <div class="stages">${L.checkpoint?"":`<div class="stage on"><span class="sn">01</span><span><small>Giai đoạn 1</small><b>Phần học</b><span>${g?nLearn+" thẻ lý thuyết":nLearn+" thẻ từ"}</span></span></div><span class="arrow">${I.arrow.replace('viewBox','width="18" height="18" viewBox')}</span>`}<div class="stage ${L.checkpoint?"on":""}"><span class="sn">${L.checkpoint?"01":"02"}</span><span><small>Giai đoạn ${L.checkpoint?1:2}</small><b>Bài kiểm tra</b><span>${nQ} câu, cần 80%</span></span></div></div>
+   ${g?lvlPickHTML(L.unit.n):""}
+   <div class="stages">${L.checkpoint?"":`<div class="stage on"><span class="sn">01</span><span><small>Giai đoạn 1</small><b>Phần học</b><span>${g?nLearn+" thẻ lý thuyết":nLearn+" thẻ từ"}</span></span></div><span class="arrow">${I.arrow.replace('viewBox','width="18" height="18" viewBox')}</span>`}<div class="stage ${L.checkpoint?"on":""}"><span class="sn">${L.checkpoint?"01":"02"}</span><span><small>Giai đoạn ${L.checkpoint?1:2}</small><b>Bài kiểm tra</b><span>${nQ} câu, cần ${lv===3?90:80}%</span></span></div></div>
    ${g&&L.unit.ielts?`<div class="soft small"><b>Dùng ở đâu trong IELTS:</b> ${esc(L.unit.ielts)}</div>`:""}
    <div class="soft" style="display:flex;flex-direction:column;gap:2px">${status}</div>
-   <div class="dlg-ft"><button class="btn" data-close>Đóng</button>${!open&&g?`<button class="btn" data-unlock="${key}">Mở sớm unit này</button>`:""}${open&&ok&&!L.checkpoint?`<button class="btn" data-quiz="${key}">Chỉ làm bài kiểm tra</button>`:""}${open?`<button class="btn primary" data-start="${key}" data-autofocus>Bắt đầu học ${I.arrow}</button>`:""}</div>`);
+   <div class="dlg-ft"><button class="btn" data-close>Đóng</button>${!open&&g&&lv===1?`<button class="btn" data-unlock="${key}">Mở sớm unit này</button>`:""}${open&&ok&&!L.checkpoint&&lv===1?`<button class="btn" data-quiz="${key}">Chỉ làm bài kiểm tra</button>`:""}${open&&lv>1?`<button class="btn" data-theory="${key}">Xem lý thuyết</button>`:""}${open?`<button class="btn primary" data-start="${key}" data-autofocus>${lv>1?"Vào thi mức "+GLV[lv-1]:"Bắt đầu học"} ${I.arrow}</button>`:""}</div>`);
 }
 document.addEventListener("click",e=>{
   const s=e.target.closest("[data-start]");if(s){closeDlg();startStudy(s.dataset.start,false)}
@@ -1765,15 +1853,15 @@ function stepper(phase){
 function studyFrame(phase,body){
   $("study").innerHTML=`<div class="study-top"><div class="in"><button class="quit" id="s-quit">${I.x.replace('viewBox','width="14" height="14" viewBox')} Thoát</button>${stepper(phase)}<span style="width:72px"></span></div></div><div class="study-body">${body}</div>`;
 }
-function startStudy(key,quizOnly){
+function startStudy(key,quizOnly,theory){
   const L=findLesson(key);
   if(!L)return toast("Không tìm thấy bài này.",true);
   if(L.kind==="vocab"&&!L.checkpoint&&!(L.words&&L.words.length))return toast("Chặng này chưa có từ (có thể chưa tải xong). Thử lại sau vài giây.",true);
-  S={L,phase:"learn",xp:0,flipped:false,remember:{},seen:new Set()};FX.reset();
+  S={L,phase:"learn",xp:0,flipped:false,remember:{},seen:new Set()};S.level=L.kind==="grammar"?gLevel(L.unit.n):1;FX.reset();
   if(L.kind==="vocab"&&!L.checkpoint){S.queue=[...L.words];S.total=L.words.length;S.done=0;S.timeLeft=L.words.length*90;S.tick=setInterval(()=>{if(S&&S.phase==="learn"&&S.timeLeft>0){S.timeLeft--;const t=$("s-time");if(t)t.textContent=mmss(S.timeLeft)}},1000)}
   if(L.kind==="grammar"){S.slide=0;S.slides=[...L.unit.points.map(p=>({t:"point",p})),{t:"mist"}]}
   $("study").hidden=false;document.body.style.overflow="hidden";
-  if(quizOnly||L.checkpoint)showIntro();else showLearn();
+  if(quizOnly||L.checkpoint||(S.level>1&&!theory))showIntro();else showLearn();
 }
 const mmss=s=>Math.floor(s/60)+":"+pad(s%60);
 function hiWord(sent,w){const re=new RegExp("("+w.trim().split(/\s+/).map(t=>reEsc(esc(t))+"\\w*").join("\\s+")+")","i");return esc(sent).replace(re,"<mark>$1</mark>")}
@@ -1823,10 +1911,10 @@ function showIntro(){
   if(S.L.kind==="grammar"&&!S.xpLearned){S.xp+=10;S.xpLearned=true}
   const n=S.L.custom?customN():S.L.checkpoint?20:16;
   studyFrame("quiz",`<div class="intro-card"><span class="big-ok">${I.check}</span><div style="display:flex;flex-direction:column;gap:10px">
-   <span class="tiny" style="font-weight:700;color:var(--bad)">${S.L.custom?"Ôn tập: "+esc(S.L.title):S.L.checkpoint?"Kiểm tra cuối chủ đề":"Phần học đã hoàn thành"}</span><div class="h1" style="font-size:clamp(28px,5vw,40px)">Bài kiểm tra ${S.L.kind==="grammar"?"ngữ pháp":"từ vựng"}</div>
+   <span class="tiny" style="font-weight:700;color:var(--bad)">${S.L.custom?"Ôn tập: "+esc(S.L.title):S.L.checkpoint?"Kiểm tra cuối chủ đề":(S.level>1?"Thử thách mức "+GLV[S.level-1]:"Phần học đã hoàn thành")}</span><div class="h1" style="font-size:clamp(28px,5vw,40px)">Bài kiểm tra ${S.L.kind==="grammar"?"ngữ pháp":"từ vựng"}</div>
    <div class="hint">Bài kiểm tra gồm ${n} câu về nội dung vừa học.</div>
-   <div class="rule"><b>20 giây/câu chọn · 30 giây/câu điền.</b> Hết giờ tính là sai.</div>
-   <div class="intro-stats"><div><b>${n}</b><span>câu hỏi</span></div>${S.L.custom?"":`<div><b>80%</b><span>yêu cầu tối thiểu</span></div>`}</div></div></div>
+   <div class="rule"><b>${S.level===3?"12 giây/câu chọn · 25 giây/câu gõ.":S.level===2?"15 giây/câu chọn · 25 giây/câu gõ.":"20 giây/câu chọn · 30 giây/câu điền."}</b> Hết giờ tính là sai.${S.level>1?" Nhiều câu phải gõ đáp án thay vì chọn.":""}</div>
+   <div class="intro-stats"><div><b>${n}</b><span>câu hỏi</span></div>${S.L.custom?"":`<div><b>${S.level===3?90:80}%</b><span>yêu cầu tối thiểu</span></div>`}</div></div></div>
    <div style="display:flex;justify-content:center"><button class="btn primary" id="q-begin" data-autofocus>Làm bài kiểm tra ${I.arrow}</button></div>`);
   $("q-begin").focus();
 }
@@ -1851,17 +1939,22 @@ function makeVQ(w,t,pool,canL,i){
   if(t==="syn"){const o=shuffle([w.w,...distract(w,pool,"w")]);return {id,ref:w,type:"mcq",html:`Từ nào gần nghĩa nhất với “${esc(w.syn)}”?`,opts:o,ans:o.indexOf(w.w),why:`"${w.syn}" ≈ "${w.w}" (${w.vi}).`,time:20}}
   const o=shuffle([w.w,...distract(w,pool,"w")]);return {id,ref:w,type:"mcq",html:`Từ nào có nghĩa là “${esc(w.vi)}”?`,opts:o,ans:o.indexOf(w.w),why:`"${w.vi}" là "${w.w}". Ví dụ: ${(w.ex||[])[0]||""}`,time:20};
 }
-function grammarQuestions(u,idx){
-  return (idx||u.quiz.map((_,i)=>i)).map(i=>{const q=u.quiz[i],id=`g${u.n}:${i}`;
-    if(q.t==="mcq"){const order=shuffle(q.o.map((o,j)=>j));return {id,type:"mcq",sent:/___/.test(q.q),html:esc(q.q).replace("___",'<span class="gap"></span>'),opts:order.map(j=>q.o[j]),ans:order.indexOf(q.a),why:q.why,time:20}}
-    return {id,type:"fill",sent:true,html:esc(q.q).replace("___",'<span class="gap"></span>'),answers:q.a,show:q.a[0],why:q.why,time:30}});
+function grammarQuestions(u,idx,lv){
+  lv=lv||1;
+  const tm=lv===3?{m:12,f:25}:lv===2?{m:15,f:25}:{m:20,f:30};
+  return (idx||u.quiz.map((_,i)=>i)).map(i=>{const q=u.quiz[i],id=`g${u.n}:${i}`,gap=/___/.test(q.q);
+    if(q.t==="mcq"){
+      const a=q.o[q.a];
+      if(gap&&lv>1&&(lv===3||Math.random()<.5)&&a&&a.length<=40&&!/[()–—]|no article|nothing|^-+$/i.test(a))
+        return {id,type:"fill",sent:true,html:esc(q.q).replace("___",'<span class="gap"></span>'),hint:"Gõ từ hoặc cụm còn thiếu",answers:[a],show:a,why:q.why,time:tm.f};
+      const order=shuffle(q.o.map((o,j)=>j));return {id,type:"mcq",sent:gap,html:esc(q.q).replace("___",'<span class="gap"></span>'),opts:order.map(j=>q.o[j]),ans:order.indexOf(q.a),why:q.why,time:tm.m}}
+    return {id,type:"fill",sent:true,html:esc(q.q).replace("___",'<span class="gap"></span>'),answers:q.a,show:q.a[0],why:q.why,time:tm.f}});
 }
-
 /* --- chạy bài kiểm tra --- */
 function startQuiz(){
   const L=S.L;S.phase="quiz";
   if(S.review)S.qs=S.qs||[];
-  else if(L.kind==="grammar")S.qs=shuffle(grammarQuestions(L.unit));
+  else if(L.kind==="grammar")S.qs=shuffle(grammarQuestions(L.unit,null,S.level));
   else if(L.custom)S.qs=vocabQuestions(L.words,L.topic.words,customN());
   else S.qs=vocabQuestions(L.words,L.topic.words,L.checkpoint?20:16);
   S.qi=0;S.answers=[];S.firstOk={};
@@ -1911,27 +2004,28 @@ function finishQuiz(){
   const correct=firsts.filter(a=>a.ok).length,total=firsts.length,score=Math.round(correct/Math.max(1,total)*100);
   if(S.review)return finishReview(correct,total,score);
   if(S.L.custom)return finishCustom(correct,total,score);
-  const L=S.L,pass=score>=80,wasPassed=passed(L.key);
+  const L=S.L,lv=L.kind==="grammar"?(S.level||1):1,pk=lv>1?gKey(L.unit.n,lv):L.key,pass=score>=(lv===3?90:80),wasPassed=passed(pk),rk0=L.kind==="grammar"?gRank(L.unit.n):0,ov0=L.kind==="grammar"?gOverall():0;
   const wrongIds=firsts.filter(a=>!a.ok).map(a=>a.q.id);
   // mét do máy chủ tính từ số câu đúng / số thẻ nhớ; học lại chặng đã qua không cộng mét
-  const payload={key:L.key,pass,score,correct,answered:total,cards:S.cards||0,slides:!!S.xpLearned,wrong:L.kind==="grammar"?wrongIds:[],
+  const payload={key:pk,pass,score,correct,answered:total,cards:S.cards||0,slides:!!S.xpLearned,wrong:L.kind==="grammar"&&lv===1?wrongIds:[],
     words:L.kind==="vocab"?(L.checkpoint?[]:L.words.map(w=>({word:w.w,meaning:`${w.vi} (${w.pos})`,example:w.ex[0],source:`${L.topic.en} ${L.no}`,remember:S.remember[w.w]!==false&&!wrongIds.includes(w.w)}))):[]};
   // cập nhật ngay trên máy
-  const prev=progress[L.key];progress[L.key]={status:pass||wasPassed?"passed":"tried",best:Math.max(score,prev?prev.best:0),attempts:(prev?prev.attempts:0)+1,wrong:payload.wrong,updated:todayISO};
+  const prev=progress[pk];progress[pk]={status:pass||wasPassed?"passed":"tried",best:Math.max(score,prev?prev.best:0),attempts:(prev?prev.attempts:0)+1,wrong:payload.wrong,updated:todayISO};
   save("saveLessonResult",payload).then(r=>{applyR(r);showEarned(r);if(!S)render()}).catch(earnFail);
   const C=2*Math.PI*74;
   const wrongs=firsts.filter(a=>!a.ok);
   const next=pass?(L.kind==="grammar"?nextGrammar():nextVocab()):null;
   studyFrame("result",`<div class="result">
     <div class="score-ring"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="74" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="85" cy="85" r="74" fill="none" stroke="${pass?"var(--ok)":"var(--bad)"}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-score/100)}" style="transition:stroke-dashoffset .8s"/></svg><div class="v num">${score}%</div></div>
-    <span class="tiny" style="font-weight:700;color:${pass?"var(--ok)":"var(--bad)"}">${pass?"Đã qua chặng":"Chưa đạt 80%"}</span>
-    <div class="h1">${pass?(wasPassed?"Ôn lại tốt":"Mở khóa chặng tiếp theo"):"Ôn lại rồi thử lần nữa"}</div>
+    <span class="tiny" style="font-weight:700;color:${pass?"var(--ok)":"var(--bad)"}">${pass?"Đã qua chặng":"Chưa đạt "+(lv===3?90:80)+"%"}</span>
+    <div class="h1">${pass?(wasPassed?"Ôn lại tốt":lv>1?"Vượt thử thách mức "+GLV[lv-1]:"Mở khóa chặng tiếp theo"):"Ôn lại rồi thử lần nữa"}</div>
     <p class="lead">Đúng ${correct}/${total} câu · ${earnedHTML()}${wasPassed?" (học lại chặng đã qua: ôn tốt nhưng không cộng mét)":""}${pass&&L.kind==="vocab"&&!L.checkpoint?" · các từ đã được thêm vào sổ Ôn tập":""}</p>
     ${wrongs.length?`<div class="wrongs"><div class="lbl" style="background:none;border:0;padding:0">Câu sai cần nhớ</div>${wrongs.map(a=>`<div><span style="color:var(--bad)">✗</span><span><b>${esc(a.q.type==="mcq"?a.q.opts[a.q.ans]:a.q.show)}</b> <span class="muted">${esc(a.q.why||"")}</span></span></div>`).join("")}</div>`:""}
     <div class="row" style="justify-content:center;gap:10px;width:100%">${pass?`<button class="btn" id="r-done">Về lộ trình</button>${next?`<button class="btn primary" data-start-next="${next.key}">Bài tiếp theo ${I.arrow}</button>`:""}`:`<button class="btn" id="r-relearn">Ôn lại phần học</button><button class="btn primary" id="r-retry">Làm lại bài kiểm tra</button>`}</div>
     ${fricBtn("lesson")}
   </div>`);
   FX.ring();
+  if(L.kind==="grammar")rankCheck(L.unit.n,rk0,ov0);
   if(pass)FX.celebrate(score===100?1.4:1,score===100?`<span class="fl">💯</span>Tuyệt đối!`:(!wasPassed?`<span class="fl">⛰</span>Qua chặng`:""));
 }
 function quitStudy(force){
@@ -1953,7 +2047,7 @@ $("study").addEventListener("click",e=>{
   if(t.closest("#q-next"))return nextQ();
   if(t.closest("#r-done"))return quitStudy(true);
   if(t.closest("#r-retry")){S.xp=0;S.cards=0;return startQuiz()}
-  if(t.closest("#r-relearn")){const k=S.L.key;quitStudy(true);return startStudy(k,false)}
+  if(t.closest("#r-relearn")){const k=S.L.key;quitStudy(true);return startStudy(k,false,true)}
   const nx=t.closest("[data-start-next]");if(nx){const k=nx.dataset.startNext;quitStudy(true);return startStudy(k,false)}
   if(t.closest("#rv-done"))return quitStudy(true);
 });
@@ -3019,7 +3113,7 @@ function kwText(key,text,ctr){
 }
 function kwBar(){
   const n=kwSet().size,tip=kwMode==="bold"?"Chạm từ hoặc kéo chọn để in đậm":kwMode==="erase"?"Chạm hoặc kéo chọn để bỏ đậm":"Bật Bold rồi chạm vào từ";
-  return `<div class="kwbar" id="kwbar"><button type="button" class="btn" data-kwmode="bold" aria-pressed="${kwMode==="bold"}"><b>B</b>&nbsp;Bold</button><button type="button" class="btn" data-kwmode="erase" aria-pressed="${kwMode==="erase"}">⌫&nbsp;Tẩy</button><button type="button" class="btn" data-kwclear ${n?"":"disabled"}>Xóa${n?" ("+n+")":""}</button><button type="button" class="btn kwapply" data-kwapply hidden></button><span class="kwtip">${tip}</span></div>`;
+  return `<div class="kwbar" id="kwbar"><button type="button" class="btn" data-kwmode="bold" aria-pressed="${kwMode==="bold"}"><b>B</b>&nbsp;Bold</button><button type="button" class="btn" data-kwmode="erase" aria-pressed="${kwMode==="erase"}">⌫&nbsp;Tẩy</button><button type="button" class="btn" data-kwclear ${n?"":"disabled"}>Xóa${n?" ("+n+")":""}</button><span class="kwtip">${tip}</span></div>`;
 }
 let kwT=null;
 function kwApply(ids,on){
@@ -3033,20 +3127,12 @@ function kwApply(ids,on){
 }
 document.addEventListener("click",e=>{
   if(!RD)return;
-  const mb=e.target.closest("[data-kwmode]");if(mb){const m=mb.dataset.kwmode;kwMode=kwMode===m?"":m;kwPend=[];ls.set("ielts-kwmode",kwMode);drawReading(true);return}
+  const mb=e.target.closest("[data-kwmode]");if(mb){const m=mb.dataset.kwmode;kwMode=kwMode===m?"":m;ls.set("ielts-kwmode",kwMode);drawReading(true);return}
   if(e.target.closest("[data-kwclear]")){const n=kwSet().size;if(!n)return;if(confirm(`Xóa hết ${n} từ khóa trong bài này?`))kwApply([...kwSet()],false);return}
   const w=e.target.closest(".kww");
   if(w&&kwMode&&!String(window.getSelection()||"").trim()){const id=w.dataset.kw;kwApply([id],kwMode==="bold"?!kwSet().has(id):false)}
 });
-let kwSelT=null,kwPend=[];
-/* Điện thoại cảm ứng: kéo tay cầm chọn chữ mất thời gian nên không tự áp dụng; hiện nút "Áp dụng" để bấm khi chọn xong.
-   Máy tính bảng/bút/chuột: vẫn tự áp dụng ngay khi chọn xong. */
-const kwPhone=()=>matchMedia("(pointer:coarse)").matches&&Math.min(screen.width,screen.height)<700;
-function kwShowApply(){
-  const b=document.querySelector("[data-kwapply]");if(!b)return;
-  if(!kwPend.length||!kwMode){b.hidden=true;return}
-  b.hidden=false;b.textContent=(kwMode==="bold"?"B Bold ":"⌫ Tẩy ")+"("+kwPend.length+" từ)";
-}
+let kwSelT=null;
 document.addEventListener("selectionchange",()=>{
   if(!RD||!kwMode)return;
   clearTimeout(kwSelT);
@@ -3056,16 +3142,9 @@ document.addEventListener("selectionchange",()=>{
     if(!host||!host.contains(r.commonAncestorContainer))return;
     const ids=[...host.querySelectorAll(".kww")].filter(x=>{try{return r.intersectsNode(x)}catch(err){return false}}).map(x=>x.dataset.kw);
     if(!ids.length)return;
-    if(kwPhone()){kwPend=ids;kwShowApply();return}
     try{sel.removeAllRanges()}catch(err){}
     const set=kwSet();kwApply(ids,kwMode==="bold"?!ids.every(i=>set.has(i)):false);
-  },kwPhone()?150:450);
-});
-document.addEventListener("click",e=>{
-  if(!RD||!e.target.closest("[data-kwapply]"))return;
-  const ids=kwPend.slice();kwPend=[];
-  try{window.getSelection().removeAllRanges()}catch(err){}
-  const set=kwSet();kwApply(ids,kwMode==="bold"?!ids.every(i=>set.has(i)):false);
+  },450);
 });
 
 /* ---------- bôi đen: tra nghĩa / lưu từ ---------- */
@@ -3491,7 +3570,7 @@ function renderSkills(){
   if(!SK[skill])skill="reading";
   ["reading","speaking","write","listening","mat"].forEach(k=>$("sk-"+k).hidden=k!==skill);
   $("sk-title").textContent=SK[skill][0];$("sk-lead").textContent=SK[skill][1];
-  ({reading:renderReading,speaking:renderSpeaking,write:renderWrite,listening:renderListening,mat:renderMat})[skill]();
+  ({reading:renderReading,speaking:renderSpeaking,write:renderWrite,listening:renderListening,mat:renderMat})[skill]();if(typeof gbEntry==="function")gbEntry();
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-skill]");if(b){skill=b.dataset.skill;ls.set("ielts-skill",skill);renderSkills()}});
 
@@ -4571,6 +4650,637 @@ load();
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!pending&&!busy())load()});
 setInterval(()=>{const t=seoulToday();if(t!==todayISO){todayISO=t;if(!S)render()}},60000);
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+/* ================= Hạng Sắt → Thách đấu cho ngữ pháp Collins ================= */
+const GLV=["Dễ","Vừa","Khó"];
+const GL={};
+const gLevel=n=>{const v=GL[n]||+ls.get("ielts-glv-"+n,1)||1;return Math.min(3,Math.max(1,v))};
+const gKey=(n,lv)=>lv>1?`g${n}-${lv}`:`g${n}`;
+const gLvOpen=(n,lv)=>lv===1||(lv===2&&passed("g"+n))||(lv===3&&passed(`g${n}-2`));
+const RANKS=[{n:"Chưa xếp hạng",c:"#8b93a7",c2:"#5b6378"},{n:"Sắt",c:"#9aa1ad",c2:"#4b5160"},{n:"Đồng",c:"#e0925a",c2:"#7a4220"},{n:"Bạc",c:"#dfe4ee",c2:"#7c869a"},{n:"Vàng",c:"#ffcf4a",c2:"#b97a00"},{n:"Kim cương",c:"#7fe3ff",c2:"#2b7fd8"},{n:"Cao thủ",c:"#c58bff",c2:"#6a2fd0"},{n:"Thách đấu",c:"#ff6b6b",c2:"#c0262d"}];
+function gRank(n){
+  const p1=progress["g"+n],p2=progress[`g${n}-2`],p3=progress[`g${n}-3`];
+  if(p3&&p3.status==="passed")return 5;
+  if(p2&&p2.status==="passed")return p2.best>=90?4:3;
+  if(p1&&p1.status==="passed")return p1.best>=90?2:1;
+  return 0;
+}
+function gOverall(){
+  const rs=GUNITS.map(u=>gRank(u.n)),c5=rs.filter(r=>r>=5).length;
+  if(c5>=GUNITS.length)return 7;
+  if(c5>=10)return 6;
+  if(!rs.some(r=>r>=1))return 0;
+  let o=1;for(let r=2;r<=5;r++)if(rs.filter(x=>x>=r).length>=4)o=r;
+  return o;
+}
+function rankEmblem(r,sz){
+  sz=sz||48;const R=RANKS[r],id="rg"+r+Math.random().toString(36).slice(2,7);
+  let inner="";
+  if(r>=1&&r<=4){for(let i=0;i<r;i++){const y=22+i*7;inner+=`<path d="M19 ${y} L32 ${y+8} L45 ${y}" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>`}}
+  if(r>=5)inner+=`<polygon points="32,18 45,31 32,50 19,31" fill="#fff" opacity=".9"/><polygon points="32,18 38,31 32,50 26,31" fill="${R.c}" opacity=".55"/><path d="M19 31H45" stroke="${R.c2}" stroke-width="1.4" opacity=".5"/>`;
+  const wings=r>=6?`<path d="M10 20C-2 20-4 38 6 48 4 38 8 32 11 30Z" fill="url(#${id})"/><path d="M54 20C66 20 68 38 58 48 60 38 56 32 53 30Z" fill="url(#${id})"/>`:"";
+  const crown=r>=7?`<path d="M20 11L23 1 32 8 41 1 44 11Z" fill="url(#${id})"/>`:"";
+  return `<svg class="rke" width="${sz}" height="${sz}" viewBox="-8 -2 80 68" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${R.c}"/><stop offset="1" stop-color="${R.c2}"/></linearGradient></defs>${wings}${crown}<path d="M32 4 54 12V32C54 46 44 56 32 60 20 56 10 46 10 32V12Z" fill="url(#${id})" stroke="rgba(255,255,255,.55)" stroke-width="1.6"/>${inner}</svg>`;
+}
+const rankPill=n=>{const r=gRank(n);return r?`<span class="rkpill" style="--rc:${RANKS[r].c}">${rankEmblem(r,16)}${RANKS[r].n}</span>`:""};
+function rankCardHTML(){
+  const o=gOverall(),R=RANKS[o],rs=GUNITS.map(u=>gRank(u.n)),c5=rs.filter(r=>r>=5).length;
+  const goal=o===0?"Qua mức Dễ của một unit để nhận hạng Sắt."
+    :o<5?`Cần ít nhất 4 unit đạt hạng ${RANKS[o+1].n}: hiện có ${rs.filter(x=>x>=o+1).length}/4.`
+    :o===5?`Cao thủ: ${c5}/10 unit đạt Kim cương.`
+    :o===6?`Thách đấu: ${c5}/${GUNITS.length} unit đạt Kim cương.`:"Đỉnh bảng: mọi unit đều đạt Kim cương.";
+  return `<div class="rk-frame" style="--rc:${R.c}"><div class="rk-top">${rankEmblem(o,72)}<div style="min-width:0"><div class="tiny muted" style="font-weight:700">HẠNG NGỮ PHÁP COLLINS</div><div class="rk-name">${R.n}</div><div class="hint">${goal}</div></div></div>
+   <div class="rk-grid">${GUNITS.map((u,i)=>{const r=rs[i],C=RANKS[r];return `<button class="rk-cell ${r?"on":""}" style="--rc:${C.c}" data-open="g${u.n}" title="Unit ${u.n}: ${esc(u.en)} · ${C.n}">${rankEmblem(r,30)}<span>U${u.n}</span></button>`}).join("")}</div>
+   <p class="hint" style="margin-top:10px">Mỗi unit có 3 mức. Dễ → Sắt (từ 90% là Đồng). Vừa → Bạc (từ 90% là Vàng). Khó → Kim cương. Hạng tổng là bậc cao nhất mà ít nhất 4 unit đạt; 10 unit Kim cương lên Cao thủ, đủ 20 unit lên Thách đấu.</p></div>`;
+}
+function lvlPickHTML(n){
+  const cur=gLevel(n),r=gRank(n);
+  const tip=["Bộ câu cơ bản, học lý thuyết trước. Qua mức này được hạng Sắt, từ 90% là Đồng.","Một nửa câu điền từ phải gõ, ít thời gian hơn. Qua mức này được hạng Bạc, từ 90% là Vàng.","Mọi câu điền từ phải gõ, cần từ 90%. Qua mức này được hạng Kim cương."][cur-1];
+  return `<div class="lvl-pick"><div class="tiny muted" style="font-weight:700">Mức độ · hạng unit này: ${r?rankPill(n):"chưa có"}</div><div class="lvl-row">${GLV.map((x,i)=>{const lv=i+1,op=gLvOpen(n,lv),k=gKey(n,lv),pr=progress[k];
+    return `<button class="lvl ${cur===lv?"on":""}" data-glv="${n}:${lv}" ${op?"":"disabled"}><b>${x}</b><small>${!op?"🔒 Khóa":pr?(passed(k)?"Đã qua "+pr.best+"%":"Chưa qua "+pr.best+"%"):"Chưa làm"}</small></button>`}).join("")}</div><p class="hint">${tip}</p></div>`;
+}
+function applyRankTheme(){
+  try{const o=gOverall();document.body.dataset.rank=o;document.body.style.setProperty("--rank",RANKS[o].c);
+    if(!document.getElementById("rankfx")){const d=document.createElement("div");d.id="rankfx";d.innerHTML="<i></i><i></i><i></i><i></i>";document.body.appendChild(d)}
+    const ch=$("altchip");if(ch&&o>0&&!ch.querySelector(".rkchip"))ch.insertAdjacentHTML("afterbegin",`<span class="rkchip" title="Hạng ngữ pháp: ${RANKS[o].n}">${rankEmblem(o,20)}</span>`)}catch(e){}
+}
+function showRankUp(o){
+  const R=RANKS[o.r],d=document.createElement("div");d.className="rankup";d.style.setProperty("--rc",R.c);
+  const sp=Array.from({length:18},(_,i)=>{const a=i/18*6.283,r=90+Math.random()*90;return `<i class="sp" style="--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r}px;animation-delay:${(Math.random()*.25).toFixed(2)}s"></i>`}).join("");
+  const un=o.n?GUNITS.find(u=>u.n===o.n):null;
+  d.innerHTML=`${sp}<div class="box"><div class="em">${rankEmblem(o.r,132)}</div><div class="t1">${o.kind==="overall"?"HẠNG TỔNG MỚI":"LÊN HẠNG"}</div><div class="t2">${R.n}</div><div class="t3">${o.kind==="overall"?"Hạng ngữ pháp Collins của mày giờ là "+R.n:"Unit "+un.n+" · "+esc(un.en)}</div><div class="t3" style="margin-top:14px;opacity:.55">Chạm để đóng</div></div>`;
+  d.addEventListener("click",()=>d.remove());document.body.appendChild(d);setTimeout(()=>d.remove(),6500);
+}
+function rankCheck(n,rk0,ov0){
+  const rk1=gRank(n),ov1=gOverall();applyRankTheme();
+  if(ov1>ov0)setTimeout(()=>showRankUp({kind:"overall",r:ov1}),700);
+  else if(rk1>rk0)setTimeout(()=>showRankUp({kind:"unit",r:rk1,n}),700);
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-glv]");
+  if(g&&!g.disabled){const [n,lv]=g.dataset.glv.split(":").map(Number);GL[n]=lv;ls.set("ielts-glv-"+n,lv);openLessonDialog("g"+n);return}
+  const th=e.target.closest("[data-theory]");
+  if(th){closeDlg();startStudy(th.dataset.theory,false,true);return}
+  const ps=e.target.closest("[data-pustart]");
+  if(ps){const n=+ps.dataset.pustart,th=ps.dataset.pute?wtWords(+ps.dataset.pud):null;if(S&&S.pu)quitStudy(true);puStart(n,th);return}
+  if(S&&S.pu&&e.target.closest("#pu-next"))return puNext();
+});
+document.addEventListener("submit",e=>{if(e.target.id==="pu-form"){e.preventDefault();puCheck()}});
+document.addEventListener("input",e=>{if(e.target.id==="pu-in"){const b=$("pu-sub");if(b)b.disabled=!e.target.value.trim()}});
+document.addEventListener("keydown",e=>{if(S&&S.pu&&S.answered&&e.key==="Enter"&&!(e.target.tagName==="TEXTAREA"&&!e.ctrlKey&&!e.metaKey)){e.preventDefault();puNext()}});
+
+/* ================= Luyện dùng từ: gõ, điền câu, nghe chép, viết/nói ================= */
+function puPool(){
+  const seen=new Set(),out=[];
+  const add=w=>{if(!w||!w.w||!w.vi)return;const k=String(w.w).toLowerCase();if(seen.has(k))return;seen.add(k);out.push({w:String(w.w),vi:String(w.vi),pos:w.pos||"",ex:(w.ex||[]).filter(Boolean)})};
+  TOPICS.forEach(t=>topicLessons(t).filter(l=>!l.checkpoint&&passed(l.key)).forEach(l=>(l.words||[]).forEach(add)));
+  (vocab||[]).forEach(v=>add({w:v.word,vi:String(v.meaning||"").replace(/\s*\([^)]*\)\s*$/,""),ex:v.example?[v.example]:[]}));
+  if(out.length<5)TOPICS[0].words.forEach(add);
+  return out;
+}
+const puId=w=>"pw:"+w.w.toLowerCase();
+const puTok=s=>String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}'\s-]/gu," ").split(/\s+/).filter(Boolean);
+function puLcs(a,b){
+  const m=a.length,n=b.length,d=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=a[i-1]===b[j-1]?d[i-1][j-1]+1:Math.max(d[i-1][j],d[i][j-1]);
+  const hits=Array(m).fill(false);let i=m,j=n;
+  while(i>0&&j>0){if(a[i-1]===b[j-1]){hits[i-1]=true;i--;j--}else if(d[i-1][j]>=d[i][j-1])i--;else j--}
+  return hits;
+}
+function puUsed(word,text){
+  const t=String(text).toLowerCase();
+  return word.toLowerCase().split(/\s+/).every(tok=>{const c=tok.replace(/[^a-z'-]/g,"");if(!c)return true;const st=c.length>=6?c.slice(0,-2):c.length>=4?c.slice(0,-1):c;return new RegExp("\\b"+reEsc(st)+"[a-z']*").test(t)});
+}
+function puHTML(){
+  loadLab();
+  const pool=puPool(),L=WL.lab||{};let seen=0,due=0;
+  pool.forEach(w=>{const r=L[puId(w)];if(r){seen++;if(r.due<=todayISO)due++}});
+  return `<div class="card pu-hero"><h3 class="h3">Luyện dùng từ đã học</h3>
+   <p class="hint">Mỗi lượt chọn 5–10 từ, ưu tiên từ đến hạn ôn. Mỗi từ qua 3 việc: gõ từ theo nghĩa, điền vào câu, rồi nghe chép hoặc tự viết/nói một câu. Đáp án mẫu được ẩn tới khi mày nộp. Tất cả tự chấm, không cần API.</p>
+   <div class="pu-stats"><div><b>${fmt(pool.length)}</b><span>từ có thể luyện</span></div><div><b>${seen}</b><span>đã luyện dùng</span></div><div><b>${due}</b><span>đến hạn ôn</span></div></div>
+   <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn" data-pustart="5">5 từ</button><button class="btn primary" data-pustart="8">8 từ</button><button class="btn" data-pustart="10">10 từ</button></div>
+   <p class="hint">Từ lấy từ các bài từ vựng mày đã qua và sổ ôn tập. Ở việc viết/nói câu, trên iPhone mày bấm micro của bàn phím để nói thay vì gõ.</p></div>`;
+}
+function puStart(n,theme,fresh){
+  fresh=fresh||[];
+  const items=(theme&&theme.length?theme:puPool()).map(w=>({id:puId(w),w}));
+  const fk=new Set(fresh.map(x=>x.w));
+  const words=[...fresh,...wlPick(items.filter(x=>!fk.has(x.w.w)),Math.max(0,n-fresh.length)).map(x=>x.w)];
+  if(words.length<3)return toast("Chưa đủ từ để luyện. Học vài bài từ vựng trước.",true);
+  FX.reset();
+  const info=words.map(w=>({w,c:clozeOf(w.w,w.ex),sent:w.ex.find(x=>puTok(x).length>=4)||""}));
+  const tasks=[];
+  info.filter(x=>fk.has(x.w.w)).forEach(x=>tasks.push({k:"see",x}));
+  info.forEach(x=>tasks.push({k:"type",x}));
+  info.forEach(x=>{if(x.c)tasks.push({k:"cloze",x})});
+  info.forEach((x,i)=>tasks.push({k:x.sent&&i%2===0&&canSpeak()?"dict":"own",x}));
+  S={L:{key:"pu",kind:"vocab",checkpoint:true},review:"pu",pu:true,pute:!!(theme&&theme.length),mission:fresh.length>0,pud:theme&&theme.length?Math.max(...theme.map(x=>x.li)):NaN,phase:"pu",xp:0,tasks,ti:0,res:{},answered:false,nWords:words.length};
+  $("study").hidden=false;document.body.style.overflow="hidden";puShow();
+}
+function puShow(){
+  const t=S.tasks[S.ti],w=t.x.w,n=S.tasks.length;S.answered=false;
+  if(t.k==="see"){studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Từ mới của tuần${w.src?" · từ "+w.src:""} · ${S.ti+1}/${n}</div><div class="qtext"><b>${esc(w.w)}</b> ${w.pos?`<span class="muted">(${esc(w.pos)})</span>`:""}</div><div class="hint">${esc(w.vi)}</div></div></div><div><button class="btn primary" type="button" data-say="${esc(w.w)}">${I.sound} Nghe</button></div>${w.ex[0]?`<div class="soft small">Ví dụ: “…${esc(w.ex[0])}…”</div>`:""}${w.syn?`<div class="soft small">Đồng nghĩa: ${esc(w.syn)}</div>`:""}<div id="pu-fb"><div class="fbk good"><span class="ic">${I.check}</span><div><b>Đọc nghĩa và câu trong bài, rồi sang phần luyện.</b></div><button class="btn primary" id="pu-next">Đã xem, tiếp →</button></div></div>`);S.answered=true;const nb=$("pu-next");if(nb)nb.focus();return}
+  const lab={type:"Gõ từ theo nghĩa",cloze:"Điền từ vào câu",dict:"Nghe và chép lại",own:"Viết hoặc nói một câu"}[t.k];
+  let prompt="",hint="",area=false;
+  if(t.k==="type"){prompt=`Từ tiếng Anh có nghĩa: <b>${esc(w.vi)}</b>`;hint=`${w.pos?esc(w.pos)+" · ":""}${w.w.length} ký tự, bắt đầu bằng “${esc(w.w[0])}”`}
+  else if(t.k==="cloze"){prompt=`${esc(t.x.c.before)}<span class="gap"></span>${esc(t.x.c.after)}`;hint=`Nghĩa: ${esc(w.vi)} · bắt đầu bằng “${esc(t.x.c.ans[0])}”`}
+  else if(t.k==="dict"){prompt="Nghe câu rồi gõ lại thật chính xác";area=true}
+  else{prompt=`Viết (hoặc nói bằng micro bàn phím) một câu có dùng <b>${esc(w.w)}</b> (${esc(w.vi)})`;hint="Câu mẫu đang được ẩn, xem sau khi nộp.";area=true}
+  studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Luyện dùng từ · ${lab} · ${S.ti+1}/${n}</div><div class="qtext ${t.k==="cloze"?"sent":""}">${prompt}</div>${hint?`<div class="hint">${hint}</div>`:""}</div></div>
+   ${t.k==="dict"?`<div><button class="btn primary" type="button" data-say="${esc(t.x.sent)}">${I.sound} Nghe lại</button></div>`:""}
+   <form class="pu-form" id="pu-form" autocomplete="off">${area?`<textarea class="inp" id="pu-in" rows="3" autocapitalize="sentences" placeholder="${t.k==="dict"?"Gõ câu mày nghe được":"Viết câu của mày"}"></textarea>`:`<input class="inp" id="pu-in" autocapitalize="off" spellcheck="false" placeholder="Gõ đáp án" aria-label="Đáp án">`}<button class="btn primary" id="pu-sub" disabled>Kiểm tra</button></form><div id="pu-fb"></div>`);
+  const inp=$("pu-in");if(inp)inp.focus();
+  if(t.k==="dict")setTimeout(()=>speak(t.x.sent),300);
+}
+function puCheck(){
+  if(!S||!S.pu||S.answered)return;
+  const t=S.tasks[S.ti],w=t.x.w,inp=$("pu-in"),val=inp.value.trim();if(!val)return;
+  S.answered=true;inp.disabled=true;$("pu-sub").disabled=true;
+  let ok=false,msg="",extra="";
+  if(t.k==="type"||t.k==="cloze"){
+    const alts=(t.k==="cloze"?[t.x.c.ans,w.w]:[w.w,w.w.replace(/^to\s+/i,"")]),g=norm(val);let near=false;
+    ok=alts.some(a=>norm(a)===g);
+    if(!ok&&alts.some(a=>norm(a).length>=6&&lev(norm(a),g)<=1)){ok=true;near=true}
+    msg=ok?(near?"Gần đúng, chú ý chính tả: "+alts[0]:"Chính xác."):"Chưa đúng. Đáp án: "+alts[0];
+    extra=`<span>${esc(w.w)} = ${esc(w.vi)}${w.ex[0]?" · "+esc(w.ex[0]):""}</span>`;
+  }else if(t.k==="dict"){
+    const ref=puTok(t.x.sent),hits=puLcs(ref,puTok(val)),ratio=hits.filter(Boolean).length/ref.length;
+    ok=ratio>=.85;msg=ok?"Chép đúng"+(ratio<1?" (sai nhẹ).":"."):`Chưa đúng hết (${Math.round(ratio*100)}%).`;
+    extra=`<span>${ref.map((x,i)=>hits[i]?esc(x):`<mark>${esc(x)}</mark>`).join(" ")}</span><span class="muted">Câu gốc: ${esc(t.x.sent)}</span>`;
+  }else{
+    const used=puUsed(w.w,val),len=puTok(val).length;ok=used&&len>=4;
+    msg=!used?`Câu chưa dùng “${w.w}” (hoặc dạng của nó).`:len<4?"Câu hơi ngắn, viết từ 4 từ trở lên.":"Đã dùng từ. Đối chiếu với câu mẫu.";
+    extra=t.x.sent||w.ex[0]?`<span><b>Câu mẫu:</b> ${esc(t.x.sent||w.ex[0])}</span>`:"";
+  }
+  (S.res[w.w]=S.res[w.w]||[]).push(ok);
+  $("pu-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${msg}</b>${extra}</div><button class="btn primary" id="pu-next">${S.ti+1<S.tasks.length?"Tiếp theo →":"Xem kết quả →"}</button></div>`;
+  const nb=$("pu-next");if(nb)nb.focus();
+}
+function puNext(){S.ti++;if(S.ti>=S.tasks.length)puFinish();else puShow()}
+function puFinish(){
+  S.phase="result";if(S.mission)ls.set("ielts-wt-"+todayISO,"1");
+  const words=[...new Map(S.tasks.filter(t=>t.k!=="see").map(t=>[t.x.w.w,t.x.w])).values()];
+  const rows=words.map(w=>{const r=S.res[w.w]||[],good=r.filter(Boolean).length;return {w,r,ok:good>=Math.ceil(r.length*2/3)}});
+  const results=rows.map(x=>({id:puId(x.w),ok:x.ok}));
+  const lab=WL.lab||(WL.lab={});
+  results.forEach(r=>{const p=lab[r.id]||{box:0,ok:0,bad:0},box=r.ok?Math.min(6,p.box+1):1;lab[r.id]={box,ok:p.ok+(r.ok?1:0),bad:p.bad+(r.ok?0:1),due:addISO(todayISO,[0,1,3,7,14,30,60][box]||1)}});
+  const okN=rows.filter(x=>x.ok).length;
+  save("saveWordLab",{results,correct:okN,answered:rows.length}).then(r=>{applyR(r);showEarned(r)}).catch(()=>{});
+  studyFrame("result",`<div class="result"><div class="h1">${okN}/${rows.length} từ dùng tốt</div>
+   <p class="lead">Từ nào dùng đúng ít nhất 2 trên 3 việc thì được xếp lịch ôn xa hơn; từ còn yếu sẽ quay lại sớm. ${earnedHTML()}</p>
+   <div class="wrongs" style="width:100%">${rows.map(x=>`<div><span style="color:var(${x.ok?"--ok":"--bad"})">${x.ok?"✓":"✗"}</span><span><b>${esc(x.w.w)}</b> <span class="muted">${esc(x.w.vi)} · ${x.r.map(v=>v?"●":"○").join(" ")}</span></span></div>`).join("")}</div>
+   <div class="row" style="justify-content:center;gap:10px;width:100%"><button class="btn" id="r-done">Về lộ trình</button><button class="btn primary" data-pustart="${S.nWords}" ${S.pute?`data-pute="1" data-pud="${S.pud}"`:""}>Luyện lượt nữa</button></div></div>`);
+}
+
+applyRankTheme();
+
+/* ================= Chủ đề tuần: từ vựng lấy từ bài đọc Collins của tuần ================= */
+const WT={w:0,live:null,loading:{}};
+/* chủ đề của 12 unit Collins Reading → dùng để chọn đề Viết, chủ đề Speaking và bài đọc cùng chủ đề */
+const WT_RX=[/family|parent|child|marriage|generation|relationship/i,/health|medic|disease|doctor|drug|hospital|diet|obes/i,/educat|school|student|universit|learn|teach/i,/\bwater\b|river|ocean|drought|\bsea\b|flood|irrigation/i,/communicat|language|body|gesture|speech|emotion|\bface/i,/scien|research|experiment|discover|space|laborator/i,/\bjob|\bwork|employ|career|labour|labor|unemploy|skill/i,/young|youth|\badult|generation|graduate|millennial/i,/communit|volunteer|neighbo|social|charit|public/i,/transport|travel|migrat|\bcity|cities|traffic|commut|touris/i,/cultur|tradition|custom|global|language|identity/i,null];
+const wtRx=w=>WT_RX[w-1]||/$^/;
+function wtCur(){const c=PLAN.findIndex(w=>w.n>0&&w.days.some(d=>d.k>=todayISO));return c<0?12:c}
+function wtLoad(w){
+  const id="rcol-"+pad(w);
+  if(PACKS[id]||WT.loading[id])return;
+  WT.loading[id]=1;
+  loadPack(id).then(()=>{delete WT.loading[id];if(tab==="path"&&pathMode==="week")renderPath();else if(tab==="home"&&!S)render()}).catch(()=>{setTimeout(()=>delete WT.loading[id],20000)});
+}
+function weekTheme(w){
+  const id="rcol-"+pad(w),p=PACKS[id],rb=BOOKS.find(b=>b.key==="reading");
+  const name=p?String(p.title).replace(/^.*?[–-]\s*/,""):(rb?rb.units[w-1]:"");
+  const raw=(p&&p.vocab)||[],per=Math.max(1,Math.ceil(raw.length/5));
+  const words=raw.map((x,i)=>({w:x.w,vi:x.vi,pos:x.pos||"",syn:x.syn||"",ex:x.ex?[x.ex]:[],li:Math.min(4,Math.floor(i/per)),src:"bài đọc"}));
+  /* thêm từ/cụm cùng chủ đề từ kho từ vựng theo chủ đề (ưu tiên cụm nhiều từ), 2 từ mỗi ngày */
+  if(p){const have=new Set(words.map(x=>x.w.toLowerCase()));
+    const ex=[];TOPICS.filter(t=>wtRx(w).test(t.en+" "+t.vi)).forEach(t=>(t.words||[]).forEach(x=>{const k=String(x.w).toLowerCase();if(x.vi&&Array.isArray(x.ex)&&x.ex.length&&!have.has(k)){have.add(k);ex.push({w:x.w,vi:x.vi,pos:x.pos||"",syn:x.syn||"",ex:x.ex})}}));
+    ex.sort((m,n)=>(/\s/.test(n.w)?1:0)-(/\s/.test(m.w)?1:0));
+    ex.slice(0,10).forEach((x,i)=>words.push({...x,li:Math.min(4,Math.floor(i/2)),src:"chủ đề"}))}
+  return {w,id,name,words,loaded:!!p,rx:wtRx(w)};
+}
+function wtWords(d){const th=weekTheme(WT.w||wtCur());return isNaN(d)?th.words:th.words.filter(x=>x.li<=d)}
+function wtPrompts(th){
+  if(th.w===12)return [{type:"task1",text:""}];
+  const l=(PROMPTS.task2||[]).filter(x=>th.rx.test(x[1])).slice(0,3).map(x=>({type:"task2",text:x[1]}));
+  return l.length?l:(PROMPTS.paragraph||[]).slice(0,2).map(x=>({type:"paragraph",text:x}));
+}
+function wtSpeak(th){return (typeof SG!=="undefined"&&SG&&SG.topics?SG.topics:[]).filter(x=>th.rx.test((x.title||"")+" "+(x.vi||""))).slice(0,5)}
+function wtReads(th){
+  if(!RIDX&&typeof loadRIndex==="function")loadRIndex();
+  const out=[];
+  if(RIDX)rSets().forEach(s=>{if(/^rcol/.test(s.id))return;s.items.forEach(it=>{if(th.rx.test(it.title||""))out.push(it)})});
+  return out.slice(0,3);
+}
+function wtUsed(th){
+  const mon=PLAN[th.w].days[0].k,sun=addISO(mon,6);
+  const txt=subs.filter(s=>{const c=String(s.created||"").slice(0,10);return c>=mon&&c<=sun}).map(s=>s.answer||"").join(" \n ");
+  return {has:!!txt.trim(),used:th.words.filter(x=>puUsed(x.w,txt))};
+}
+function wtStartDay(i){
+  const w=WT.w||wtCur(),th=weekTheme(w);
+  if(!th.loaded){wtLoad(w);return toast("Đang tải từ của tuần, thử lại sau vài giây.",true)}
+  const fresh=th.words.filter(x=>x.li===i);
+  if(!fresh.length)return toast("Hôm nay không có từ mới, luyện cả bộ từ của tuần.");
+  puStart(Math.min(10,fresh.length+3),th.words.filter(x=>x.li<=i),fresh);
+}
+function weekHTML(){
+  loadLab();
+  if(typeof SG!=="undefined"&&!SG&&typeof loadSG==="function"){loadSG();setTimeout(()=>{if(tab==="path"&&pathMode==="week"&&SG)renderPath()},2500)}
+  if(!WT.w)WT.w=wtCur();
+  const w=WT.w,th=weekTheme(w);wtLoad(w);
+  const pw=PLAN[w],mon=pw.days[0].k,sat=addISO(mon,5),sun=addISO(mon,6),curW=wtCur(),U=wtUsed(th);
+  const doneDays=pw.days.filter(d=>ls.get("ielts-wt-"+d.k,"")).length;
+  const gram=String(pw.units||"").split(", ")[0];
+  const days=pw.days.map((d,i)=>{const nw=th.words.filter(x=>x.li===i),ok=!!ls.get("ielts-wt-"+d.k,"");
+    return `<div class="wt-day ${d.k===todayISO?"is-today":""} ${ok?"done":""}"><div class="dl">${DOW[d.date.getDay()]}<small>${dm(d.k)}</small></div>
+     <div class="wt-tasks"><button class="wt-task" data-wtday="${i}" ${th.loaded?"":"disabled"}><span class="ck">${ok?"✓":""}</span><span>${th.loaded?`Học ${nw.length} từ mới (${nw.filter(x=>x.src==="bài đọc").length} từ bài đọc, ${nw.filter(x=>x.src==="chủ đề").length} từ chủ đề) rồi luyện dùng: <b>${nw.map(x=>esc(x.w)).join(", ")}</b>`:"Đang tải từ của tuần…"}</span></button></div></div>`}).join("");
+  const reads=wtReads(th),wp=wtPrompts(th),sg=wtSpeak(th);
+  const chips=th.words.map(x=>{const u=U.used.includes(x);return `<button class="wt-chip ${u?"used":""}" data-say="${esc(x.w)}" title="${esc(x.vi)}"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small>${u?"<i>✓</i>":""}</button>`}).join("");
+  return `<div class="wt-nav"><button class="btn sm" data-wtgo="-1" ${w<=1?"disabled":""}>← Tuần trước</button><b>Tuần ${w}/12 · ${dm(mon)} – ${dm(sun)}${w===curW?" · tuần này":""}</b><button class="btn sm" data-wtgo="1" ${w>=12?"disabled":""}>Tuần sau →</button></div>
+   <div class="card wt-hero"><div class="tiny muted" style="font-weight:700">CHỦ ĐỀ TRỌNG ĐIỂM · COLLINS READING UNIT ${w}</div><div class="h2">${esc(th.name)}</div>
+    <p class="hint">Từ vựng của tuần lấy thẳng từ bài đọc Collins Reading unit ${w}, cùng bài mà lịch học đã xếp trong tuần. Cuối tuần mày ôn lại các từ này bằng bài đọc cùng chủ đề, bài viết và bài nói.</p>
+    <div class="bar"><i style="width:${doneDays/5*100}%"></i></div><div class="tiny muted">${doneDays}/5 nhiệm vụ từ vựng của tuần đã xong</div>
+    <div class="lbl" style="margin-top:6px">Từ mục tiêu của tuần (${th.words.length})${U.has?` · đã dùng trong bài nộp tuần này: <b>${U.used.length}/${th.words.length}</b>`:""}</div><div class="wt-chips">${th.loaded?chips:`<span class="hint">Đang tải…</span>`}</div></div>
+   <h3 class="h3" style="margin-top:6px">Thứ 2 → thứ 6: nhiệm vụ từ vựng mỗi ngày</h3>
+   <p class="hint">Mỗi ngày vài từ mới từ bài đọc, rồi luyện gõ, điền câu, nghe chép, viết hoặc nói câu. Nhiệm vụ này cũng hiện ở Trang chủ. Ngữ pháp vẫn theo lịch sách (${esc(gram)}); thử dùng nó khi viết câu về chủ đề.</p>
+   <div class="wt-days">${days}</div>
+   <h3 class="h3" style="margin-top:10px">Cuối tuần: đọc, viết, nói, đối chiếu</h3>
+   <div class="card wt-end">
+    <div><div class="lbl">Thứ 7 (${dm(sat)}) · Đọc cùng chủ đề</div>${reads.length?reads.map(x=>`<div class="wt-prompt"><span>${esc(x.title)}</span><button class="btn sm primary" data-ropen="${x.id}">Làm bài</button></div>`).join(""):`<div class="wt-prompt"><span>${w===12?"Làm lại đề thực hành Reading của Collins (đề cuối sách).":"Chưa có bài đọc khác khớp chủ đề này trong kho; làm lại bài Collins unit "+w+" và đọc lại các từ mục tiêu."}</span><button class="btn sm primary" data-ropen="rcol-${w===12?"12":pad(w)}">Làm bài</button></div>`}</div>
+    <div><div class="lbl">Thứ 7 (${dm(sat)}) · Viết về chủ đề</div>${wp.map((x,i)=>`<div class="wt-prompt"><span>${x.text?esc(x.text):"Task 1: mô tả biểu đồ trong sách, dùng các từ mô tả số liệu."}</span><span class="row" style="gap:6px;flex-wrap:wrap">${x.type==="task1"?"":`<button class="btn sm" data-gbw="${i}">Viết có kèm cặp</button>`}<button class="btn sm primary" data-wtwrite="${i}">Tự viết</button></span></div>`).join("")}
+     <p class="hint">Màn viết hiện bộ từ mục tiêu và đếm khi mày gõ. Nộp xong nhắn Claude "chấm bài".</p></div>
+    <div><div class="lbl">Chủ nhật (${dm(sun)}) · Nói về chủ đề</div>${sg.length?`<div class="wt-chips">${sg.map(x=>`<button class="chip" data-sgtopic="${esc(x.id)}">${esc(x.title)}</button>`).join("")}</div><p class="hint">Mở chủ đề để xem câu hỏi, từ vựng và bài mẫu. Nói trước, đối chiếu sau.</p>`:`<p class="hint">${SG?"Chưa có chủ đề Speaking khớp tuần này.":"Đang tải danh sách chủ đề Speaking…"}</p>`}
+     <button class="btn sm" data-gbs="1">Nói có kèm cặp</button><button class="btn sm" data-wtspeak="1">Luyện nói với giám khảo</button></div>
+    <div><div class="lbl">Đối chiếu từ mục tiêu</div>${U.has?`<p class="hint">Bài nộp trong tuần dùng <b>${U.used.length}/${th.words.length}</b> từ mục tiêu${U.used.length<th.words.length?`. Chưa dùng: ${th.words.filter(x=>!U.used.includes(x)).map(x=>esc(x.w)).join(", ")}.`:". Đủ bộ từ."}</p>`:`<p class="hint">Chưa có bài nộp nào trong tuần. Nộp bài viết hoặc nói xong, mục này tự đếm số từ mục tiêu mày đã dùng.</p>`}
+     <button class="btn sm" data-wtall="1" ${th.loaded?"":"disabled"}>Luyện dùng cả bộ từ của tuần</button></div></div>
+   <details class="card" style="padding:14px"><summary style="cursor:pointer;font-weight:700">Luyện dùng với cả kho từ đã học</summary><div style="margin-top:10px">${puHTML()}</div></details>`;
+}
+/* nhiệm vụ nhỏ của chủ đề tuần hiện trên Trang chủ */
+function wtHomeItems(){
+  const wi=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
+  if(wi<1)return [];
+  const th=weekTheme(wi);wtLoad(wi);
+  const dow=fromISO(todayISO).getDay(),i=dow>=1&&dow<=5?dow-1:-1,out=[];
+  const lastSeen=id=>(rstats.latest||{})[id]&&(rstats.latest||{})[id].date===todayISO;
+  const label=`Tuần ${wi} · ${th.name}`;
+  if(i>=0){const nw=th.words.filter(x=>x.li===i);
+    out.push({time:"Chủ đề tuần",min:15,title:th.loaded?`${label}: ${nw.length} từ mới`:`${label}: đang tải từ…`,how:th.loaded?nw.map(x=>x.w).join(", ")+" · học rồi luyện gõ, điền câu, nghe chép":"",done:!!ls.get("ielts-wt-"+todayISO,""),btn:th.loaded?`data-wtday="${i}"`:"",label:"Học",primary:true})}
+  else if(dow===6){const rd=wtReads(th)[0];
+    out.push({time:"Chủ đề tuần",min:30,title:rd?`Reading cùng chủ đề: ${rd.title}`:`${label}: làm lại bài đọc Collins`,how:"Ôn các từ mục tiêu của tuần qua một bài đọc như thi thật",done:!!(rd&&lastSeen(rd.id)),btn:`data-ropen="${rd?rd.id:"rcol-"+pad(wi)}"`,label:"Làm"});
+    out.push({time:"Chủ đề tuần",min:30,title:`Viết về chủ đề: ${th.name}`,how:"Viết từng câu theo khung, có gợi ý, bảng kiểm và bộ từ mục tiêu",done:subs.some(s=>String(s.created).slice(0,10)===todayISO&&s.type!=="speaking"),btn:'data-gbw="0"',label:"Viết"})}
+  else if(dow===0){
+    out.push({time:"Chủ đề tuần",min:20,title:`Nói về chủ đề: ${th.name}`,how:"Nói từng câu theo khung (gõ hoặc micro bàn phím), rồi đối chiếu bài mẫu",done:subs.some(s=>String(s.created).slice(0,10)===todayISO&&s.type==="speaking"),btn:'data-gbs="1"',label:"Nói"});
+    out.push({time:"Chủ đề tuần",min:10,title:"Đối chiếu từ mục tiêu của tuần",how:"Xem mày đã dùng bao nhiêu từ trong bài viết và bài nói, rồi luyện lại từ còn thiếu",done:false,btn:'data-wtopen="1"',label:"Xem"})}
+  return out;
+}
+function wtWrite(i){
+  const th=weekTheme(WT.w||wtCur()),it=wtPrompts(th)[i];if(!it)return;
+  skill="write";ls.set("ielts-skill","write");setTab("skills");WT.live=th.words;
+  setTimeout(()=>{const ty=$("w-type"),pr=$("w-prompt");if(!ty||!pr)return;
+    ty.value=it.type;ty.dispatchEvent(new Event("change",{bubbles:true}));
+    pr.value=it.text;pr.dispatchEvent(new Event("input",{bubbles:true}));
+    wtLive();const a=$("w-ans");if(a)a.focus()},150);
+}
+function wtLive(){
+  const a=$("w-ans");if(!a||!WT.live||!WT.live.length)return;
+  let box=$("w-wt");if(!box){box=document.createElement("div");box.id="w-wt";box.className="wt-live";const lb=a.closest("label")||a;lb.insertAdjacentElement("afterend",box)}
+  const txt=a.value,u=WT.live.filter(x=>puUsed(x.w,txt));
+  box.innerHTML=`<div class="lbl">Từ mục tiêu tuần này · đã dùng ${u.length}/${WT.live.length}</div><div class="wt-chips">${WT.live.map(x=>`<span class="wt-chip ${u.includes(x)?"used":""}"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small>${u.includes(x)?"<i>✓</i>":""}</span>`).join("")}</div>`;
+}
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-wtgo]");if(g&&!g.disabled){WT.w=Math.min(12,Math.max(1,(WT.w||wtCur())+(+g.dataset.wtgo)));renderPath();return}
+  const w=e.target.closest("[data-wtwrite]");if(w){wtWrite(+w.dataset.wtwrite);return}
+  const d=e.target.closest("[data-wtday]");if(d&&!d.disabled){wtStartDay(+d.dataset.wtday);return}
+  if(e.target.closest("[data-wtall]")){const th=weekTheme(WT.w||wtCur());puStart(8,th.words);return}
+  if(e.target.closest("[data-wtopen]")){pathMode="week";ls.set("ielts-pathmode","week");WT.w=0;setTab("path");return}
+  if(e.target.closest("[data-wtspeak]")){skill="speaking";ls.set("ielts-skill","speaking");spView="practice";ls.set("ielts-spview","practice");setTab("skills")}
+});
+document.addEventListener("input",e=>{if(e.target.id==="w-ans")wtLive()});
+
+/* ================= Luyện có kèm cặp: Viết và Nói theo từng câu ================= */
+const GB_ST={
+  rel:{n:"mệnh đề quan hệ (which, who, where…)",rx:/\b(which|who|whom|whose|where)\b/i},
+  cond:{n:"câu điều kiện (if… would…, unless…)",rx:/\bif\b[^.?!]*\b(would|could|might|will|can)\b|\bunless\b|\bprovided that\b/i},
+  pass:{n:"câu bị động",rx:/\b(is|are|was|were|be|been|being)\s+(\w+ly\s+)?\w+(ed|en)\b/i},
+  concede:{n:"nhượng bộ (although, while, despite, however…)",rx:/\b(although|even though|though|whereas|while|despite|in spite of|nevertheless|however|having said that|on the other hand)\b/i},
+  inv:{n:"đảo ngữ (Not only does…, Rarely do…, Only when… can…)",rx:/\b(not only|rarely|seldom|never|hardly|scarcely|no sooner|only when|only if|little)\b[^.?!]{0,30}\b(do|does|did|have|has|had|is|are|was|were|can|could|will|would)\b/i},
+  link:{n:"từ nối (because, for example, as a result…)",rx:/\b(because|since|so that|for example|for instance|as a result|therefore|thus|moreover|furthermore|in addition|besides|however|firstly|secondly|finally|in conclusion|overall)\b/i},
+  hedge:{n:"cách nói giảm (I tend to think, it depends, probably…)",rx:/\b(i tend to|i'd say|i would say|i think|in my opinion|it depends|probably|perhaps|might|may|seems? to)\b/i},
+  past:{n:"thì quá khứ (was, went, had, -ed…)",rx:/\b(was|were|had|went|did|made|took|saw|felt|got|\w+ed)\b/i}
+};
+const GB_COMMON_I=[
+ {id:"i1",para:"Mở bài",label:"Câu 1 · Viết lại đề",goal:"Viết lại đề bằng từ khác, không chép nguyên văn. Đổi từ loại (động từ → danh từ), đổi chủ động ↔ bị động, dùng từ đồng nghĩa.",starters:["Nowadays, it is widely believed that…","In recent years, there has been a growing debate about whether…","Some people argue that…, while others…"],minw:14,use:[],ex:"In recent years, a growing number of people have argued that students should study mainly through online platforms."}];
+const GB_I2={
+ opinion:["Câu 2 · Nêu quan điểm","Trả lời thẳng: đồng ý hoàn toàn, một phần hay không đồng ý. Nêu luôn hai lý do sẽ triển khai.",["I completely agree with this view because…","I partly agree; although…, I believe…","This essay will argue that… for two main reasons."],"I largely agree, since online study is flexible and affordable, although it cannot fully replace classrooms."],
+ discuss:["Câu 2 · Báo sẽ bàn cả hai bên","Nói sẽ bàn cả hai quan điểm, rồi cho biết mình nghiêng về bên nào.",["This essay will discuss both views before giving my own opinion.","While there are merits in both approaches, I believe…"],"This essay will discuss both views, but I personally believe that a blended approach works best."],
+ advdis:["Câu 2 · Trả lời thẳng câu hỏi của đề","Trả lời đề hỏi gì: lợi nhiều hơn hại, hay tích cực nhiều hơn tiêu cực. Nêu hai ý chính.",["Although there are drawbacks, I believe the advantages outweigh the disadvantages.","This development brings both benefits and risks, but…"],"Although there are some drawbacks, I believe the benefits outweigh them because of lower costs and greater flexibility."],
+ problem:["Câu 2 · Báo sẽ nêu nguyên nhân và giải pháp","Nói sẽ phân tích nguyên nhân (hoặc vấn đề) rồi đề xuất giải pháp.",["This essay will examine the main causes and suggest practical solutions.","Several factors contribute to this trend, and measures can be taken to…"],"This essay will examine the main causes of this trend and suggest some practical solutions."],
+ twopart:["Câu 2 · Báo sẽ trả lời hai câu hỏi","Nói ngắn gọn sẽ trả lời lần lượt hai câu hỏi, mỗi câu một đoạn thân bài.",["The main reasons are…, and I believe the impact is…"],"There are several reasons for this trend, and I believe its impact is largely positive."]
+};
+const GB_BODY={
+ opinion:[["Lý do chính","Lý do thứ hai (hoặc nêu ý ngược lại rồi phản bác)"],"Mỗi đoạn một lý do, không dồn hai ý vào một đoạn."],
+ discuss:[["Quan điểm thứ nhất","Quan điểm thứ hai và ý kiến của mình"],"Phải bàn đủ cả hai bên, bên mình ủng hộ nói sau cùng."],
+ advdis:[["Mặt lợi","Mặt hại"],"Cân bằng hai đoạn; nếu đề hỏi bên nào nhiều hơn thì đoạn mạnh hơn đặt cuối."],
+ problem:[["Nguyên nhân / vấn đề","Giải pháp"],"Mỗi giải pháp phải khớp với một nguyên nhân đã nêu."],
+ twopart:[["Trả lời câu hỏi 1","Trả lời câu hỏi 2"],"Trả lời đúng thứ tự hai câu hỏi trong đề."]
+};
+function gbBodySteps(type,k){
+  const role=GB_BODY[type][0][k-1],tag="b"+k,p="Thân bài "+k+" · "+role;
+  const topic=k===1?["One major reason is that…","The first point to consider is…","Firstly,…"]:["Another important factor is…","Secondly,…","On the other hand,…"];
+  return [
+   {id:tag+"1",para:p,label:"Câu 1 · Câu chủ đề",goal:"Nêu ý chính của đoạn: "+role.toLowerCase()+". Chỉ một ý, rõ ràng, chưa đưa ví dụ.",starters:topic,minw:12,use:[],ex:k===1?"One major reason is that online courses allow students to study at their own pace.":"Another important factor is that face-to-face contact helps students stay motivated."},
+   {id:tag+"2",para:p,label:"Câu 2 · Giải thích",goal:"Giải thích vì sao ý đó đúng và hậu quả là gì, dùng quan hệ nhân quả. Thử một mệnh đề quan hệ.",starters:["This is because…","This means that…","As a result,…","…, which leads to…"],minw:15,use:["rel"],ex:"This is because learners can review difficult lessons several times, which leads to a deeper understanding."},
+   {id:tag+"3",para:p,label:"Câu 3 · Ví dụ cụ thể",goal:"Đưa ví dụ có thật: người, nơi chốn, tình huống hoặc số liệu. Ví dụ cụ thể ăn điểm hơn ý chung chung.",starters:["For instance,…","A case in point is…","In Vietnam, for example,…"],minw:12,use:[],ex:"For instance, many Vietnamese workers have finished university degrees online while keeping their full-time jobs."},
+   {id:tag+"4",para:p,label:"Câu 4 · Câu nâng cao",goal:k===1?"Một câu dùng câu điều kiện để mở rộng ý (if… would…).":"Một câu dùng đảo ngữ để nhấn mạnh (Not only does… / Rarely do… / Only when… can…).",starters:k===1?["If governments invested more in…, … would…","Unless…, …"]:["Not only does… but it also…","Rarely do people realise that…","Only when…, can…"],minw:16,use:[k===1?"cond":"inv"],ex:k===1?"If schools offered more flexible online options, working adults would find it far easier to continue their education.":"Not only does online study save money, but it also gives access to teachers in other countries."},
+   {id:tag+"5",para:p,label:"Câu 5 · Chốt ý",goal:"Chốt đoạn bằng một câu nối ý về lại đề bài.",starters:["Therefore,…","This clearly shows that…","Thus,…"],minw:8,use:["link"],ex:"Therefore, online learning clearly offers advantages that traditional classrooms struggle to match."}];
+}
+function gbWriteSteps(type){
+  if(type==="paragraph")return [
+   {id:"p1",para:"Đoạn văn",label:"Câu 1 · Câu chủ đề",goal:"Trả lời thẳng đề trong một câu, nêu ý chính của cả đoạn.",starters:["In my opinion,…","One of the most important…is…","I would like to describe…"],minw:12,use:[],ex:"In my opinion, a healthy routine is the key to staying productive during a busy week."},
+   {id:"p2",para:"Đoạn văn",label:"Câu 2–3 · Giải thích",goal:"Giải thích bằng hai câu, có nhân quả. Thử một mệnh đề quan hệ.",starters:["This is because…","As a result,…","…, which means that…"],minw:25,use:["rel"],ex:"This is because regular sleep and exercise give people more energy, which means they can concentrate for longer."},
+   {id:"p3",para:"Đoạn văn",label:"Câu 4 · Ví dụ",goal:"Một ví dụ thật từ bản thân hoặc người quanh mày.",starters:["For example,…","Last year, I…","My brother, for instance,…"],minw:14,use:[],ex:"For example, my sister started jogging every morning and now finishes her work earlier."},
+   {id:"p4",para:"Đoạn văn",label:"Câu 5 · Câu nâng cao",goal:"Một câu điều kiện hoặc nhượng bộ.",starters:["If people…, they would…","Although…, …"],minw:14,use:["cond","concede"],ex:"Although it is tempting to stay up late, people who sleep well perform much better at work."},
+   {id:"p5",para:"Đoạn văn",label:"Câu 6 · Kết đoạn",goal:"Một câu kết ngắn nhắc lại ý chính.",starters:["Overall,…","That is why…"],minw:8,use:["link"],ex:"Overall, simple daily habits make a big difference to our performance."}];
+  const out=[...GB_COMMON_I];
+  if(type==="intro")return [...out,{id:"i2",para:"Mở bài",label:"Câu 2 · Nêu quan điểm",goal:"Nêu quan điểm của mày hoặc báo trước nội dung bài.",starters:["I believe that…","This essay will discuss…"],minw:12,use:[],ex:"This essay will discuss both views before explaining why I support the second."}];
+  const t=GB_I2[type];out.push({id:"i2",para:"Mở bài",label:t[0],goal:t[1],starters:t[2],minw:14,use:[],ex:t[3]});
+  const b1=gbBodySteps(type,1),b2=gbBodySteps(type,2);
+  const c=[{id:"c1",para:"Kết bài",label:"Câu 1 · Tóm tắt quan điểm",goal:"Nhắc lại quan điểm bằng từ khác. Không thêm ý mới.",starters:["In conclusion,…","To sum up,…","Overall,…"],minw:14,use:["concede"],ex:"In conclusion, although traditional classrooms still matter, online learning offers greater flexibility and should be encouraged."},
+   {id:"c2",para:"Kết bài",label:"Câu 2 · Đề xuất (ngắn, tùy chọn)",goal:"Một câu đề xuất hoặc nhìn về tương lai.",starters:["Governments should…","It is hoped that…"],minw:8,use:[],opt:true,ex:"Governments should therefore invest in reliable internet access for all learners."}];
+  return [...out,...b1,...b2,...c];
+}
+function gbSpeakSteps(part,P){
+  if(part==="p1")return [
+   {id:"a",para:"Part 1",label:"Câu 1 · Trả lời thẳng",goal:"Trả lời ngay câu hỏi, không im lặng hay nói vòng.",starters:["Yes, I do…","Well, it depends…","Actually, I'm quite fond of…","To be honest,…"],minw:5,use:[],ex:"Yes, I do. I'm quite keen on cooking at home."},
+   {id:"b",para:"Part 1",label:"Câu 2 · Lý do",goal:"Cho một lý do rõ ràng, nối bằng because / since.",starters:["The main reason is that…","I think that's because…","It makes me feel…"],minw:10,use:["link"],ex:"The main reason is that it's cheaper and I can control what goes into my meals."},
+   {id:"c",para:"Part 1",label:"Câu 3 · Ví dụ cá nhân",goal:"Một chi tiết hoặc ví dụ từ đời thực của mày, nên dùng thì quá khứ.",starters:["For example, last week I…","I remember that…","When I was a child,…"],minw:10,use:["past"],ex:"For example, last weekend I made a big pot of soup for my whole family."},
+   {id:"d",para:"Part 1",label:"Câu 4 · Nối thêm (nếu còn thời gian)",goal:"Một câu đối lập hoặc nói về tương lai để kéo dài câu trả lời.",starters:["However,…","But these days,…","In the future, I'd like to…"],minw:8,use:["concede"],opt:true,ex:"However, during busy weeks I often have to order takeaway instead."}];
+  if(part==="p2"){const b=P.bullets||[];return [
+   {id:"o",para:"Part 2",label:"Phần 1 · Mở đầu",goal:"Giới thiệu chủ đề trong 1–2 câu. Nói rõ mày sẽ kể về ai / cái gì / lúc nào.",starters:["I'd like to talk about…","Let me tell you about…","The person I'm going to describe is…"],minw:12,use:[],ex:"I'd like to talk about a teacher who really changed the way I think about learning."},
+   ...[0,1,2].map(i=>({id:"m"+i,para:"Part 2",label:"Phần "+(i+2)+" · "+(b[i]||"Ý "+(i+1)),goal:"Trả lời ý này của thẻ bằng 2–3 câu có chi tiết. Kể bằng thì quá khứ nếu là chuyện đã qua.",starters:["First of all,…","As for…, …","What made it special was…","This happened when…"],minw:25,use:["past","link"],ex:"First of all, we met in my first year at university. She was our English tutor, and she always encouraged us to ask questions."})),
+   {id:"z",para:"Part 2",label:"Phần 5 · "+(P.last||"Cảm xúc hoặc ý nghĩa"),goal:"Kết bằng cảm xúc hoặc bài học. Một đến hai câu là đủ.",starters:["Looking back,…","All in all, I'd say…","What I learned from it is…"],minw:15,use:["link"],ex:"Looking back, I'd say she taught me that curiosity matters more than perfect answers."}]}
+  return [
+   {id:"pt",para:"Part 3",label:"Câu 1 · Nêu quan điểm",goal:"Nêu quan điểm rõ ràng, dùng cách nói giảm vì đây là câu hỏi mở.",starters:["I'd say that…","In my opinion,…","I tend to think that…"],minw:10,use:["hedge"],ex:"I tend to think that parents have a bigger influence on children in their early years."},
+   {id:"pr",para:"Part 3",label:"Câu 2 · Lý do",goal:"Giải thích vì sao bằng một hoặc hai câu.",starters:["This is mainly because…","The reason is that…"],minw:12,use:["link"],ex:"This is mainly because children spend most of their time at home and copy what they see."},
+   {id:"pe",para:"Part 3",label:"Câu 3 · Ví dụ",goal:"Một ví dụ chung về xã hội hoặc người xung quanh (không cần chuyện cá nhân).",starters:["For example, in many countries…","Take… as an example."],minw:12,use:[],ex:"For example, in many countries children pick up their language and habits directly from their families."},
+   {id:"pc",para:"Part 3",label:"Câu 4 · Nhìn từ phía khác",goal:"Thừa nhận quan điểm ngược lại để câu trả lời cân bằng, trình độ band cao hơn.",starters:["On the other hand,…","Having said that,…","Of course, some people might say…"],minw:10,use:["concede"],ex:"Having said that, teachers become more influential once children start school."}];
+}
+const GB_TYPES={
+  w:[["opinion","Đồng ý / không đồng ý"],["discuss","Thảo luận hai quan điểm"],["advdis","Lợi / hại"],["problem","Nguyên nhân và giải pháp"],["twopart","Hai câu hỏi"],["t1","Task 1 · biểu đồ, quy trình, bản đồ"],["paragraph","Đoạn văn 150 từ"],["intro","Chỉ viết mở bài"]],
+  s:[["p1","Part 1 · trả lời ngắn"],["p2","Part 2 · thẻ nói 2 phút"],["p3","Part 3 · thảo luận"]]
+};
+const GB_TIPS={
+  opinion:"Bài 4 đoạn, 260–290 từ, khoảng 40 phút. Quan điểm phải rõ ở mở bài và nhất quán tới kết bài.",
+  discuss:"Bàn đủ hai quan điểm trước khi nêu ý kiến riêng. Thiếu một bên là mất điểm Task Response.",
+  advdis:"Đọc kỹ đề hỏi gì: liệt kê lợi và hại, hay hỏi bên nào nhiều hơn. Trả lời đúng câu hỏi của đề.",
+  problem:"Mỗi giải pháp nên đáp lại một nguyên nhân. Tránh liệt kê giải pháp không liên quan.",
+  twopart:"Mỗi câu hỏi một đoạn thân bài, theo đúng thứ tự trong đề.",
+  paragraph:"Một đoạn khoảng 150 từ: câu chủ đề, giải thích, ví dụ, câu nâng cao, câu kết.",
+  intro:"Mở bài chỉ gồm 2 câu: viết lại đề, nêu quan điểm.",
+  p1:"Part 1: 2–4 câu mỗi câu hỏi. Trả lời thẳng, cho lý do, thêm ví dụ. Nói trôi chảy quan trọng hơn dùng từ hay.",
+  p2:"Part 2: nói liền 1,5–2 phút. Ghi nhanh 4 ý trong 1 phút chuẩn bị, rồi đi lần lượt qua các ý của thẻ.",
+  p3:"Part 3: nêu quan điểm, lý do, ví dụ, rồi thừa nhận phía ngược lại. Câu trả lời dài hơn Part 1."
+};
+const GB={};
+const gbWc=t=>(String(t).match(/\S+/g)||[]).length;
+function gbThemeWords(){if(GB.type==="t1")return [];try{return weekTheme(WT.w||wtCur()).words}catch(e){return []}}
+function gbCands(kind,type){
+  const th=(()=>{try{return weekTheme(WT.w||wtCur())}catch(e){return {rx:/$^/}}})();
+  let l=[];
+  if(kind==="w"&&type==="t1"){t1Index();return (T1.idx||[]).filter(x=>x.type===(GB.t1||"line")).map(x=>({id:x.id,text:x.title,type:x.type}))}
+  if(kind==="w"){
+    if(type==="paragraph")l=(PROMPTS.paragraph||[]).map(x=>({text:x}));
+    else if(type==="intro")l=(PROMPTS.task2||[]).map(x=>({text:x[1]}));
+    else l=(PROMPTS.task2||[]).filter(x=>x[0]===type).map(x=>({text:x[1]}));
+    const m=l.filter(x=>th.rx.test(x.text));return m.length?[...m,...l.filter(x=>!m.includes(x))]:shuffle(l);
+  }
+  if(type==="p1")SPEAK.part1.forEach(t=>t.qs.forEach(q=>l.push({topic:t.topic,text:q})));
+  else if(type==="p2")SPEAK.part2.forEach(t=>l.push({topic:t.topic,text:t.card,bullets:t.bullets,last:t.last}));
+  else SPEAK.part2.forEach(t=>(t.part3||[]).forEach(q=>l.push({topic:t.topic,text:q})));
+  const m=l.filter(x=>th.rx.test(x.topic));return m.length?[...shuffle(m),...shuffle(l.filter(x=>!m.includes(x)))]:shuffle(l);
+}
+const gbKey=(k,ty)=>"ielts-gb-"+(k||GB.kind)+"-"+(ty||GB.type)+(((ty||GB.type)==="t1")?"-"+(GB.t1||"line"):"");
+function gbOpen(kind,type,idx,text){
+  Object.assign(GB,{kind,type:type||GB_TYPES[kind][0][0],level:1,ci:0,i:0,texts:[],checked:{}});
+  if(!type)GB.type=GB_TYPES[kind][0][0];
+  GB.t1=GB.t1||"line";GB.pack=null;GB.packErr=false;GB.steps=null;
+  GB.lvDone=+ls.get(gbKey(kind,GB.type),0);GB.level=Math.min(3,GB.lvDone+1);
+  GB.cands=gbCands(kind,GB.type);if(text)GB.cands.unshift({text});
+  S={L:{key:"gb",kind:"vocab",checkpoint:true},review:"gb",gb:true,phase:"gbs",xp:0};
+  FX.reset();$("study").hidden=false;document.body.style.overflow="hidden";gbSetup();if(GB.type==="t1")gbT1Load();
+}
+const gbTypeName=()=>GB.type==="t1"&&GB.pack?"Task 1 · "+((T1_TYPES.find(x=>x[0]===GB.pack.type)||[])[1]||""):(GB_TYPES[GB.kind].find(x=>x[0]===GB.type)||[])[1]||"";
+function gbPromptHTML(){
+  const c=GB.cands[GB.ci]||{text:"(chưa có đề)"};
+  if(GB.type==="t1"){const p=GB.pack;return `<div class="gb-prompt"><div class="lbl">Đề bài${p&&p.page?" · ebook trang "+p.page:""}</div><div>${p?esc(p.prompt):(GB.packErr?"Không tải được đề này. Kiểm tra mạng rồi thử lại.":(T1.idx&&!T1.idx.length?"Chưa có dữ liệu Task 1 trong Drive (writing/t1).":"Đang tải đề…"))}</div></div>${gbT1Figure(p)}`}
+  return `<div class="gb-prompt"><div class="lbl">${GB.kind==="w"?"Đề bài":(GB.type==="p2"?"Thẻ nói · "+esc(c.topic||""):"Câu hỏi · "+esc(c.topic||""))}</div><div>${esc(c.text)}</div>${c.bullets?`<ul>${c.bullets.map(b=>`<li>${esc(b)}</li>`).join("")}${c.last?`<li>${esc(c.last)}</li>`:""}</ul>`:""}</div>`;
+}
+function gbSetup(){
+  const lvN=["Có đủ gợi ý từng câu","Chỉ giữ nhãn từng câu","Tự viết/nói cả bài, chỉ có bảng kiểm"];
+  const W=GB.kind==="w";
+  studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Luyện có kèm cặp · ${W?"Viết":"Nói"}</div><div class="qtext">${W?"Chọn dạng bài":"Chọn phần thi"}</div><div class="hint">${esc(GB_TIPS[GB.type])}</div></div></div>
+   <div class="wt-chips">${GB_TYPES[GB.kind].map(([k,n])=>`<button class="chip" data-gbtype="${k}" aria-pressed="${GB.type===k}">${n}${k!=="t1"&&+ls.get(gbKey(GB.kind,k),0)?` · mức ${ls.get(gbKey(GB.kind,k),0)} ✓`:""}</button>`).join("")}</div>
+   ${GB.type==="t1"?`<div class="wt-chips">${T1_TYPES.map(([k,n])=>`<button class="chip" data-gbt1="${k}" aria-pressed="${GB.t1===k}">${n}${+ls.get("ielts-gb-w-t1-"+k,0)?" · mức "+ls.get("ielts-gb-w-t1-"+k,0)+" ✓":""}</button>`).join("")}</div>${GB.cands.length?`<select class="inp" data-gbsel="1">${GB.cands.map((x,i)=>`<option value="${i}" ${i===GB.ci?"selected":""}>${esc(x.text)}</option>`).join("")}</select>`:""}`:""}
+   ${gbPromptHTML()}${GB.type==="t1"?(GB.pack?`<div><button class="btn sm" data-gbana="1">${GB.ana?"Ẩn":"Xem"} phân tích bài mẫu</button></div>${GB.ana?gbT1Analysis(GB.pack):""}`:""):`<div><button class="btn sm" data-gbnew="1">Đổi đề khác</button></div>`}
+   <div><div class="lbl">Mức độ</div><div class="lvl-row">${[1,2,3].map(l=>`<button class="lvl ${GB.level===l?"on":""}" data-gblvl="${l}"><b>Mức ${l}</b><small>${lvN[l-1]}</small></button>`).join("")}</div></div>
+   ${gbThemeWords().length&&GB.type!=="t1"?`<div><div class="lbl">Từ mục tiêu của tuần (cố gắng dùng)</div><div class="wt-chips">${gbThemeWords().slice(0,12).map(x=>`<span class="wt-chip"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small></span>`).join("")}</div></div>`:""}
+   <div class="row" style="justify-content:flex-end"><button class="btn primary" data-gbstart="1" ${GB.type==="t1"&&!GB.pack?"disabled":""}>Bắt đầu →</button></div>`);
+}
+function gbSteps(){
+  if(GB.steps)return GB.steps;
+  const c=GB.cands[GB.ci]||{};
+  let st=GB.type==="t1"?gbT1Steps(GB.pack):GB.kind==="w"?gbWriteSteps(GB.type):gbSpeakSteps(GB.type,c);
+  if(GB.level===3)st=[{id:"free",para:GB.kind==="w"?"Cả bài":"Cả câu trả lời",label:GB.kind==="w"?"Viết cả bài":"Nói cả câu trả lời (gõ hoặc dùng micro bàn phím)",goal:"Tự làm theo cấu trúc đã học. Bảng kiểm bên dưới cho biết mày đã đủ chưa.",starters:[],minw:GB.kind==="w"?(GB.type==="paragraph"?140:GB.type==="intro"?30:GB.type==="t1"?150:250):(GB.type==="p2"?200:GB.type==="p1"?45:60),use:[...new Set(st.flatMap(x=>x.use))],outline:st.filter(x=>!x.opt).map(x=>x.label)}];
+  return GB.steps=st;
+}
+function gbStart(){
+  GB.steps=null;GB.i=0;GB.texts=[];GB.checked={};
+  const st=gbSteps(),W=GB.kind==="w";
+  if(GB.level===3)return gbShow();
+  studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Luyện có kèm cặp · ${W?"Viết":"Nói"} · ${esc(gbTypeName())} · Mức ${GB.level}</div><div class="qtext">Bản đồ bài làm</div><div class="hint">${esc(GB_TIPS[GB.type])}</div></div></div>
+   ${gbPromptHTML()}
+   <div class="gb-map">${st.map((x,i)=>`<div class="gb-row"><span class="n">${i+1}</span><span><b>${esc(x.label)}</b><small>${esc(x.para)}${x.use.length?" · nên dùng: "+x.use.map(u=>GB_ST[u].n).join(", "):""}</small></span></div>`).join("")}</div>
+   <p class="hint">Mỗi bước viết đúng một câu (hoặc nói một câu) rồi bấm Kiểm tra. ${GB.level===1?"Ở mức 1 mày có gợi ý mở câu, cấu trúc nên dùng và câu mẫu (ẩn tới khi mày bấm).":"Ở mức 2 chỉ còn nhãn và mục tiêu của mỗi câu."}</p>
+   <div class="row" style="justify-content:flex-end"><button class="btn primary" data-gbgo="1">Vào bước 1 →</button></div>`);
+}
+function gbCheck(text,step){
+  const w=gbWc(text),res=[];
+  res.push({ok:w>=step.minw,t:`Độ dài: ${w} từ (cần từ ${step.minw})`});
+  step.use.forEach(u=>res.push({ok:GB_ST[u].rx.test(text),t:"Dùng "+GB_ST[u].n}));
+  const tw=gbThemeWords();if(tw.length){const u=tw.filter(x=>puUsed(x.w,text));res.push({ok:u.length>0,t:u.length?"Từ mục tiêu đã dùng: "+u.map(x=>x.w).join(", "):"Chưa dùng từ mục tiêu nào (nên thử 1–2 từ)",soft:true})}
+  return res;
+}
+function gbShow(){
+  const st=gbSteps(),s=st[GB.i],n=st.length,W=GB.kind==="w",L1=GB.level===1;
+  const cur=GB.texts[GB.i]||"";
+  studyFrame("quiz",`<div class="qhd"><div><div class="tiny">${W?"Viết":"Nói"} · ${esc(gbTypeName())} · Mức ${GB.level} · ${GB.level===3?"Cả bài":`Bước ${GB.i+1}/${n} · ${esc(s.para)}`}</div><div class="qtext">${esc(s.label)}</div><div class="hint">${esc(s.goal)}</div></div></div>
+   ${gbPromptHTML()}
+   ${s.outline?`<div class="gb-map">${s.outline.map((x,i)=>`<div class="gb-row"><span class="n">${i+1}</span><span><b>${esc(x)}</b></span></div>`).join("")}</div>`:""}
+   ${L1&&s.starters.length?`<div><div class="lbl">Gợi ý mở câu (bấm để chèn)</div><div class="wt-chips">${s.starters.map(x=>`<button class="chip" data-gbstarter="${esc(x.replace(/…/g,""))}">${esc(x)}</button>`).join("")}</div></div>`:""}
+   ${s.use.length&&GB.level<3?`<div class="hint">Nên dùng: ${s.use.map(u=>GB_ST[u].n).join(" hoặc ")}</div>`:""}
+   <div class="wt-live" id="gb-tw"></div>
+   <textarea class="inp" id="gb-in" rows="${GB.level===3?9:4}" autocapitalize="sentences" placeholder="${W?"Viết ở đây":"Gõ ở đây, hoặc bấm micro trên bàn phím để nói"}">${esc(cur)}</textarea>
+   <div class="hint" id="gb-wc"></div><div id="gb-fb"></div>
+   ${L1&&s.pairs&&s.pairs.length?`<div id="gb-pairs" class="gb-ex" hidden><b>Gợi ý đổi từ:</b> ${s.pairs.map(x=>esc(x[0])+" → "+esc(x[1])).join("; ")}</div>`:""}
+   ${L1?`<div id="gb-ex" class="gb-ex" hidden><b>Câu mẫu${GB.type==="t1"?" (Simon, cùng đề)":" (chủ đề khác)"}:</b> ${esc(s.ex||"")}</div>`:""}
+   <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-end">${L1&&s.pairs&&s.pairs.length?`<button class="btn sm" data-gbpairs="1">Gợi ý đổi từ</button>`:""}${L1&&s.ex?`<button class="btn sm" data-gbex="1">Xem câu mẫu</button>`:""}${GB.i>0?`<button class="btn sm" data-gbprev="1">← Bước trước</button>`:""}<button class="btn" data-gbcheck="1">Kiểm tra</button><button class="btn primary" data-gbnext="1">${GB.i+1<n?"Bước tiếp →":"Hoàn thành →"}</button></div>`);
+  gbLive();const a=$("gb-in");if(a)a.focus();
+}
+function gbLive(){
+  const a=$("gb-in");if(!a)return;const s=gbSteps()[GB.i];GB.texts[GB.i]=a.value;
+  const w=gbWc(a.value);$("gb-wc").textContent=`${w} từ · mục tiêu tối thiểu ${s.minw}`;
+  const tw=gbThemeWords(),box=$("gb-tw");
+  if(box){if(!tw.length)box.hidden=true;else{const u=tw.filter(x=>puUsed(x.w,a.value));box.hidden=false;box.innerHTML=`<div class="lbl">Từ mục tiêu · đã dùng ${u.length}/${tw.length}</div><div class="wt-chips">${tw.slice(0,12).map(x=>`<span class="wt-chip ${u.includes(x)?"used":""}"><b>${esc(x.w)}</b>${u.includes(x)?"<i>✓</i>":""}</span>`).join("")}</div>`}}
+}
+function gbDoCheck(){
+  const s=gbSteps()[GB.i],t=($("gb-in").value||"").trim();
+  if(!t)return toast("Chưa có nội dung.",true);
+  const r=gbCheck(t,s);GB.checked[GB.i]=r;
+  $("gb-fb").innerHTML=`<div class="gb-chk">${r.map(x=>`<div class="${x.ok?"ok":x.soft?"soft":"bad"}"><span>${x.ok?"✓":x.soft?"○":"✗"}</span>${esc(x.t)}</div>`).join("")}</div>`;
+}
+function gbNext(){
+  const st=gbSteps(),s=st[GB.i];GB.texts[GB.i]=($("gb-in").value||"").trim();
+  if(!GB.texts[GB.i]&&!s.opt)return toast("Viết hoặc nói ít nhất một câu rồi mới sang bước tiếp.",true);
+  if(GB.i+1<st.length){GB.i++;gbShow()}else gbFinish();
+}
+function gbAssemble(){
+  const st=gbSteps(),paras=[],idx={};
+  st.forEach((s,i)=>{const t=(GB.texts[i]||"").trim();if(!t)return;if(!(s.para in idx)){idx[s.para]=paras.length;paras.push([])}paras[idx[s.para]].push(t)});
+  return paras.map(p=>p.join(" ")).join("\n\n");
+}
+function gbFinish(){
+  S.phase="result";
+  const st=gbSteps(),text=gbAssemble(),w=gbWc(text),W=GB.kind==="w",tw=gbThemeWords(),u=tw.filter(x=>puUsed(x.w,text));
+  const need=[...new Set(st.flatMap(x=>x.use))],got=need.filter(k=>GB_ST[k].rx.test(text));
+  const rng=W?(GB.type==="t1"?"150–190":GB.type==="paragraph"?"140–170":GB.type==="intro"?"30–50":"250–300"):(GB.type==="p2"?"200–260":GB.type==="p1"?"45–90":"70–120");
+  ls.set(gbKey(),String(Math.max(+ls.get(gbKey(),0),GB.level)));
+  GB.text=text;
+  studyFrame("result",`<div class="result" style="align-items:stretch;text-align:left"><div class="h1" style="text-align:center">Hoàn thành mức ${GB.level}</div>
+   <div class="gb-stats"><div><b>${w}</b><span>từ (mục tiêu ${rng})</span></div>${tw.length?`<div><b>${u.length}/${tw.length}</b><span>từ mục tiêu đã dùng</span></div>`:""}<div><b>${got.length}/${need.length}</b><span>cấu trúc nên dùng</span></div></div>
+   ${need.length&&got.length<need.length?`<p class="hint">Chưa dùng: ${need.filter(k=>!got.includes(k)).map(k=>GB_ST[k].n).join("; ")}. Lần sau thử thêm.</p>`:""}
+   <div class="gb-essay">${esc(text).replace(/\n\n/g,"</p><p>").replace(/^/,"<p>")+"</p>"}</div>
+   ${GB.type==="t1"?`<div class="lbl">So với bài mẫu</div>${gbT1Analysis(GB.pack)}`:""}
+   <p class="hint">${W?"Nộp để Claude chấm (nhắn \"chấm bài\"), hoặc đọc lại và sửa trước.":"Đọc to bài này vài lần, rồi thử nói lại không nhìn."} ${GB.level<3?"Lần sau thử mức "+(GB.level+1)+" để ít gợi ý hơn.":"Mức 3 đã xong: mày có thể vào mục Kỹ năng để tự chọn bài."}</p>
+   <div class="row" style="justify-content:center;gap:10px;flex-wrap:wrap"><button class="btn" id="r-done">Xong</button>${GB.level<3?`<button class="btn" data-gbup="1">Làm lại mức ${GB.level+1}</button>`:""}<button class="btn primary" data-gbsubmit="1">Nộp bài này</button></div></div>`);
+}
+function gbSubmit(){
+  const c=GB.cands[GB.ci]||{},W=GB.kind==="w";
+  const task=W?(GB.type==="paragraph"?"paragraph":GB.type==="intro"?"intro":GB.type==="t1"?"task1":"task2"):"speaking";
+  const p1=GB.type==="t1"&&GB.pack;const payload=W?{type:"writing",ref:p1?"Task 1: "+p1.title+" (có kèm cặp)":(TASKS[task]?TASKS[task].label:task)+": có kèm cặp",prompt:p1?p1.prompt+(p1.data?"\n[Số liệu từ hình]\n"+p1.data:""):c.text||"",answer:GB.text,selfScore:"",minutes:""}
+   :{type:"speaking",ref:"Part "+GB.type.slice(1)+": "+(c.topic||"")+" (có kèm cặp)",prompt:c.text||"",answer:GB.text,selfScore:"",minutes:""};
+  save("saveSubmission",payload).then(r=>{applyR(r);toast(W?"Đã nộp. Nhắn Claude \"chấm bài\" để được chấm.":"Đã nộp bài nói.");const b=document.querySelector("[data-gbsubmit]");if(b){b.disabled=true;b.textContent="Đã nộp"}}).catch(()=>{});
+}
+function gbEntry(){
+  const host=skill==="write"?$("sk-write"):skill==="speaking"?$("sk-speaking"):null;
+  if(!host||host.querySelector("#gb-entry"))return;
+  const W=skill==="write";
+  host.insertAdjacentHTML("afterbegin",`<div class="card gb-entry" id="gb-entry"><div><div class="h3">Luyện có kèm cặp · ${W?"Viết":"Nói"}</div><p class="hint">Làm từng câu theo khung của từng dạng bài, có gợi ý mở câu, cấu trúc nên dùng và bảng kiểm. Qua mức 1, 2, 3 rồi mày tự chọn bài ở dưới.</p></div><button class="btn primary" data-gbopen="${W?"w":"s"}">Bắt đầu</button></div>`);
+}
+document.addEventListener("click",e=>{
+  const t=e.target;
+  const o=t.closest("[data-gbopen]");if(o){gbOpen(o.dataset.gbopen);return}
+  const gw=t.closest("[data-gbw]");if(gw){const th=weekTheme(WT.w||wtCur()),it=wtPrompts(th)[+gw.dataset.gbw];if(!it)return;
+    if(it.type==="task1")return wtWrite(+gw.dataset.gbw);
+    const k=it.type==="paragraph"?"paragraph":(kindOf(it.text)||"opinion");gbOpen("w",k,0,it.text);return}
+  const gs=t.closest("[data-gbs]");if(gs){gbOpen("s","p1");return}
+  if(!S||!S.gb)return;
+  const ty=t.closest("[data-gbtype]");if(ty){GB.type=ty.dataset.gbtype;GB.ci=0;GB.pack=null;GB.packErr=false;GB.lvDone=+ls.get(gbKey(),0);GB.level=Math.min(3,GB.lvDone+1);GB.cands=gbCands(GB.kind,GB.type);gbSetup();if(GB.type==="t1")gbT1Load();return}
+  const lv=t.closest("[data-gblvl]");if(lv){GB.level=+lv.dataset.gblvl;gbSetup();return}
+  if(t.closest("[data-gbnew]")){GB.ci=(GB.ci+1)%Math.max(1,GB.cands.length);gbSetup();return}
+  const t1=t.closest("[data-gbt1]");if(t1){GB.t1=t1.dataset.gbt1;GB.ci=0;GB.pack=null;GB.packErr=false;GB.ana=false;GB.lvDone=+ls.get(gbKey(),0);GB.level=Math.min(3,GB.lvDone+1);GB.cands=gbCands("w","t1");gbSetup();gbT1Load();return}
+  if(t.closest("[data-gbana]")){GB.ana=!GB.ana;gbSetup();return}
+  if(t.closest("[data-gbpairs]")){const x=$("gb-pairs");if(x)x.hidden=!x.hidden;return}
+  if(t.closest("[data-gbstart]")){gbStart();return}
+  if(t.closest("[data-gbgo]")){gbShow();return}
+  const st=t.closest("[data-gbstarter]");if(st){const a=$("gb-in");if(a){a.value=(a.value?a.value+" ":"")+st.dataset.gbstarter;a.focus();gbLive()}return}
+  if(t.closest("[data-gbex]")){const x=$("gb-ex");if(x)x.hidden=!x.hidden;return}
+  if(t.closest("[data-gbcheck]")){gbDoCheck();return}
+  if(t.closest("[data-gbnext]")){gbNext();return}
+  if(t.closest("[data-gbprev]")){GB.texts[GB.i]=($("gb-in").value||"");GB.i--;gbShow();return}
+  if(t.closest("[data-gbsubmit]")){gbSubmit();return}
+  if(t.closest("[data-gbup]")){GB.level=Math.min(3,GB.level+1);gbStart();return}
+});
+document.addEventListener("input",e=>{if(e.target.id==="gb-in"&&S&&S.gb)gbLive()});
+document.addEventListener("change",e=>{const sel=e.target.closest&&e.target.closest("[data-gbsel]");if(sel&&S&&S.gb){GB.ci=+sel.value;GB.pack=null;GB.packErr=false;GB.ana=false;gbSetup();gbT1Load()}});
+
+(function(){const o=window.renderSkills;})();
+
+/* ================= Task 1 có kèm cặp (đề + hình + phân tích từ ebook, dữ liệu nằm trong Drive) ================= */
+const T1_TYPES=[["line","Line graph"],["bar","Bar chart"],["pie","Pie chart"],["table","Table"],["mixed","Nhiều biểu đồ"],["process","Quy trình"],["map","Bản đồ"]];
+const T1={idx:null,loading:false,err:false,packs:{},pl:{}};
+Object.assign(GB_ST,{
+  trend:{n:"động từ xu hướng (rose, fell, remained stable, peaked…)",rx:/\b(rose|rise|risen|rising|increase[ds]?|increasing|grew|grow|growth|climbed|fell|fall|fallen|falling|dropped|drop|decrease[ds]?|declined|decline|dipped|fluctuat\w+|remained|stable|peak(ed)?|surged|plunged|doubled|halved|tripled)\b/i},
+  num:{n:"số liệu cụ thể (năm, %, số lượng)",rx:/\d/},
+  cmp:{n:"so sánh/đối lập (while, by contrast, higher than, respectively)",rx:/\b(while|whereas|whilst|by contrast|in contrast|compared (with|to)|than|higher|lower|more|less|the most|the least|highest|lowest|respectively|similarly|likewise)\b/i},
+  seq:{n:"từ chỉ trình tự (first, then, next, finally, before, after that)",rx:/\b(first|firstly|initially|then|next|after that|afterwards|subsequently|following|finally|before|once|meanwhile|eventually|lastly|at this stage)\b/i},
+  loc:{n:"từ chỉ vị trí (to the north of, next to, opposite, between)",rx:/\b(north|south|east|west|northern|southern|eastern|western|next to|opposite|between|beside|alongside|adjacent|near|in the (centre|center|middle|corner)|on the (left|right))\b/i},
+  chg:{n:"từ chỉ thay đổi (was replaced, will be demolished, converted into, added)",rx:/\b(replaced|demolished|removed|converted|constructed|added|extended|relocated|turned into|knocked down|cleared|built|will be|has been|have been|new)\b/i},
+  ovw:{n:"câu Overview (It is clear that / Overall)",rx:/\b(it is clear|it is noticeable|it is evident|overall|in general|it can be seen|as can be seen|the most (notable|striking|noticeable))\b/i}
+});
+GB_TIPS.t1="Task 1: 150–190 từ, khoảng 20 phút. 4 đoạn: mở bài (viết lại đề), overview (nêu điểm nổi bật, KHÔNG có số liệu), 2 đoạn thân bài (số liệu hoặc các bước). Không đưa ý kiến cá nhân.";
+function t1Index(){
+  if(T1.idx||T1.loading)return;T1.loading=true;
+  call("getPack","writing/t1/_index.json",packVer).then(s=>{T1.idx=(JSON.parse(s).items)||[];T1.loading=false;if(S&&S.gb&&S.phase==="gbs")gbT1Refresh()})
+   .catch(()=>{T1.loading=false;T1.idx=[];T1.err=true;if(S&&S.gb&&S.phase==="gbs")gbT1Refresh()});
+}
+function t1Pack(id){
+  if(T1.packs[id])return Promise.resolve(T1.packs[id]);
+  if(T1.pl[id])return T1.pl[id];
+  return T1.pl[id]=call("getPack","writing/t1/"+id+".json",packVer).then(s=>{const p=JSON.parse(s);T1.packs[id]=p;delete T1.pl[id];return p}).catch(e=>{delete T1.pl[id];throw e});
+}
+function gbT1Refresh(){
+  GB.cands=gbCands("w","t1");GB.ci=Math.min(GB.ci,Math.max(0,GB.cands.length-1));GB.pack=null;gbSetup();gbT1Load();
+}
+function gbT1Load(){
+  const c=GB.cands[GB.ci];if(!c||!c.id)return;
+  t1Pack(c.id).then(p=>{if(S&&S.gb&&S.phase==="gbs"&&GB.cands[GB.ci]===c){GB.pack=p;gbSetup()}}).catch(()=>{if(S&&S.gb&&S.phase==="gbs"&&GB.cands[GB.ci]===c){GB.packErr=true;gbSetup()}});
+}
+const gbSplitS=t=>(String(t||"").match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g)||[]).map(x=>x.trim()).filter(Boolean);
+function gbT1Steps(p){
+  const ty=p.type,paras=String(p.model||"").split(/\n\n+/).map(x=>x.trim()).filter(Boolean);
+  const data=ty==="process"?"proc":ty==="map"?"map":"data",trendT=ty==="line"||ty==="mixed";
+  const nm={line:"line graph",bar:"bar chart",pie:"pie chart",table:"table",mixed:"charts",process:"diagram",map:"maps"}[ty]||"chart";
+  const st=[];
+  st.push({id:"t0",para:"Mở bài",label:"Mở bài · Viết lại đề",goal:"Một câu, viết lại đề bằng từ khác (đổi từ đồng nghĩa, đổi cấu trúc). Không chép nguyên văn.",starters:data==="proc"?["The diagram illustrates the process of…","The picture shows how … is produced."]:data==="map"?["The maps show the changes to … between … and …","The two maps compare … in … and …"]:["The "+nm+" compares …","The "+nm+" illustrates changes in … over a period of …"],minw:15,use:[],ex:paras[0]||"",pairs:p.intro||[]});
+  st.push({id:"t1",para:"Overview",label:"Overview · Điểm nổi bật",goal:data==="proc"?"Hai câu: nêu quá trình có bao nhiêu giai đoạn, bắt đầu từ đâu và kết thúc ở đâu. Chưa nêu chi tiết từng bước.":data==="map"?"Hai câu: nêu thay đổi lớn nhất và ý chung (thêm, bỏ, chuyển chỗ gì). Không đưa chi tiết nhỏ.":"Hai câu: chọn 2 điểm nổi bật nhất (xu hướng chung, nhóm cao nhất/thấp nhất, điểm giống/khác). Tuyệt đối không đưa số liệu cụ thể.",starters:["It is clear that…","Overall, …","It is noticeable that…"],minw:25,use:["ovw"],ex:paras[1]||""});
+  const bodies=paras.slice(2);const nb=Math.max(2,Math.min(3,bodies.length||2));
+  const G={
+    data:[["Nêu số liệu đầu kỳ (hoặc nhóm lớn nhất) của các đối tượng chính, kèm mốc thời gian.",["In 2000, … stood at …, while …","At the start of the period, …","Looking at …, …"],["num"]],
+          [trendT?"Mô tả xu hướng tiếp theo: động từ xu hướng + trạng từ + khoảng thời gian.":"Nêu tiếp các nhóm khác và so sánh với câu trước.",trendT?["Over the following … years, … rose steadily to …","…, before falling sharply to …"]:["By contrast, …","…, while …","… higher than …"],[trendT?"trend":"cmp"]],
+          ["Chuyển sang giai đoạn/nhóm còn lại; nêu điểm đáng chú ý nhất (cao nhất, thấp nhất, thay đổi lớn nhất).",["By …, …","A dramatic increase was seen from … to …","…, reaching a peak of …"],["num"]],
+          ["So sánh hoặc đối lập với đối tượng còn lại bằng While / By contrast; thử dùng respectively.",["By contrast, …","…, while …","… respectively."],["cmp"]]],
+    proc:[["Giai đoạn đầu của quy trình, dùng bị động (is/are + V3).",["The process begins with …","First, … is/are …"],["pass"]],
+          ["Nối các bước bằng từ chỉ trình tự; thử ghép câu bằng V-ing hoặc mệnh đề quan hệ.",["Next, …","These are then …, before being …","After that, …"],["seq"]],
+          ["Các giai đoạn giữa/sau, mỗi câu một hai bước, bị động.",["Following this, …","At this stage, …"],["seq","pass"]],
+          ["Giai đoạn cuối, kết thúc bằng sản phẩm hoặc điểm cuối của quy trình.",["Finally, …","At the final stage, …"],["seq"]]],
+    map:[["Mô tả bản đồ cũ/hiện trạng với từ chỉ vị trí.",["In 2004, … was located …","Currently, there is …"],["loc"]],
+         ["Các chi tiết còn lại của bản đồ cũ.",["To the north of …, there is …","Next to …, …"],["loc"]],
+         ["Mô tả thay đổi bằng bị động: was replaced / will be demolished / converted into.",["In 2024, … will be …","… will be replaced by …"],["chg"]],
+         ["Thay đổi nhỏ còn lại và vị trí mới của các công trình.",["In addition, …","… will be built to the east of …"],["chg","loc"]]]
+  }[data];
+  for(let b=0;b<nb;b++){
+    const ss=gbSplitS(bodies[b]||""),mid=ss.length>2?1:ss.length-1>0?1:ss.length,first=ss.slice(0,Math.max(1,mid)).join(" "),rest=ss.slice(Math.max(1,mid)).join(" ");
+    const a=b===0?G[0]:b===nb-1&&nb>2?G[3]:G[2],c=b===0?G[1]:G[3];
+    st.push({id:"b"+b+"a",para:"Thân bài "+(b+1),label:"Thân bài "+(b+1)+" · Câu đầu",goal:a[0],starters:a[1],minw:14,use:a[2],ex:first});
+    st.push({id:"b"+b+"b",para:"Thân bài "+(b+1),label:"Thân bài "+(b+1)+" · Các câu tiếp",goal:c[0],starters:c[1],minw:20,use:c[2],ex:rest});
+  }
+  return st;
+}
+function gbT1Analysis(p){
+  if(!p)return "";
+  const L=(t,h)=>h?`<div><div class="lbl">${t}</div>${h}</div>`:"";
+  return `<div class="gb-ana">
+   ${L("Mở bài · cách đổi từ",(p.intro||[]).length?`<div class="wt-chips">${p.intro.map(x=>`<span class="wt-chip"><b>${esc(x[0])}</b><small>→ ${esc(x[1])}</small></span>`).join("")}</div>`:"")}
+   ${L("Overview · chọn gì",p.overview?`<p>${esc(p.overview)}</p>`:"")}
+   ${L("Thân bài · chia thế nào",p.body?`<p>${esc(p.body)}</p>`:"")}
+   ${L("Khung câu dùng lại được",(p.frames||[]).length?`<ul>${p.frames.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"")}
+   ${L("Từ và cụm đáng học",(p.phrases||[]).length?`<div class="wt-chips">${p.phrases.map(x=>`<span class="wt-chip"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></span>`).join("")}</div>`:"")}
+   ${p.model?`<details class="gb-det"><summary>Bài mẫu đầy đủ${p.page?` (ebook trang ${p.page})`:""}</summary><div class="gb-essay">${esc(p.model).replace(/\n\n/g,"</p><p>").replace(/^/,"<p>")+"</p>"}</div></details>`:""}</div>`;
+}
+function gbT1Figure(p){
+  if(!p)return "";
+  return (p.imgs||[]).map(x=>`<img class="gb-fig" alt="Biểu đồ của đề" src="${esc(x)}">`).join("")+(p.data?`<details class="gb-det"><summary>Số liệu đọc từ hình</summary><div class="gb-data">${esc(p.data).replace(/\n/g,"<br>")}</div></details>`:"");
+}
+</script>
 </body>
 </html>
