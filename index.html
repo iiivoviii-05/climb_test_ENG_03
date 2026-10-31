@@ -1405,7 +1405,7 @@ const GOALS=[250,400,600];
 
 /* ================= Lịch 12 tuần ================= */
 const BOOKS=[{key:"grammar",name:"Collins Grammar",units:GUNITS.map(u=>u.en)},{key:"listening",name:"Collins Listening",units:["On the move","Being young","Climate","Family structures","Starting university","Fame","Alternative energy","Migration","At the gym","At the office","Local languages","Practice test"]},{key:"reading",name:"Collins Reading",units:["Family matters","Healthcare","Getting an education","Water","Non-verbal clues","Scientists at work","The job market","Twenty-somethings","Community spirit","On the move","Cultural differences","Practice test"]}];
-const HOLIDAYS={"2026-12-25":"Giáng sinh","2027-01-01":"Năm mới"};
+const HOLIDAYS={"2026-12-25":"Giáng sinh","2027-01-01":"Năm mới","2027-02-08":"Tết/Seollal (nghỉ bù)"};
 const SRS=[0,1,3,7,14,30,60];
 const TASKS={paragraph:{label:"Đoạn văn 150 từ",min:150,max:200,paras:[1,1]},intro:{label:"Mở bài",min:25,max:80,paras:[1,1]},task1:{label:"Task 1",min:150,max:220,paras:[3,4]},task2:{label:"Task 2",min:250,max:320,paras:[4,5]}};
 function buildPlan(){
@@ -1431,6 +1431,18 @@ function buildPlan(){
       {am:{task:"Viết đoạn 150 từ, nộp chấm"},pm:{task:gB?`Grammar U${gB}: exam practice, sửa bài viết`:"Ôn tổng tuần, sửa bài viết"}}
     ].map((d,i)=>({...d,date:addDays(mon,i)}));
     weeks.push({n:w,label:"Tuần "+w,days,units:[gA?`Grammar U${gA}–${gB}`:"Grammar ôn tập",`Listening U${w}`,`Reading U${w}`].join(", ")});
+  }
+  const CAMB=[18,19,20];
+  for(let w=13;w<=24;w++){
+    const mon=addDays(start,(w-1)*7),N=CAMB[Math.floor((w-13)/4)],K=(w-13)%4+1,T=`Cambridge ${N} Test ${K}`,du=w-12;
+    const days=[
+      {am:{task:`${T}: Listening, làm trọn 40 câu${K===4?" (thi thử, tính giờ)":""}`},pm:{task:`${T}: phân tích transcript Listening, ghi sổ lỗi`}},
+      {am:{task:`${T}: Reading Passage 1`},pm:{task:`${T}: Reading Passage 2`}},
+      {am:{task:`${T}: Writing Task 2 (chọn đề ở ô Đề Cambridge trong Viết & chấm)`},pm:{task:`${T}: Reading Passage 3`}},
+      {am:{task:`Sửa bài Task 2 theo nhận xét, từ vựng Destination B2 Unit ${du}`},pm:{task:`${T}: Speaking Part 1–3 (chọn thẻ Cam ${N} · Test ${K})`}},
+      {am:{task:`${T}: Writing Task 1 (xem hình trong sách)`},pm:{task:`Ôn tuần: sổ lỗi, từ đến hạn, ôn Destination B2 Unit ${du}`}}
+    ].map((d,i)=>({...d,date:addDays(mon,i)}));
+    weeks.push({n:w,label:"Tuần "+w,days,units:`${T}${K===4?" · thi thử":""}`});
   }
   weeks.forEach(w=>w.days.forEach(d=>{d.k=iso(d.date);d.hol=d.opt?"khởi động":HOLIDAYS[d.k]||""}));
   return weeks;
@@ -1753,7 +1765,7 @@ function renderPath(){
    words:["Xưởng từ","Hiểu sâu và dùng đúng từ","Sổ từ phim & sách, dạng từ, kết hợp từ, nâng cấp từ, paraphrase và bẫy True/False/Not Given. Mỗi câu luyện có lịch ôn riêng."],
    week:["Chủ đề tuần","Mỗi tuần một chủ điểm","Học từ vựng, luyện dùng, viết và nói quanh cùng một chủ đề. Ngữ pháp và sách vẫn theo lịch học."],
    grammar:["Lộ trình ngữ pháp","Collins Grammar, 20 unit","Mỗi unit: tóm tắt lý thuyết bằng tiếng Việt, lỗi hay gặp, rồi 16 câu kiểm tra ở 3 mức Dễ, Vừa, Khó để lên hạng từ Sắt tới Kim cương. Unit đã tick xong trong sách được mở sẵn."],
-   plan:["Lịch học Stage 1","12 tuần · 2/11/2026 → 22/1/2027","Lộ trình bắt buộc theo sách: Collins Grammar (20 unit), Collins Listening và Collins Reading (12 unit mỗi cuốn), mỗi tuần 1 bài viết và luyện nói. Tài liệu trên web là phần bổ trợ. Tick từng ca sau khi học; ngày đỏ là ngày còn nợ, học bù rồi tick lại. Tuần 0 là khởi động tự chọn."]}[pathMode];
+   plan:["Lịch học 2 giai đoạn","24 tuần · 2/11/2026 → 16/4/2027","Stage 1 (tuần 1–12, đến 22/1/2027) và Stage 2 (tuần 13–24, từ 25/1/2027). Stage 2: mỗi tuần một đề Cambridge (Cam 18, 19, 20), làm Listening, 3 bài Reading, Writing Task 1 và 2, Speaking, kèm từ vựng Destination B2; tuần thứ tư của mỗi quyển là thi thử có tính giờ. Mục tiêu cuối Stage 2: khoảng 5.5–6.0, mục tiêu cuối cùng 7.0. Stage 1: lộ trình bắt buộc theo sách: Collins Grammar (20 unit), Collins Listening và Collins Reading (12 unit mỗi cuốn), mỗi tuần 1 bài viết và luyện nói. Tài liệu trên web là phần bổ trợ. Tick từng ca sau khi học; ngày đỏ là ngày còn nợ, học bù rồi tick lại. Tuần 0 là khởi động tự chọn."]}[pathMode];
   let body="";
   if(pathMode==="vocab"){loadVIndex();
     const chips=`<div class="rfilters vsets"><button class="chip" data-vset="core" aria-pressed="${vset==="core"}">Chủ đề IELTS</button>${vSets().map(x=>`<button class="chip" data-vset="${x.id}" aria-pressed="${vset===x.id}">${esc(x.name)}</button>`).join("")}${!VIDX?(vIdxFail&&!vIdxLoading?`<button class="chip" data-vreload>Chưa tải được các bộ từ khác · Thử lại</button>`:`<span class="hint">đang tải bộ từ…</span>`):""}</div>`;
@@ -4333,7 +4345,9 @@ document.addEventListener("input",e=>{if(e.target.id==="rt-q"){WL.rtQ=e.target.v
    Ca học có "Listening U3" → mở lcol-03; "Reading U3: chiến lược và bài 1" → bài kỹ năng rcolp-03; "Reading U3: bài 2" → exam practice rcol-03.
    Làm xong (nộp cả bài) thì tự tick đúng ca đó: hôm nay nếu trùng, nếu không thì ngày còn nợ sớm nhất có cùng nhiệm vụ. */
 function planPackFor(task){
-  const t=String(task||"");let m=t.match(/Listening U(\d+)/);
+  const t=String(task||"");const cb=t.match(/^Cambridge (\d+) Test (\d): (Listening, làm trọn|Reading Passage (\d))/);
+  if(cb)return cb[4]?`cam${cb[1]}-${pad(3*(+cb[2]-1)+(+cb[4]))}`:`lcam${cb[1]}-${pad(+cb[2])}`;
+  let m=t.match(/Listening U(\d+)/);
   if(m)return "lcol-"+pad(+m[1]);
   m=t.match(/Reading U(\d+)/);if(!m)return null;const n=+m[1];
   if(n===12)return /bài 2/.test(t)?"rcol-13":"rcol-12";
@@ -4341,7 +4355,7 @@ function planPackFor(task){
 }
 function planPackBtn(task){
   const id=planPackFor(task);if(!id)return "";
-  const L=id.startsWith("lcol");
+  const L=/^l/.test(id);
   if(L){if(!LIDX)loadLIndex();if(!lItem(id))return ""}
   else{if(!RIDX)loadRIndex();if(!rItem(id))return ""}
   const done=(rstats.latest||{})[id];
@@ -4858,7 +4872,7 @@ const WT={w:0,live:null,loading:{}};
 /* chủ đề của 12 unit Collins Reading → dùng để chọn đề Viết, chủ đề Speaking và bài đọc cùng chủ đề */
 const WT_RX=[/family|parent|child|marriage|generation|relationship/i,/health|medic|disease|doctor|drug|hospital|diet|obes/i,/educat|school|student|universit|learn|teach/i,/\bwater\b|river|ocean|drought|\bsea\b|flood|irrigation/i,/communicat|language|body|gesture|speech|emotion|\bface/i,/scien|research|experiment|discover|space|laborator/i,/\bjob|\bwork|employ|career|labour|labor|unemploy|skill/i,/young|youth|\badult|generation|graduate|millennial/i,/communit|volunteer|neighbo|social|charit|public/i,/transport|travel|migrat|\bcity|cities|traffic|commut|touris/i,/cultur|tradition|custom|global|language|identity/i,null];
 const wtRx=w=>WT_RX[w-1]||/$^/;
-function wtCur(){const c=PLAN.findIndex(w=>w.n>0&&w.days.some(d=>d.k>=todayISO));return c<0?12:c}
+function wtCur(){const c=PLAN.findIndex(w=>w.n>0&&w.days.some(d=>d.k>=todayISO));return c<0?12:Math.min(12,c)}
 function wtLoad(w){
   const id="rcol-"+pad(w);
   if(PACKS[id]||WT.loading[id])return;
@@ -4938,7 +4952,7 @@ function weekHTML(){
 /* nhiệm vụ nhỏ của chủ đề tuần hiện trên Trang chủ */
 function wtHomeItems(){
   const wi=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
-  if(wi<1)return [];
+  if(wi<1||wi>12)return [];
   const th=weekTheme(wi);wtLoad(wi);
   const dow=fromISO(todayISO).getDay(),i=dow>=1&&dow<=5?dow-1:-1,out=[];
   const lastSeen=id=>(rstats.latest||{})[id]&&(rstats.latest||{})[id].date===todayISO;
@@ -4980,7 +4994,7 @@ document.addEventListener("input",e=>{if(e.target.id==="w-ans")wtLive()});
 /* ================= Nhiệm vụ tuần bắt buộc trên Trang chủ ================= */
 function wtMust(){
   const wi=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
-  if(wi<1)return null;
+  if(wi<1||wi>12)return null;
   const th=weekTheme(wi);wtLoad(wi);const mon=PLAN[wi].days[0].k;
   const seen=(id,d)=>{const x=(rstats.latest||{})[id];return !!(x&&x.date===d)};
   const subOn=(d,sp)=>subs.some(s=>String(s.created).slice(0,10)===d&&(sp?s.type==="speaking":s.type!=="speaking"));
