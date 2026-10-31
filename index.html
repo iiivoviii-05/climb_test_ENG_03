@@ -3605,14 +3605,14 @@ function spPracticeHTML(){
      <label class="fld">Chủ đề<select id="sp-p1"><option value="">Ngẫu nhiên</option>${p1.map(t=>`<option value="${t.id}">${esc(t.topic)} · ${esc(t.vi)}</option>`).join("")}</select></label>
      <button class="btn primary" data-spk="p1">Bắt đầu Part 1 ${I.arrow}</button></div>
     <div class="card cont"><div class="kicker">Part 2 + 3 · 8–10 phút</div><div class="ttl">Thẻ đề và thảo luận</div><p class="hint">1 phút chuẩn bị, nói 2 phút theo thẻ đề, rồi 4 câu thảo luận sâu hơn.</p>
-     <label class="fld">Thẻ đề<select id="sp-p2"><option value="">Ngẫu nhiên</option>${p2.map(t=>`<option value="${t.id}">${esc(t.topic)}</option>`).join("")}</select></label>
+     <label class="fld">Thẻ đề<select id="sp-p2"><option value="">Ngẫu nhiên</option>${p2.map(t=>`<option value="${t.id}">${esc(t.topic)}${t.tag?" · "+esc(t.tag):""}</option>`).join("")}</select></label>
      <button class="btn primary" data-spk="p2">Bắt đầu Part 2 ${I.arrow}</button></div>
     <div class="card cont"><div class="kicker">Thi thử · 12–14 phút</div><div class="ttl">Đủ 3 phần</div><p class="hint">4 câu Part 1, thẻ đề Part 2, 4 câu Part 3. Nên tắt gợi ý để giống thi thật.</p>
      <button class="btn sun" data-spk="full">Thi thử đầy đủ ${I.arrow}</button></div>
    </div>
    <div class="card cont"><div class="kicker">Part 3 hỏi vặn · dùng Claude hoặc ChatGPT voice (không tốn thêm phí)</div><div class="ttl">Bị hỏi dồn như giám khảo thật</div>
      <p class="hint">Web soạn sẵn lời dặn cho giám khảo: hỏi từng câu, bắt giải thích, đưa ví dụ, xét ý kiến ngược lại, so sánh quá khứ và tương lai, rồi nhận xét bằng tiếng Việt. Copy, mở app voice, dán vào và bắt đầu nói.</p>
-     <div class="row" style="gap:8px;align-items:flex-end"><label class="fld">Chủ đề<select id="sp-p3">${p2.map(t=>`<option value="${t.id}">${esc(t.topic)}</option>`).join("")}</select></label><button class="btn" data-p3prompt style="flex:none">Tạo lời dặn ${I.arrow}</button></div></div>
+     <div class="row" style="gap:8px;align-items:flex-end"><label class="fld">Chủ đề<select id="sp-p3">${p2.map(t=>`<option value="${t.id}">${esc(t.topic)}${t.tag?" · "+esc(t.tag):""}</option>`).join("")}</select></label><button class="btn" data-p3prompt style="flex:none">Tạo lời dặn ${I.arrow}</button></div></div>
    <label class="mini card" style="padding:14px 16px"><input type="checkbox" id="sp-coach" ${coach?"checked":""}><span><b>Gợi ý ngay sau mỗi câu trả lời</b><br><span class="hint">Chỉ ra chỗ cần thêm và đưa một câu trả lời mẫu từ chính ý của mày. Tắt đi khi muốn thi thử như thật.</span></span></label>
    <div class="card"><h3 class="h3">Cách nói bằng micro</h3><ol class="steps" style="margin-top:8px">
      <li>Nghe câu hỏi (bấm "Nghe lại" nếu cần), rồi chạm vào ô trả lời.</li>
@@ -5340,6 +5340,78 @@ function gbT1Figure(p){
   if(!p)return "";
   return (p.imgs||[]).map(x=>`<img class="gb-fig" alt="Biểu đồ của đề" src="${esc(x)}">`).join("")+(p.data?`<details class="gb-det"><summary>Số liệu đọc từ hình</summary><div class="gb-data">${esc(p.data).replace(/\n/g,"<br>")}</div></details>`:"");
 }
+
+/* ---------- Đề Cambridge 18–21: Writing + Speaking (đọc từ writing/cambridge, speaking/cambridge) ---------- */
+let CAMW=null,CAMS=null,camLoading=false,camFail=0;
+const CAMN=[18,19,20,21];
+const CAMKIND={line:"biểu đồ đường",bar:"biểu đồ cột",pie:"biểu đồ tròn",table:"bảng số liệu",map:"bản đồ",process:"quy trình",mixed:"biểu đồ kết hợp"};
+function loadCam(force){
+  if(CAMW||camLoading||(!force&&Date.now()-camFail<20000))return;
+  camLoading=true;
+  call("getPacks",[...CAMN.map(n=>`writing/cambridge/cam${n}.json`),...CAMN.map(n=>`speaking/cambridge/cam${n}.json`)],packVer).then(a=>{
+    const ps=s=>{try{return s?JSON.parse(s):null}catch(e){return null}};
+    const w=a.slice(0,4).map(ps).filter(Boolean),sp=a.slice(4,8).map(ps).filter(Boolean);
+    if(!w.length&&!sp.length)throw new Error("cam");
+    CAMW=w;CAMS=sp;camLoading=false;camMerge();camRerender();
+  }).catch(()=>{camLoading=false;camFail=Date.now()});
+}
+function camMerge(){
+  const cl=s=>String(s||"").replace(/\s*\[[^\]]*\]/g,"").trim();
+  (CAMW||[]).forEach(p=>p.tests.forEach(t=>{
+    if(t.t2&&t.t2.prompt&&!PROMPTS.task2.some(x=>x[1]===t.t2.prompt))PROMPTS.task2.push([t.t2.kind||"opinion",t.t2.prompt]);
+  }));
+  (CAMS||[]).forEach(p=>{const n=String(p.id).replace("cam","");p.tests.forEach(t=>{
+    const tag=`Cam ${n} · Test ${t.test}`;
+    (t.part1||[]).forEach((x,i)=>{const id=`c${n}t${t.test}p1${i}`;if(!SPEAK.part1.some(y=>y.id===id))SPEAK.part1.push({id,topic:x.topic,vi:tag,qs:(x.qs||[]).map(cl)})});
+    if(t.part2&&t.part2.card){
+      const id=`c${n}t${t.test}p2`,g={};(t.part3||[]).forEach(y=>{(g[y.topic]=g[y.topic]||[]).push(cl(y.q))});
+      const ks=Object.keys(g),o=[];ks.forEach(k=>o.push(...g[k].slice(0,2)));ks.forEach(k=>o.push(...g[k].slice(2)));
+      if(!SPEAK.part2.some(y=>y.id===id))SPEAK.part2.push({id,topic:t.part2.topic,tag,card:t.part2.card,bullets:t.part2.bullets||[],last:t.part2.last||"",part3:o});
+    }
+  })});
+}
+function camRerender(){
+  if(S||RD||DT||SP)return;
+  if(tab==="skills"&&skill==="speaking")renderSpeaking();
+  else if(tab==="skills"&&skill==="write"&&typeof updateWriteForm==="function")updateWriteForm();
+}
+function camPicker(){
+  const rb=$("w-random");if(!rb||!CAMW||!CAMW.length)return;
+  let sel=$("w-cam");
+  if(!sel){sel=document.createElement("select");sel.id="w-cam";sel.className="inp";sel.setAttribute("aria-label","Chọn đề Cambridge");sel.style.cssText="flex:1;min-width:0;max-width:280px";rb.parentNode.insertBefore(sel,rb);sel.addEventListener("change",camPick);
+    const nt=document.createElement("div");nt.id="w-camnote";nt.className="soft small";nt.hidden=true;const fig=$("w-fig");fig.parentNode.insertBefore(nt,fig)}
+  const key=CAMW.map(p=>p.id+p.tests.length).join();
+  if(sel.dataset.k===key)return;
+  sel.dataset.k=key;
+  sel.innerHTML=`<option value="">Đề Cambridge…</option>`+CAMW.map(p=>{const n=String(p.id).replace("cam","");
+    return `<optgroup label="Cambridge ${n}">`+p.tests.map(t=>{
+      let h="";
+      if(t.t1&&t.t1.prompt)h+=`<option value="${n}|${t.test}|1">Test ${t.test} · Task 1 · ${esc(CAMKIND[t.t1.kind]||t.t1.kind||"")}</option>`;
+      if(t.t2&&t.t2.prompt)h+=`<option value="${n}|${t.test}|2">Test ${t.test} · Task 2 · ${esc(t.t2.title||"")}</option>`;
+      return h}).join("")+`</optgroup>`}).join("");
+}
+function camPick(){
+  const sel=$("w-cam"),v=sel.value;if(!v)return;
+  const [n,tn,k]=v.split("|"),p=CAMW.find(x=>String(x.id)==="cam"+n),t=p&&p.tests.find(x=>String(x.test)===tn),o=t&&(k==="1"?t.t1:t.t2);
+  if(!o)return;
+  let prompt=o.prompt,note=`<b>Cambridge ${n} · Test ${tn} · Task ${k}</b>${o.title?`: ${esc(o.title)}`:""}`;
+  if(k==="1"){
+    if(o.needsImage){const l=`[Biểu đồ: xem trang ${o.page} sách Cambridge IELTS ${n}]`;prompt+="\n\n"+l;note+=`<br>Biểu đồ nằm ở <b>trang ${o.page}</b> sách Cambridge IELTS ${n}. Mở sách xem hình rồi viết, web không có hình này.`}
+    else if(o.data){prompt+="\n\n[Số liệu] "+o.data;note+=`<br>Số liệu đã kèm trong đề bài (sách trang ${o.page}).`}
+  }else if(o.page)note+=` · sách trang ${o.page}`;
+  $("w-type").value=k==="1"?"task1":"task2";
+  $("w-ref").value=`Cambridge ${n} Test ${tn}`;
+  $("w-prompt").value=prompt;$("w-prompt").rows=Math.min(10,Math.max(3,prompt.split("\n").length+2));
+  const nt=$("w-camnote");nt.innerHTML=note;nt.dataset.p=prompt;nt.hidden=false;
+  sel.value="";
+  $("wform").dispatchEvent(new Event("input"));
+}
+(function(){
+  const _uw=updateWriteForm;
+  updateWriteForm=function(){loadCam();camPicker();const nt=$("w-camnote");if(nt&&!nt.hidden&&nt.dataset.p!==$("w-prompt").value)nt.hidden=true;return _uw.apply(this,arguments)};
+  const _rs=renderSpeaking;
+  renderSpeaking=function(){loadCam();return _rs.apply(this,arguments)};
+})();
 </script>
 </body>
 </html>
