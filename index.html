@@ -5033,6 +5033,7 @@ function wtLive(){
   box.innerHTML=`<div class="lbl">Từ mục tiêu tuần này · đã dùng ${u.length}/${WT.live.length}</div><div class="wt-chips">${WT.live.map(x=>`<span class="wt-chip ${u.includes(x)?"used":""}"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small>${u.includes(x)?"<i>✓</i>":""}</span>`).join("")}</div>`;
 }
 document.addEventListener("click",e=>{
+  if(e.target.closest("[data-wtwaive]")){if(confirm("Đánh dấu tất cả nhiệm vụ nợ của các ngày đã qua là đã xong?"))wtWaive();return}
   const g=e.target.closest("[data-wtgo]");if(g&&!g.disabled){WT.w=Math.min(12,Math.max(1,(WT.w||wtCur())+(+g.dataset.wtgo)));renderPath();return}
   const w=e.target.closest("[data-wtwrite]");if(w){wtWrite(+w.dataset.wtwrite);return}
   const d=e.target.closest("[data-wtday]");if(d&&!d.disabled){wtStartDay(+d.dataset.wtday,+d.dataset.wtweek||0);return}
@@ -5047,6 +5048,7 @@ function wtMust(){
   const wi=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
   if(wi<1||wi>12)return null;
   const th=weekTheme(wi);wtLoad(wi);const mon=PLAN[wi].days[0].k;
+  const wv=(d,k)=>!!ls.get("ielts-wtw-"+d+"-"+k,"")||(evLog||[]).some(e=>e.k==="wordlab"&&e.r==="wt:"+d+":"+k);
   const seen=(id,d)=>{const x=(rstats.latest||{})[id];return !!(x&&String(x.date)>=d)};
   const subOn=(d,sp)=>subs.some(s=>String(s.created).slice(0,10)>=d&&(sp?s.type==="speaking":s.type!=="speaking"));
   const rds=wtReads(th),rd=rds[0],rids=[...rds.map(x=>x.id),"rcol-"+pad(wi)].filter(Boolean);
@@ -5054,14 +5056,35 @@ function wtMust(){
   for(let i=0;i<7;i++){
     const d=addISO(mon,i),t=[];
     if(i<5){const nw=th.words.filter(x=>x.li===i);
-      t.push({done:wtDone(d),title:th.loaded?`Học ${nw.length} từ mới và luyện dùng`:"Đang tải từ của tuần…",sub:nw.map(x=>x.w).join(", ")+(th.loaded?" · kèm 4 câu từ nối và paraphrase":""),btn:th.loaded?`data-wtday="${i}" data-wtweek="${wi}"`:"",label:"Học"})}
+      t.push({k:"vocab",done:wtDone(d),title:th.loaded?`Học ${nw.length} từ mới và luyện dùng`:"Đang tải từ của tuần…",sub:nw.map(x=>x.w).join(", ")+(th.loaded?" · kèm 4 câu từ nối và paraphrase":""),btn:th.loaded?`data-wtday="${i}" data-wtweek="${wi}"`:"",label:"Học"})}
     else if(i===5){
-      t.push({done:rids.some(id=>seen(id,d)),title:rd?`Reading cùng chủ đề: ${rd.title}`:"Làm lại bài đọc Collins của tuần",sub:"Ôn từ mục tiêu qua bài đọc",btn:`data-ropen="${rids[0]}"`,label:"Làm"});
-      t.push({done:subOn(d,false),title:`Viết về chủ đề: ${th.name}`,sub:"Viết từng câu theo khung, có bảng kiểm",btn:'data-gbw="0"',label:"Viết"})}
-    else t.push({done:subOn(d,true),title:`Nói về chủ đề: ${th.name}`,sub:"Nói từng câu theo khung, rồi đối chiếu bài mẫu",btn:'data-gbs="1"',label:"Nói"});
+      t.push({k:"read",done:wv(d,"read")||rids.some(id=>seen(id,d)),title:rd?`Reading cùng chủ đề: ${rd.title}`:"Làm lại bài đọc Collins của tuần",sub:"Ôn từ mục tiêu qua bài đọc",btn:`data-ropen="${rids[0]}"`,label:"Làm"});
+      t.push({k:"write",done:wv(d,"write")||subOn(d,false),title:`Viết về chủ đề: ${th.name}`,sub:"Viết từng câu theo khung, có bảng kiểm",btn:'data-gbw="0"',label:"Viết"})}
+    else t.push({k:"speak",done:wv(d,"speak")||subOn(d,true),title:`Nói về chủ đề: ${th.name}`,sub:"Nói từng câu theo khung, rồi đối chiếu bài mẫu",btn:'data-gbs="1"',label:"Nói"});
     days.push({i,d,t,ok:t.every(x=>x.done)});
   }
-  return {wi,th,days};
+  const res={wi,th,days};setTimeout(()=>wtSyncLocal(res),1500);
+  return res;
+}
+/* một lần: các ngày đã học bù trước đây chỉ có dấu trên máy này → gửi lên máy chủ để máy khác cũng thấy (không cộng mét, không đếm bài) */
+const WTSYNC={};
+function wtSyncLocal(m){
+  if(WTSYNC.on)return;WTSYNC.on=1;
+  m.days.forEach(x=>{if(x.i>4||x.d>todayISO)return;
+    const has=(evLog||[]).some(e=>e.k==="wordlab"&&e.r==="wt:"+x.d);
+    if(has||!ls.get("ielts-wt-"+x.d,"")||ls.get("ielts-wt-sync-"+x.d,""))return;
+    callRaw("saveWordLab",[{results:[],correct:0,answered:0,ref:"wt:"+x.d,eid:newEid()}],true).then(()=>{ls.set("ielts-wt-sync-"+x.d,"1");try{evLog.push({d:todayISO,k:"wordlab",r:"wt:"+x.d,x:0,data:{}})}catch(e){}}).catch(()=>{})});
+}
+/* xóa nợ: đánh dấu các nhiệm vụ của ngày đã qua là xong (lưu trên máy và gửi máy chủ để đồng bộ) */
+function wtWaive(){
+  const m=wtMust();if(!m)return;let n=0;
+  m.days.forEach(x=>{if(x.d>=todayISO||x.ok)return;
+    x.t.filter(y=>!y.done).forEach(y=>{
+      const ref="wt:"+x.d+(y.k==="vocab"?"":":"+y.k);
+      ls.set(y.k==="vocab"?"ielts-wt-"+x.d:"ielts-wtw-"+x.d+"-"+y.k,"1");
+      try{evLog.push({d:todayISO,k:"wordlab",r:ref,x:0,data:{}})}catch(e){}
+      callRaw("saveWordLab",[{results:[],correct:0,answered:0,ref,eid:newEid()}],true).catch(()=>{});n++})});
+  toast(n?`Đã xóa nợ ${n} nhiệm vụ`:"Không có nợ để xóa");render();
 }
 function wtPending(){const m=wtMust();if(!m)return false;return m.days.some(x=>x.d<=todayISO&&!x.ok)}
 function wtMustHTML(){
@@ -5077,6 +5100,7 @@ function wtMustHTML(){
    ${pend?`<div class="wt-warn">${late.length?`Còn nợ ${late.length} ngày. Bù xong mới được coi là hoàn thành tuần.`:"Phải xong hôm nay. Phần bổ trợ bên dưới tạm làm mờ cho tới khi làm xong."}</div>`:`<div class="wt-warn ok">Đã xong hết nhiệm vụ tuần tính tới hôm nay.</div>`}
    ${late.map(x=>row(x,x,"late")).join("")}
    ${today?row(today,today,"today"):""}
+   ${late.length?`<p class="hint" style="margin:4px 0 0"><button class="linkbtn" data-wtwaive="1">Xóa nợ: đánh dấu các ngày đã qua là xong</button></p>`:""}
    <p class="hint" style="margin:4px 0 0">Muốn xem cả tuần: <button class="linkbtn" data-wtopen="1">Mở trang Chủ đề tuần</button></p>
   </section>`;
 }
