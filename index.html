@@ -4777,8 +4777,9 @@ document.addEventListener("click",e=>{
   const th=e.target.closest("[data-theory]");
   if(th){closeDlg();startStudy(th.dataset.theory,false,true);return}
   const ps=e.target.closest("[data-pustart]");
-  if(ps){const n=+ps.dataset.pustart,th=ps.dataset.pute?wtWords(+ps.dataset.pud):null;if(S&&S.pu)quitStudy(true);puStart(n,th);return}
+  if(ps){const n=+ps.dataset.pustart,th=ps.dataset.pute?wtWords(+ps.dataset.pud,+ps.dataset.pwk||0):null;if(S&&S.pu)quitStudy(true);puStart(n,th);return}
   if(S&&S.pu&&e.target.closest("#pu-next"))return puNext();
+  const mc=e.target.closest("[data-pumc]");if(mc&&S&&S.pu&&!S.answered)return puMc(+mc.dataset.pumc);
 });
 document.addEventListener("submit",e=>{if(e.target.id==="pu-form"){e.preventDefault();puCheck()}});
 document.addEventListener("input",e=>{if(e.target.id==="pu-in"){const b=$("pu-sub");if(b)b.disabled=!e.target.value.trim()}});
@@ -4816,8 +4817,8 @@ function puHTML(){
    <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn" data-pustart="5">5 từ</button><button class="btn primary" data-pustart="8">8 từ</button><button class="btn" data-pustart="10">10 từ</button></div>
    <p class="hint">Từ lấy từ các bài từ vựng mày đã qua và sổ ôn tập. Ở việc viết/nói câu, trên iPhone mày bấm micro của bàn phím để nói thay vì gõ.</p></div>`;
 }
-function puStart(n,theme,fresh){
-  fresh=fresh||[];
+function puStart(n,theme,fresh,extra){
+  fresh=fresh||[];extra=extra||[];
   const items=(theme&&theme.length?theme:puPool()).map(w=>({id:puId(w),w}));
   const fk=new Set(fresh.map(x=>x.w));
   const words=[...fresh,...wlPick(items.filter(x=>!fk.has(x.w.w)),Math.max(0,n-fresh.length)).map(x=>x.w)];
@@ -4828,13 +4829,21 @@ function puStart(n,theme,fresh){
   info.filter(x=>fk.has(x.w.w)).forEach(x=>tasks.push({k:"see",x}));
   info.forEach(x=>tasks.push({k:"type",x}));
   info.forEach(x=>{if(x.c)tasks.push({k:"cloze",x})});
-  info.forEach((x,i)=>tasks.push({k:x.sent&&i%2===0&&canSpeak()?"dict":"own",x}));
-  S={L:{key:"pu",kind:"vocab",checkpoint:true},review:"pu",pu:true,pute:!!(theme&&theme.length),mission:fresh.length>0,pud:theme&&theme.length?Math.max(...theme.map(x=>x.li)):NaN,phase:"pu",xp:0,tasks,ti:0,res:{},answered:false,nWords:words.length};
+  /* nhiệm vụ tuần (có chủ đề) không có phần nghe: thay bằng từ nối và paraphrase */
+  info.forEach((x,i)=>tasks.push({k:!(theme&&theme.length)&&x.sent&&i%2===0&&canSpeak()?"dict":"own",x}));
+  extra.forEach(q=>tasks.push({k:"mc",q}));
+  S={L:{key:"pu",kind:"vocab",checkpoint:true},review:"pu",pu:true,mres:{},pute:!!(theme&&theme.length),mission:fresh.length>0,pud:theme&&theme.length?Math.max(...theme.map(x=>x.li)):NaN,phase:"pu",xp:0,tasks,ti:0,res:{},answered:false,nWords:words.length};
   $("study").hidden=false;document.body.style.overflow="hidden";puShow();
 }
 function puShow(){
-  const t=S.tasks[S.ti],w=t.x.w,n=S.tasks.length;S.answered=false;
-  if(t.k==="see"){studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Từ mới của tuần${w.src?" · từ "+w.src:""} · ${S.ti+1}/${n}</div><div class="qtext"><b>${esc(w.w)}</b> ${w.pos?`<span class="muted">(${esc(w.pos)})</span>`:""}</div><div class="hint">${esc(w.vi)}</div></div></div><div><button class="btn primary" type="button" data-say="${esc(w.w)}">${I.sound} Nghe</button></div>${w.ex[0]?`<div class="soft small">Ví dụ: “…${esc(w.ex[0])}…”</div>`:""}${w.syn?`<div class="soft small">Đồng nghĩa: ${esc(w.syn)}</div>`:""}<div id="pu-fb"><div class="fbk good"><span class="ic">${I.check}</span><div><b>Đọc nghĩa và câu trong bài, rồi sang phần luyện.</b></div><button class="btn primary" id="pu-next">Đã xem, tiếp →</button></div></div>`);S.answered=true;const nb=$("pu-next");if(nb)nb.focus();return}
+  const t=S.tasks[S.ti],n=S.tasks.length;S.answered=false;
+  if(t.k==="mc"){
+    const q=t.q;
+    studyFrame("quiz",`<div class="qhd"><div><div class="tiny">${esc(q.cat||"Từ nối")} · ${S.ti+1}/${n}</div><div class="qtext sent">${q.html}</div></div></div>
+     <div class="opts">${q.opts.map((o,i)=>`<button class="opt" type="button" data-pumc="${i}"><span class="k">${"ABCD"[i]}</span><span>${esc(o)}</span></button>`).join("")}</div><div id="pu-fb"></div>`);
+    return}
+  const w=t.x.w;
+  if(t.k==="see"){studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Từ mới của tuần${w.src?" · từ "+w.src:""} · ${S.ti+1}/${n}</div><div class="qtext"><b>${esc(w.w)}</b> ${w.pos?`<span class="muted">(${esc(w.pos)})</span>`:""}</div><div class="hint">${esc(w.vi)}</div></div></div>${S.pute?"":`<div><button class="btn primary" type="button" data-say="${esc(w.w)}">${I.sound} Nghe</button></div>`}${w.ex[0]?`<div class="soft small">Ví dụ: “…${esc(w.ex[0])}…”</div>`:""}${w.syn?`<div class="soft small">Đồng nghĩa: ${esc(w.syn)}</div>`:""}<div id="pu-fb"><div class="fbk good"><span class="ic">${I.check}</span><div><b>Đọc nghĩa và câu trong bài, rồi sang phần luyện.</b></div><button class="btn primary" id="pu-next">Đã xem, tiếp →</button></div></div>`);S.answered=true;const nb=$("pu-next");if(nb)nb.focus();return}
   const lab={type:"Gõ từ theo nghĩa",cloze:"Điền từ vào câu",dict:"Nghe và chép lại",own:"Viết hoặc nói một câu"}[t.k];
   let prompt="",hint="",area=false;
   if(t.k==="type"){prompt=`Từ tiếng Anh có nghĩa: <b>${esc(w.vi)}</b>`;hint=`${w.pos?esc(w.pos)+" · ":""}${w.w.length} ký tự, bắt đầu bằng “${esc(w.w[0])}”`}
@@ -4871,20 +4880,28 @@ function puCheck(){
   $("pu-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${msg}</b>${extra}</div><button class="btn primary" id="pu-next">${S.ti+1<S.tasks.length?"Tiếp theo →":"Xem kết quả →"}</button></div>`;
   const nb=$("pu-next");if(nb)nb.focus();
 }
+function puMc(i){
+  const t=S.tasks[S.ti],q=t.q;if(!q||S.answered)return;S.answered=true;
+  const ok=i===q.ans;if(!(q.id in S.mres))S.mres[q.id]=ok;
+  document.querySelectorAll("[data-pumc]").forEach(b=>{const k=+b.dataset.pumc;b.disabled=true;if(k===q.ans)b.classList.add("right");else if(k===i)b.classList.add("wrong")});
+  $("pu-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${ok?"Chính xác.":"Chưa đúng. Đáp án: "+esc(q.opts[q.ans])}</b><span>${esc(q.why||"")}</span></div><button class="btn primary" id="pu-next">${S.ti+1<S.tasks.length?"Tiếp theo →":"Xem kết quả →"}</button></div>`;
+  const nb=$("pu-next");if(nb)nb.focus();
+}
 function puNext(){S.ti++;if(S.ti>=S.tasks.length)puFinish();else puShow()}
 function puFinish(){
-  S.phase="result";if(S.mission)ls.set("ielts-wt-"+(S.mday||todayISO),"1");
-  const words=[...new Map(S.tasks.filter(t=>t.k!=="see").map(t=>[t.x.w.w,t.x.w])).values()];
+  S.phase="result";const mDay=S.mday||todayISO;
+  if(S.mission){ls.set("ielts-wt-"+mDay,"1");try{evLog.push({d:todayISO,k:"wordlab",r:"wt:"+mDay,x:0,data:{}})}catch(e){}}
+  const words=[...new Map(S.tasks.filter(t=>t.x&&t.k!=="see").map(t=>[t.x.w.w,t.x.w])).values()];
   const rows=words.map(w=>{const r=S.res[w.w]||[],good=r.filter(Boolean).length;return {w,r,ok:good>=Math.ceil(r.length*2/3)}});
-  const results=rows.map(x=>({id:puId(x.w),ok:x.ok}));
+  const results=rows.map(x=>({id:puId(x.w),ok:x.ok})),mcR=Object.keys(S.mres||{}).map(id=>({id,ok:S.mres[id]}));mcR.forEach(r=>results.push(r));
   const lab=WL.lab||(WL.lab={});
   results.forEach(r=>{const p=lab[r.id]||{box:0,ok:0,bad:0},box=r.ok?Math.min(6,p.box+1):1;lab[r.id]={box,ok:p.ok+(r.ok?1:0),bad:p.bad+(r.ok?0:1),due:addISO(todayISO,[0,1,3,7,14,30,60][box]||1)}});
   const okN=rows.filter(x=>x.ok).length;
-  save("saveWordLab",{results,correct:okN,answered:rows.length}).then(r=>{applyR(r);showEarned(r)}).catch(()=>{});
+  save("saveWordLab",{results,correct:okN,answered:rows.length,ref:S.mission?"wt:"+mDay:""}).then(r=>{applyR(r);showEarned(r)}).catch(()=>{});
   studyFrame("result",`<div class="result"><div class="h1">${okN}/${rows.length} từ dùng tốt</div>
-   <p class="lead">Từ nào dùng đúng ít nhất 2 trên 3 việc thì được xếp lịch ôn xa hơn; từ còn yếu sẽ quay lại sớm. ${earnedHTML()}</p>
+   <p class="lead">${mcR.length?`Từ nối và paraphrase: <b>${mcR.filter(x=>x.ok).length}/${mcR.length}</b> câu đúng ngay lần đầu. `:""}Từ nào dùng đúng ít nhất 2 trên 3 việc thì được xếp lịch ôn xa hơn; từ còn yếu sẽ quay lại sớm. ${earnedHTML()}</p>
    <div class="wrongs" style="width:100%">${rows.map(x=>`<div><span style="color:var(${x.ok?"--ok":"--bad"})">${x.ok?"✓":"✗"}</span><span><b>${esc(x.w.w)}</b> <span class="muted">${esc(x.w.vi)} · ${x.r.map(v=>v?"●":"○").join(" ")}</span></span></div>`).join("")}</div>
-   <div class="row" style="justify-content:center;gap:10px;width:100%"><button class="btn" id="r-done">Về lộ trình</button><button class="btn primary" data-pustart="${S.nWords}" ${S.pute?`data-pute="1" data-pud="${S.pud}"`:""}>Luyện lượt nữa</button></div></div>`);
+   <div class="row" style="justify-content:center;gap:10px;width:100%"><button class="btn" id="r-done">Về lộ trình</button><button class="btn primary" data-pustart="${S.nWords}" ${S.pute?`data-pute="1" data-pud="${S.pud}" data-pwk="${S.wk||0}"`:""}>Luyện lượt nữa</button></div></div>`);
 }
 
 applyRankTheme();
@@ -4894,7 +4911,12 @@ const WT={w:0,live:null,loading:{}};
 /* chủ đề của 12 unit Collins Reading → dùng để chọn đề Viết, chủ đề Speaking và bài đọc cùng chủ đề */
 const WT_RX=[/family|parent|child|marriage|generation|relationship/i,/health|medic|disease|doctor|drug|hospital|diet|obes/i,/educat|school|student|universit|learn|teach/i,/\bwater\b|river|ocean|drought|\bsea\b|flood|irrigation/i,/communicat|language|body|gesture|speech|emotion|\bface/i,/scien|research|experiment|discover|space|laborator/i,/\bjob|\bwork|employ|career|labour|labor|unemploy|skill/i,/young|youth|\badult|generation|graduate|millennial/i,/communit|volunteer|neighbo|social|charit|public/i,/transport|travel|migrat|\bcity|cities|traffic|commut|touris/i,/cultur|tradition|custom|global|language|identity/i,null];
 const wtRx=w=>WT_RX[w-1]||/$^/;
-function wtCur(){const c=PLAN.findIndex(w=>w.n>0&&w.days.some(d=>d.k>=todayISO));return c<0?12:Math.min(12,c)}
+/* tuần hiện tại tính theo thứ 2 → chủ nhật (trước đây cuối tuần bị nhảy sang tuần sau nên "Học bù" mở nhầm từ và đánh dấu nhầm ngày) */
+function wtCur(){
+  let c=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
+  if(c<0)c=PLAN.findIndex(w=>w.n>0&&w.days.some(d=>d.k>=todayISO));
+  return c<0?12:Math.min(12,c);
+}
 function wtLoad(w){
   const id="rcol-"+pad(w);
   if(PACKS[id]||WT.loading[id])return;
@@ -4913,7 +4935,7 @@ function weekTheme(w){
     ex.slice(0,10).forEach((x,i)=>words.push({...x,li:Math.min(4,Math.floor(i/2)),src:"chủ đề"}))}
   return {w,id,name,words,loaded:!!p,rx:wtRx(w)};
 }
-function wtWords(d){const th=weekTheme(WT.w||wtCur());return isNaN(d)?th.words:th.words.filter(x=>x.li<=d)}
+function wtWords(d,w){const th=weekTheme(w||WT.w||wtCur());return isNaN(d)?th.words:th.words.filter(x=>x.li<=d)}
 function wtPrompts(th){
   if(th.w===12)return [{type:"task1",text:""}];
   const l=(PROMPTS.task2||[]).filter(x=>th.rx.test(x[1])).slice(0,3).map(x=>({type:"task2",text:x[1]}));
@@ -4931,13 +4953,20 @@ function wtUsed(th){
   const txt=subs.filter(s=>{const c=String(s.created||"").slice(0,10);return c>=mon&&c<=sun}).map(s=>s.answer||"").join(" \n ");
   return {has:!!txt.trim(),used:th.words.filter(x=>puUsed(x.w,txt))};
 }
-function wtStartDay(i){
-  const w=WT.w||wtCur(),th=weekTheme(w);
+/* một ngày từ vựng xong khi máy này có dấu, hoặc máy chủ đã ghi sự kiện wordlab có ref "wt:<ngày>" (đồng bộ giữa các thiết bị) */
+function wtDone(d){return !!ls.get("ielts-wt-"+d,"")||(typeof evLog!=="undefined"&&evLog||[]).some(e=>e.k==="wordlab"&&e.r==="wt:"+d)}
+function wtStartDay(i,wk){
+  const w=wk||WT.w||wtCur(),th=weekTheme(w);
   if(!th.loaded){wtLoad(w);return toast("Đang tải từ của tuần, thử lại sau vài giây.",true)}
   const fresh=th.words.filter(x=>x.li===i);
   if(!fresh.length)return toast("Hôm nay không có từ mới, luyện cả bộ từ của tuần.");
-  puStart(Math.min(10,fresh.length+3),th.words.filter(x=>x.li<=i),fresh);
-  if(S&&S.pu&&S.mission){const pw=PLAN[w];if(pw&&pw.days&&pw.days[0])S.mday=addISO(pw.days[0].k,i)}
+  const go=()=>{
+    if(S&&S.pu)return;
+    puStart(Math.min(10,fresh.length+3),th.words.filter(x=>x.li<=i),fresh,wtExtra());
+    if(S&&S.pu)S.wk=w;
+    if(S&&S.pu&&S.mission){const pw=PLAN[w];if(pw&&pw.days&&pw.days[0])S.mday=addISO(pw.days[0].k,i)}};
+  /* kho paraphrase đề thật tải xong mới bắt đầu; lỗi mạng thì vẫn học, chỉ thiếu phần paraphrase */
+  if(WL.pk&&WL.pk.para)go();else loadWLPack("para").then(go).catch(go);
 }
 function weekHTML(){
   loadLab();
@@ -4945,20 +4974,20 @@ function weekHTML(){
   if(!WT.w)WT.w=wtCur();
   const w=WT.w,th=weekTheme(w);wtLoad(w);
   const pw=PLAN[w],mon=pw.days[0].k,sat=addISO(mon,5),sun=addISO(mon,6),curW=wtCur(),U=wtUsed(th);
-  const doneDays=pw.days.filter(d=>ls.get("ielts-wt-"+d.k,"")).length;
+  const doneDays=pw.days.filter(d=>wtDone(d.k)).length;
   const gram=String(pw.units||"").split(", ")[0];
-  const days=pw.days.map((d,i)=>{const nw=th.words.filter(x=>x.li===i),ok=!!ls.get("ielts-wt-"+d.k,"");
+  const days=pw.days.map((d,i)=>{const nw=th.words.filter(x=>x.li===i),ok=wtDone(d.k);
     return `<div class="wt-day ${d.k===todayISO?"is-today":""} ${ok?"done":""}"><div class="dl">${DOW[d.date.getDay()]}<small>${dm(d.k)}</small></div>
      <div class="wt-tasks"><button class="wt-task" data-wtday="${i}" ${th.loaded?"":"disabled"}><span class="ck">${ok?"✓":""}</span><span>${th.loaded?`Học ${nw.length} từ mới (${nw.filter(x=>x.src==="bài đọc").length} từ bài đọc, ${nw.filter(x=>x.src==="chủ đề").length} từ chủ đề) rồi luyện dùng: <b>${nw.map(x=>esc(x.w)).join(", ")}</b>`:"Đang tải từ của tuần…"}</span></button></div></div>`}).join("");
   const reads=wtReads(th),wp=wtPrompts(th),sg=wtSpeak(th);
-  const chips=th.words.map(x=>{const u=U.used.includes(x);return `<button class="wt-chip ${u?"used":""}" data-say="${esc(x.w)}" title="${esc(x.vi)}"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small>${u?"<i>✓</i>":""}</button>`}).join("");
+  const chips=th.words.map(x=>{const u=U.used.includes(x);return `<button class="wt-chip ${u?"used":""}" title="${esc(x.vi)}"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small>${u?"<i>✓</i>":""}</button>`}).join("");
   return `<div class="wt-nav"><button class="btn sm" data-wtgo="-1" ${w<=1?"disabled":""}>← Tuần trước</button><b>Tuần ${w}/12 · ${dm(mon)} – ${dm(sun)}${w===curW?" · tuần này":""}</b><button class="btn sm" data-wtgo="1" ${w>=12?"disabled":""}>Tuần sau →</button></div>
    <div class="card wt-hero"><div class="tiny muted" style="font-weight:700">CHỦ ĐỀ TRỌNG ĐIỂM · COLLINS READING UNIT ${w}</div><div class="h2">${esc(th.name)}</div>
     <p class="hint">Từ vựng của tuần lấy thẳng từ bài đọc Collins Reading unit ${w}, cùng bài mà lịch học đã xếp trong tuần. Cuối tuần mày ôn lại các từ này bằng bài đọc cùng chủ đề, bài viết và bài nói.</p>
     <div class="bar"><i style="width:${doneDays/5*100}%"></i></div><div class="tiny muted">${doneDays}/5 nhiệm vụ từ vựng của tuần đã xong</div>
     <div class="lbl" style="margin-top:6px">Từ mục tiêu của tuần (${th.words.length})${U.has?` · đã dùng trong bài nộp tuần này: <b>${U.used.length}/${th.words.length}</b>`:""}</div><div class="wt-chips">${th.loaded?chips:`<span class="hint">Đang tải…</span>`}</div></div>
    <h3 class="h3" style="margin-top:6px">Thứ 2 → thứ 6: nhiệm vụ từ vựng mỗi ngày</h3>
-   <p class="hint">Mỗi ngày vài từ mới từ bài đọc, rồi luyện gõ, điền câu, nghe chép, viết hoặc nói câu. Nhiệm vụ này cũng hiện ở Trang chủ. Ngữ pháp vẫn theo lịch sách (${esc(gram)}); thử dùng nó khi viết câu về chủ đề.</p>
+   <p class="hint">Mỗi ngày vài từ mới từ bài đọc, rồi luyện gõ, điền câu, viết hoặc nói câu, kèm vài câu từ nối và paraphrase để dùng cho bài đọc và bài viết cuối tuần. Nhiệm vụ này cũng hiện ở Trang chủ. Ngữ pháp vẫn theo lịch sách (${esc(gram)}); thử dùng nó khi viết câu về chủ đề.</p>
    <div class="wt-days">${days}</div>
    <h3 class="h3" style="margin-top:10px">Cuối tuần: đọc, viết, nói, đối chiếu</h3>
    <div class="card wt-end">
@@ -4980,7 +5009,7 @@ function wtHomeItems(){
   const lastSeen=id=>(rstats.latest||{})[id]&&(rstats.latest||{})[id].date===todayISO;
   const label=`Tuần ${wi} · ${th.name}`;
   if(i>=0){const nw=th.words.filter(x=>x.li===i);
-    out.push({time:"Chủ đề tuần",min:15,title:th.loaded?`${label}: ${nw.length} từ mới`:`${label}: đang tải từ…`,how:th.loaded?nw.map(x=>x.w).join(", ")+" · học rồi luyện gõ, điền câu, nghe chép":"",done:!!ls.get("ielts-wt-"+todayISO,""),btn:th.loaded?`data-wtday="${i}"`:"",label:"Học",primary:true})}
+    out.push({time:"Chủ đề tuần",min:15,title:th.loaded?`${label}: ${nw.length} từ mới`:`${label}: đang tải từ…`,how:th.loaded?nw.map(x=>x.w).join(", ")+" · học rồi luyện gõ, điền câu, viết câu, từ nối và paraphrase":"",done:wtDone(todayISO),btn:th.loaded?`data-wtday="${i}" data-wtweek="${wi}"`:"",label:"Học",primary:true})}
   else if(dow===6){const rd=wtReads(th)[0];
     out.push({time:"Chủ đề tuần",min:30,title:rd?`Reading cùng chủ đề: ${rd.title}`:`${label}: làm lại bài đọc Collins`,how:"Ôn các từ mục tiêu của tuần qua một bài đọc như thi thật",done:!!(rd&&lastSeen(rd.id)),btn:`data-ropen="${rd?rd.id:"rcol-"+pad(wi)}"`,label:"Làm"});
     out.push({time:"Chủ đề tuần",min:30,title:`Viết về chủ đề: ${th.name}`,how:"Viết từng câu theo khung, có gợi ý, bảng kiểm và bộ từ mục tiêu",done:subs.some(s=>String(s.created).slice(0,10)===todayISO&&s.type!=="speaking"),btn:'data-gbw="0"',label:"Viết"})}
@@ -5006,7 +5035,7 @@ function wtLive(){
 document.addEventListener("click",e=>{
   const g=e.target.closest("[data-wtgo]");if(g&&!g.disabled){WT.w=Math.min(12,Math.max(1,(WT.w||wtCur())+(+g.dataset.wtgo)));renderPath();return}
   const w=e.target.closest("[data-wtwrite]");if(w){wtWrite(+w.dataset.wtwrite);return}
-  const d=e.target.closest("[data-wtday]");if(d&&!d.disabled){wtStartDay(+d.dataset.wtday);return}
+  const d=e.target.closest("[data-wtday]");if(d&&!d.disabled){wtStartDay(+d.dataset.wtday,+d.dataset.wtweek||0);return}
   if(e.target.closest("[data-wtall]")){const th=weekTheme(WT.w||wtCur());puStart(8,th.words);return}
   if(e.target.closest("[data-wtopen]")){pathMode="week";ls.set("ielts-pathmode","week");WT.w=0;setTab("path");return}
   if(e.target.closest("[data-wtspeak]")){skill="speaking";ls.set("ielts-skill","speaking");spView="practice";ls.set("ielts-spview","practice");setTab("skills")}
@@ -5018,14 +5047,14 @@ function wtMust(){
   const wi=PLAN.findIndex(w=>w.n>0&&todayISO>=w.days[0].k&&todayISO<=addISO(w.days[0].k,6));
   if(wi<1||wi>12)return null;
   const th=weekTheme(wi);wtLoad(wi);const mon=PLAN[wi].days[0].k;
-  const seen=(id,d)=>{const x=(rstats.latest||{})[id];return !!(x&&x.date===d)};
-  const subOn=(d,sp)=>subs.some(s=>String(s.created).slice(0,10)===d&&(sp?s.type==="speaking":s.type!=="speaking"));
-  const rd=wtReads(th)[0],rids=[rd&&rd.id,"rcol-"+pad(wi)].filter(Boolean);
+  const seen=(id,d)=>{const x=(rstats.latest||{})[id];return !!(x&&String(x.date)>=d)};
+  const subOn=(d,sp)=>subs.some(s=>String(s.created).slice(0,10)>=d&&(sp?s.type==="speaking":s.type!=="speaking"));
+  const rds=wtReads(th),rd=rds[0],rids=[...rds.map(x=>x.id),"rcol-"+pad(wi)].filter(Boolean);
   const days=[];
   for(let i=0;i<7;i++){
     const d=addISO(mon,i),t=[];
     if(i<5){const nw=th.words.filter(x=>x.li===i);
-      t.push({done:!!ls.get("ielts-wt-"+d,""),title:th.loaded?`Học ${nw.length} từ mới và luyện dùng`:"Đang tải từ của tuần…",sub:nw.map(x=>x.w).join(", "),btn:th.loaded?`data-wtday="${i}"`:"",label:"Học"})}
+      t.push({done:wtDone(d),title:th.loaded?`Học ${nw.length} từ mới và luyện dùng`:"Đang tải từ của tuần…",sub:nw.map(x=>x.w).join(", ")+(th.loaded?" · kèm 4 câu từ nối và paraphrase":""),btn:th.loaded?`data-wtday="${i}" data-wtweek="${wi}"`:"",label:"Học"})}
     else if(i===5){
       t.push({done:rids.some(id=>seen(id,d)),title:rd?`Reading cùng chủ đề: ${rd.title}`:"Làm lại bài đọc Collins của tuần",sub:"Ôn từ mục tiêu qua bài đọc",btn:`data-ropen="${rids[0]}"`,label:"Làm"});
       t.push({done:subOn(d,false),title:`Viết về chủ đề: ${th.name}`,sub:"Viết từng câu theo khung, có bảng kiểm",btn:'data-gbw="0"',label:"Viết"})}
@@ -5593,6 +5622,62 @@ function mgRefItems(){
     return base+`<div class="hd" style="margin-top:18px"><div><h2 class="h2">Từ điển Vật liệu & ODS</h2><p class="hint">${us.length} chương · ${fmt(tot)} thuật ngữ · ${ch} chặng, học như các unit ở trên. Tra cứu và luyện phụ lục ở tab Từ điển.</p></div></div>${mgLearn().replace(/^<div class="mg-bar">.*?<\/div>\s*/s,"")}`;
   };
 })();
+
+/* ================= Từ nối (linking words) + paraphrase cho nhiệm vụ tuần ================= */
+const LK_BANK=[
+["Đối lập","The new bridge is expensive to maintain. ___, it has cut travel time by half.",["However","Therefore","For instance","Moreover"],"However","However đứng đầu câu, chỉ sự đối lập với câu trước."],
+["Nhượng bộ","___ the experiment was repeated three times, the results were inconsistent.",["Although","Despite","Because","Unless"],"Although","Although + mệnh đề (S + V). Despite chỉ đi với danh từ hoặc V-ing."],
+["Nhượng bộ","___ the high cost, many families still prefer private schools.",["Despite","Although","However","Because"],"Despite","Despite + danh từ (the high cost). Although cần cả mệnh đề."],
+["Bổ sung","Public transport reduces traffic. ___, it lowers air pollution.",["Furthermore","Nevertheless","Otherwise","Whereas"],"Furthermore","Furthermore thêm một ý cùng chiều (giống Moreover, In addition)."],
+["Bổ sung","Online courses are flexible. In addition ___ this, they are usually cheaper.",["to","of","for","with"],"to","Cụm cố định: in addition to + danh từ/cụm danh từ."],
+["Nguyên nhân","The match was cancelled ___ heavy rain.",["because of","because","so that","although"],"because of","because of + danh từ; because + mệnh đề."],
+["Nguyên nhân","Prices rose sharply ___ demand exceeded supply.",["because","because of","despite","therefore"],"because","because + mệnh đề (demand exceeded supply)."],
+["Nguyên nhân","___ the reservoir is almost empty, water use is restricted.",["Since","Despite","Whereas","Unless"],"Since","Since ở đầu câu nghĩa là “vì”, nêu lý do đã biết."],
+["Nguyên nhân","The delay was ___ a technical fault.",["due to","owing","because","although"],"due to","due to + danh từ, đứng sau động từ to be."],
+["Nguyên nhân","___ the cost of living is rising, many graduates delay buying a home.",["Given that","In contrast","Whereas","Nevertheless"],"Given that","Given that = vì/xét rằng, nêu cơ sở cho điều ở mệnh đề sau."],
+["Kết quả","Demand for oil fell; ___, prices dropped.",["as a result","on the other hand","for instance","in contrast"],"as a result","as a result chỉ kết quả của điều vừa nói."],
+["Kết quả","The factory closed. ___, hundreds of workers lost their jobs.",["Consequently","Nevertheless","Besides","Instead"],"Consequently","Consequently = vì thế (kết quả)."],
+["Kết quả","The policy was so unpopular ___ it was withdrawn within a month.",["that","which","because","than"],"that","Cấu trúc so + tính từ + that + mệnh đề kết quả."],
+["Kết quả","The data are incomplete; ___, no firm conclusion can be drawn.",["therefore","however","for example","whereas"],"therefore","therefore = do đó, rút ra kết luận từ điều trước."],
+["Kết quả","The company cut its energy use by 20%, ___ saving millions of dollars a year.",["thereby","whereas","unless","although"],"thereby","thereby + V-ing: nêu hệ quả đi kèm của hành động trước."],
+["Mục đích","Students use flashcards ___ they can memorise vocabulary more easily.",["so that","even though","as long as","whereas"],"so that","so that + mệnh đề: để cho."],
+["Mục đích","Governments should invest in rail ___ reduce road congestion.",["in order to","in spite of","due to","owing to"],"in order to","in order to + động từ nguyên mẫu: để."],
+["Ví dụ","Many countries have banned plastic bags. ___, Rwanda introduced the ban in 2008.",["For instance","Nevertheless","Likewise","Hence"],"For instance","For instance = ví dụ, mở đầu một ví dụ cụ thể."],
+["Ví dụ","Some jobs, ___ nursing and teaching, require strong communication skills.",["such as","as such","like as","for such"],"such as","such as + danh từ: chẳng hạn như."],
+["Ví dụ","Young people, ___ those aged 18 to 24, are the most affected by unemployment.",["in particular","in contrast","in conclusion","as a result"],"in particular","in particular = đặc biệt là, thu hẹp nhóm vừa nói."],
+["Trình tự","First of all, the sample is heated. ___, it is cooled in water.",["Subsequently","Conversely","In contrast","Even so"],"Subsequently","Subsequently = sau đó, nối bước tiếp theo của quy trình."],
+["Trình tự","On the one hand, tourism creates jobs. ___, it can damage local culture.",["On the other hand","As a result","In addition","For instance"],"On the other hand","On the one hand … On the other hand … nêu hai mặt đối lập."],
+["Trình tự","Firstly, exercise improves health. ___, it boosts mental well-being.",["Secondly","Nevertheless","Otherwise","Whereas"],"Secondly","Firstly, Secondly, Finally dùng để đánh số ý."],
+["Kết luận","___, remote work offers clear benefits, although it is not suitable for everyone.",["In conclusion","In addition","For example","Meanwhile"],"In conclusion","In conclusion mở đầu đoạn kết."],
+["Điều kiện","The project will succeed ___ it receives enough funding.",["provided that","even though","whereas","so that"],"provided that","provided that = miễn là, nêu điều kiện cần."],
+["Điều kiện","You will fail the exam ___ you revise.",["unless","if","although","since"],"unless","unless = if … not. “if you revise” sẽ sai nghĩa."],
+["Điều kiện","Online learning works well ___ students stay motivated.",["as long as","in case of","whereas","owing to"],"as long as","as long as = miễn là, theo sau là mệnh đề."],
+["Điều kiện","Students must submit the form by Friday; ___, they will lose their place.",["otherwise","moreover","for example","similarly"],"otherwise","otherwise = nếu không thì."],
+["Đối chiếu","Urban areas are densely populated, ___ rural areas have low population density.",["whereas","because","so","unless"],"whereas","whereas đặt hai vế tương phản trong một câu."],
+["Đối chiếu","Teenagers prefer texting. ___, older people tend to phone.",["In contrast","Likewise","As a result","For example"],"In contrast","In contrast = ngược lại, đối chiếu hai nhóm."],
+["Đối chiếu","Cars cause pollution. ___, aircraft emit large amounts of carbon dioxide.",["Similarly","However","Instead","Otherwise"],"Similarly","Similarly = tương tự, nối hai ý cùng loại."],
+["Đối chiếu","Both cycling and walking are healthy. The former is faster, ___ the latter is gentler on the joints.",["while","unless","because of","so that"],"while","while ở giữa câu có thể mang nghĩa đối chiếu, giống whereas."],
+["Nhượng bộ","It is true that cities offer more jobs. ___, living costs are much higher.",["Nevertheless","Therefore","Besides","Likewise"],"Nevertheless","Nevertheless = tuy vậy, thừa nhận ý trước rồi quay sang mặt khác."],
+["Nhượng bộ","___ he studied hard, he did not reach band 7.",["Even though","Even so","Despite","Besides"],"Even though","Even though + mệnh đề. Even so là trạng từ nối, không đi ngay trước S + V như vậy."],
+["Nhượng bộ","In spite ___ the warnings, many hikers ignored the path closure.",["of","for","to","with"],"of","Cụm cố định: in spite of + danh từ."],
+["Nhấn mạnh","The results were surprising; ___, they contradicted earlier studies.",["in fact","by contrast","otherwise","whereas"],"in fact","in fact bổ sung chi tiết mạnh hơn cho ý trước."],
+["Nhấn mạnh","Not only did costs fall, ___ quality improved.",["but also","and also not","as well","besides"],"but also","Not only … but also …, đảo trợ động từ sau Not only."],
+["Diễn giải","The metal is ductile; ___, it can be drawn into thin wires.",["in other words","on the contrary","by comparison","despite this"],"in other words","in other words = nói cách khác, giải thích lại ý vừa nêu."],
+["Phản bác","Technology has not made people lazy. ___, it has created new demands on their time.",["On the contrary","For example","As well","Owing to"],"On the contrary","On the contrary phủ định ý trước và nêu điều ngược lại."],
+["Liệt kê","___ being cheap, bicycles are also good for health.",["Apart from","Whereas","Unless","Otherwise"],"Apart from","Apart from + V-ing/danh từ = ngoài việc."],
+["Thay thế","Many commuters now cycle ___ driving to work.",["instead of","instead","rather","in spite"],"instead of","instead of + V-ing/danh từ. Instead đứng một mình, không có of."],
+["Nguyên nhân","Emissions fell by 15% ___ the new law.",["as a consequence of","although","however","whereas"],"as a consequence of","as a consequence of + danh từ = do hậu quả của."]
+].map((x,i)=>({id:"g:lk:"+String(i+1).padStart(2,"0"),cat:x[0],s:x[1],opts:x[2],a:x[3],why:x[4]}));
+function lkItems(){
+  return LK_BANK.map(x=>({id:x.id,mk:()=>{const q=mcq(x.id,gapHTML(x.s),x.opts,x.a,x.why,25);q.cat="Từ nối · "+x.cat.toLowerCase();return q}}));
+}
+/* 2 câu từ nối + 2 câu paraphrase (từ kho paraphrase đề thật nếu đã tải) cho mỗi ngày */
+function wtExtra(){
+  const out=[];
+  try{wlPick(lkItems(),2).forEach(it=>out.push(it.mk()))}catch(e){}
+  try{if(WL.pk&&WL.pk.para)wlPick(wlItems("para"),2).forEach(it=>{const q=it.mk();q.cat="Paraphrase đề thật";out.push(q)})}catch(e){}
+  return out;
+}
 </script>
 </body>
 </html>
