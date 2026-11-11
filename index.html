@@ -1168,6 +1168,28 @@ select.inp{width:100%}
 .mg-note{grid-column:1;font-size:12.5px;color:var(--ink-3)}
 .mg-bar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:4px 0 8px}
 @media(max-width:560px){.mgcard .mg-vs{grid-template-columns:1fr}}
+
+.stem:has(.stbl-w){white-space:normal;padding:8px}
+.stbl-w{overflow-x:auto}
+.stbl{border-collapse:collapse;width:100%;font-size:14px;line-height:1.4}
+.stbl th{background:var(--sunk);text-align:left;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted,#8a93a6);padding:8px 6px;border-bottom:2px solid var(--line)}
+.stbl td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+.stbl .gapw{display:inline-flex;flex-direction:column;align-items:flex-start;gap:3px}
+.stbl .gapw b{font-size:11px;min-width:20px;height:18px;line-height:18px;padding:0 5px}
+.stbl .ginp,.stbl .gsel{width:100%;min-width:72px;max-width:130px;box-sizing:border-box;font-size:14px;padding:4px 6px}
+.stbl td,.stbl th{padding:6px 4px;word-break:break-word}
+
+/* bài đã làm */
+.rrow.done{box-shadow:inset 4px 0 0 var(--ok);background:var(--ok-soft)}
+.rrow.done.d-mid{box-shadow:inset 4px 0 0 var(--sun);background:var(--sun-soft)}
+.rrow.done:hover{filter:brightness(1.05)}
+.rrow .rscore{text-align:right}
+.rdone{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.rdone .num{font-size:18px;line-height:1.1}
+.rdchip{font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;letter-spacing:.02em}
+.rdchip.ok{background:var(--ok);color:#06210f}
+.rdchip.mid{background:var(--sun);color:var(--sun-ink,#3a2500)}
+.prevnote{margin-top:6px;padding:8px 12px;border-radius:10px;background:var(--ok-soft);border-left:4px solid var(--ok);font-size:13px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -2787,9 +2809,9 @@ function rViewSets(){
    <div class="hd"><span class="hint">${esc(s.name)} · ${s.items.length} bài</span></div>
    <div class="rfilters"><button class="chip" data-rtypef="all" aria-pressed="${rTypeF==="all"}">Mọi dạng</button>${types.map(t=>`<button class="chip" data-rtypef="${t}" aria-pressed="${rTypeF===t}">${RTYPE_SHORT[t]||t}</button>`).join("")}</div>
    <div class="card pad0">${items.map((it,i)=>{const b=rBest(it.id),hd=it.test&&it.test!==lastTest?`<div class="rtest">${esc(it.test)}</div>`:"";lastTest=it.test||lastTest;
-     return `${hd}<button class="rrow" data-ropen="${it.id}"><span class="rno num">${pad(s.items.indexOf(it)+1)}</span><span style="min-width:0"><b>${esc(it.title)}</b>
+     return `${hd}<button class="rrow ${rMark(it.id,b).cls}" data-ropen="${it.id}"><span class="rno num">${pad(s.items.indexOf(it)+1)}</span><span style="min-width:0"><b>${esc(it.title)}</b>
       <span class="rk">${it.types.map(t=>`<span class="tchip">${RTYPE_SHORT[t]||t}</span>`).join("")}<span class="tiny muted">${it.q} câu</span>${it.key==="ai"?`<span class="tchip" title="Nguồn không kèm đáp án, AI tự giải và dẫn chứng từng câu">đáp án AI</span>`:""}${rWordsOf(it.id).length?`<span class="tchip ok">${rWordsOf(it.id).length} từ</span>`:""}</span></span>
-      <span class="rscore">${b==null?`<span class="chip sun">Chưa làm</span>`:`<b class="num" style="color:${b>=70?"var(--ok)":b>=50?"var(--ink)":"var(--bad)"}">${b}%</b>`}</span></button>`}).join("")||`<p class="hint" style="padding:16px">Không có bài nào có dạng này.</p>`}</div>`;
+      <span class="rscore">${rMark(it.id,b).score}</span></button>`}).join("")||`<p class="hint" style="padding:16px">Không có bài nào có dạng này.</p>`}</div>`;
 }
 function rViewTypes(){
   if(!RIDX)return skelHTML();
@@ -2981,7 +3003,9 @@ function resultLine(n){
 function stemHTML(g,gi){
   const nums=new Set(rNums());
   const kctr={i:0};
-  let s=String(g.stem).split(/(\[\d+\])/).map(pt=>/^\[\d+\]$/.test(pt)?pt:kwText("s"+gi,pt,kctr)).join("");
+  const trs=String(g.stem).split("\n"),nc=trs[0].split(" | ").length,isTbl=trs.length>=3&&nc>=2&&trs.every(r=>r.split(" | ").length===nc);
+  const fx=str=>str.split(/(\[\d+\])/).map(pt=>/^\[\d+\]$/.test(pt)?pt:kwText("s"+gi,pt,kctr)).join("");
+  let s=isTbl?'<div class="stbl-w"><table class="stbl">'+trs.map((r,ri)=>"<tr>"+r.split(" | ").map(c=>(ri?"<td>":"<th>")+fx(c.replace(/\//g,"/\u200b"))+(ri?"</td>":"</th>")).join("")+"</tr>").join("")+"</table></div>":fx(String(g.stem));
   return s.replace(/\[(\d+)\]/g,(m,k)=>{const n=+k;if(!nums.has(n))return `<span class="gap off">${n}</span>`;
     const res=RD.result&&RD.result.map[n];
     if(g.options&&g.options.length)return `<select class="gsel ${res?(res.ok?"ok":"no"):""}" data-asel="${n}" ${RD.result?"disabled":""}><option value="">${n}</option>${g.options.map(o=>`<option value="${esc(o.k)}" ${normAns(RD.answers[n]||"")===normAns(o.k)?"selected":""}>${esc(o.k)}</option>`).join("")}</select>`;
@@ -3413,9 +3437,9 @@ function renderLTests(){
    <div class="hd"><span class="hint">${esc(s.name)} · ${s.items.length} bài${s.desc?" · "+esc(s.desc):""}</span></div>
    <div class="card pad0">${s.items.map((it,i)=>{const b=rBest(it.id),hd=it.test&&it.test!==lastTest?`<div class="rtest">${esc(it.test)}</div>`:"";lastTest=it.test||lastTest;
      const dk=it.kind==="dictation";const b2=dk?dBest(it.id):b;
-     return `${hd}<button class="rrow" data-lopen="${it.id}"><span class="rno num">${pad(i+1)}</span><span style="min-width:0"><b>${esc(it.title)}</b>
+     return `${hd}<button class="rrow ${rMark(it.id,b2).cls}" data-lopen="${it.id}"><span class="rno num">${pad(i+1)}</span><span style="min-width:0"><b>${esc(it.title)}</b>
       <span class="rk">${dk?`<span class="tchip">Chép chính tả</span>`:""}${(it.types||[]).map(t=>`<span class="tchip">${RTYPE_SHORT[t]||t}</span>`).join("")}<span class="tiny muted">${dk?(it.lines||0)+" câu nghe":it.q+" câu"}${it.audio?"":" · chưa có audio"}${it.script?" · có transcript":""}${it.key==="ai"?" · đáp án AI":it.key==="none"?" · chưa có đáp án":""}</span></span></span>
-      <span class="rscore">${b2==null?`<span class="chip sun">Chưa làm</span>`:`<b class="num" style="color:${b2>=70?"var(--ok)":b2>=50?"var(--ink)":"var(--bad)"}">${b2}%</b>`}</span></button>`}).join("")}</div>`;
+      <span class="rscore">${rMark(dk?"d-"+it.id:it.id,b2).score}</span></button>`}).join("")}</div>`;
 }
 function openListening(id,opt){
   const it=lItem(id);
@@ -4621,9 +4645,9 @@ function matRead(){
   const rt=matRetry();
   return `${rt.length?`<div class="card weak"><span class="k">Làm lại câu sai</span><b>${rt.reduce((a,x)=>a+x.wrong.length,0)} câu ở ${rt.length} bài</b><button class="btn primary sm" data-ropen="${rt[0].rid}" data-rmode="retry">Làm lại ${I.arrow}</button></div>`:""}
    <p class="hint">${esc(s.desc||"")} Bôi đen từ trong bài để tô, tra nghĩa và lưu vào sổ (nguồn ghi theo bài).</p>
-   <div class="card pad0">${s.items.map((it,i)=>{const b=rBest(it.id);return `<button class="rrow" data-ropen="${it.id}"><span class="rno num">${pad(i+1)}</span><span style="min-width:0"><b>${esc(it.title)}</b>
+   <div class="card pad0">${s.items.map((it,i)=>{const b=rBest(it.id);return `<button class="rrow ${rMark(it.id,b).cls}" data-ropen="${it.id}"><span class="rno num">${pad(i+1)}</span><span style="min-width:0"><b>${esc(it.title)}</b>
      <span class="rk">${it.types.map(t=>`<span class="tchip">${RTYPE_SHORT[t]||t}</span>`).join("")}<span class="tiny muted">${it.q} câu · ${it.words} từ</span>${rWordsOf(it.id).length?`<span class="tchip ok">${rWordsOf(it.id).length} từ đã lưu</span>`:""}</span></span>
-     <span class="rscore">${b==null?`<span class="chip sun">Chưa làm</span>`:`<b class="num" style="color:${b>=70?"var(--ok)":b>=50?"var(--ink)":"var(--bad)"}">${b}%</b>`}</span></button>`}).join("")}</div>`;
+     <span class="rscore">${rMark(it.id,b).score}</span></button>`}).join("")}</div>`;
 }
 function matWrite(){
   if(!MATW)return matwFail?matMissing("đề Writing"):skelHTML();
@@ -5702,6 +5726,33 @@ function wtExtra(){
   try{if(WL.pk&&WL.pk.para)wlPick(wlItems("para"),2).forEach(it=>{const q=it.mk();q.cat="Paraphrase đề thật";out.push(q)})}catch(e){}
   return out;
 }
+
+/* ================= Đánh dấu bài đã làm: màu riêng + điểm lần trước (chỉ hiển thị, vẫn làm lại bình thường) ================= */
+function rFmtD(iso){const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso||""));return m?m[3]+"/"+m[2]:""}
+function rMark(id,best){
+  const L=(rstats.latest||{})[id],hasL=!!(L&&L.total);
+  if(best==null&&!hasL)return {cls:"",score:`<span class="chip sun">Chưa làm</span>`};
+  const last=hasL?Math.round(L.score/L.total*100):null,b=best!=null?best:last;
+  const good=b>=70,col=good?"var(--ok)":b>=50?"var(--ink)":"var(--bad)";
+  const dt=L&&L.date?rFmtD(L.date):"";
+  const sub=hasL?`${last!==b?"Tốt nhất · ":""}Lần gần nhất ${L.score}/${L.total}${last!==b?` (${last}%)`:""}${dt?" · "+dt:""}`:(dt?"Làm ngày "+dt:"");
+  return {cls:"done "+(good?"d-ok":"d-mid"),score:`<span class="rdone"><span class="rdchip ${good?"ok":"mid"}">✓ Đã làm</span><b class="num" style="color:${col}">${b}%</b>${sub?`<span class="tiny muted">${sub}</span>`:""}</span>`};
+}
+/* Writing: nhắc khi đề đang chọn đã từng viết */
+function wPrevNote(){
+  const ta=document.getElementById("w-prompt");if(!ta)return;
+  let n=document.getElementById("w-prevnote");
+  if(!n){n=document.createElement("div");n.id="w-prevnote";n.className="prevnote";n.hidden=true;ta.insertAdjacentElement("afterend",n)}
+  const q=ta.value.trim().toLowerCase();
+  const same=q.length<12?[]:subs.filter(s=>s.type!=="speaking"&&String(s.prompt||"").trim().toLowerCase()===q);
+  if(!same.length){n.hidden=true;return}
+  const s=same[same.length-1],g=(typeof parseG==="function")?parseG(s):null;
+  const band=g?"Band "+g.overall:(s.result||"chưa chấm");
+  n.hidden=false;n.innerHTML=`✓ Đề này đã viết ${same.length} lần. Lần gần nhất: <b>${esc(String(s.created||""))}</b> · <b>${esc(String(band))}</b>. Vẫn viết lại được bình thường.`;
+}
+document.addEventListener("input",e=>{if(e.target&&e.target.id==="w-prompt")wPrevNote()});
+document.addEventListener("click",e=>{if(e.target.closest("#w-random,[data-wideaw]"))setTimeout(wPrevNote,60)});
+setInterval(()=>{if(skill==="write"&&wView==="main")wPrevNote()},1500);
 </script>
 </body>
 </html>
