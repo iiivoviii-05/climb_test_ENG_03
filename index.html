@@ -5753,6 +5753,21 @@ function wPrevNote(){
 document.addEventListener("input",e=>{if(e.target&&e.target.id==="w-prompt")wPrevNote()});
 document.addEventListener("click",e=>{if(e.target.closest("#w-random,[data-wideaw]"))setTimeout(wPrevNote,60)});
 setInterval(()=>{if(skill==="write"&&wView==="main")wPrevNote()},1500);
+
+/* ================= confirm() bị chặn trong iframe (Apps Script / PWA) =================
+   Trong iframe không có quyền allow-modals, confirm() trả về false ngay lập tức mà không hiện hộp thoại,
+   nên các nút phải qua bước xác nhận (Nộp bài khi còn câu trống, Thoát, Xóa nợ…) trông như "không phản ứng".
+   Người thật bấm Hủy luôn mất > 40 ms; trả về false quá nhanh = bị chặn → coi như đồng ý (trừ thao tác xóa). */
+(function(){
+  const nat=window.confirm.bind(window);
+  window.confirm=function(msg){
+    const t0=performance.now();let r=false;
+    try{r=nat(msg)}catch(e){r=false}
+    if(r)return true;
+    if(performance.now()-t0<40&&!/Xóa|Xoá/.test(String(msg))){window.__confirmBlocked=true;return true}
+    return false;
+  };
+})();
 </script>
 </body>
 </html>
