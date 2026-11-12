@@ -1213,6 +1213,10 @@ select.inp{width:100%}
 .ex-dots{display:flex;flex-wrap:wrap;gap:3px;margin:6px 0}
 .ex-dot{width:10px;height:10px;border-radius:50%;border:0;background:var(--line-2);padding:0;cursor:pointer}
 .ex-dot.ok{background:var(--ok)}.ex-dot.bad{background:var(--bad)}.ex-dot.cur{outline:2px solid var(--ink);outline-offset:1px}
+.ex-fold{margin-top:8px;border:1px solid var(--line);border-radius:12px;background:var(--sunk);padding:2px 10px;text-align:left}
+.ex-fold>summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-2);padding:8px 0;list-style:revert}
+.ex-fold .ex-card{border:0;background:transparent;padding:4px 0 8px;margin-top:0}
+.ex-fold .ex-p p,.ex-fold .ex-conf p{font-size:13.5px;line-height:1.55}
 </style>
 </head>
 <body>
@@ -2092,7 +2096,7 @@ function answer(given){
   const right=q.type==="mcq"?q.opts[q.ans]:q.show;
   {const opts=document.querySelectorAll(".opt"),el=q.type==="mcq"?opts[given]:$("q-in");
    if(ok)FX.ok(el||$("q-fb"),"✓");else FX.bad(el||$("q-in"),q.type==="mcq"?opts[q.ans]:null)}
-  $("q-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${ok?(near?"Gần đúng, chú ý chính tả: "+esc(right):"Chính xác."):given===null?"Hết giờ. Đáp án đúng: "+esc(right):"Chưa chính xác. Đáp án đúng: "+esc(right)}</b><span>${esc(q.why||"")}</span></div><button class="btn primary" id="q-next">${S.qi+1<S.qs.length?"Câu tiếp theo →":"Xem kết quả →"}</button></div>`;
+  $("q-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${ok?(near?"Gần đúng, chú ý chính tả: "+esc(right):"Chính xác."):given===null?"Hết giờ. Đáp án đúng: "+esc(right):"Chưa chính xác. Đáp án đúng: "+esc(right)}</b><span>${esc(q.why||"")}</span>${exFb(q,ok)}</div><button class="btn primary" id="q-next">${S.qi+1<S.qs.length?"Câu tiếp theo →":"Xem kết quả →"}</button></div>`;
   $("q-next").focus();
 }
 function nextQ(){S.qi++;if(S.qi>=S.qs.length)finishQuiz();else showQ()}
@@ -4924,7 +4928,7 @@ function puCheck(){
     extra=t.x.sent||w.ex[0]?`<span><b>Câu mẫu:</b> ${esc(t.x.sent||w.ex[0])}</span>`:"";
   }
   (S.res[w.w]=S.res[w.w]||[]).push(ok);
-  $("pu-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${msg}</b>${extra}</div><button class="btn primary" id="pu-next">${S.ti+1<S.tasks.length?"Tiếp theo →":"Xem kết quả →"}</button></div>`;
+  $("pu-fb").innerHTML=`<div class="fbk ${ok?"good":"bad"}"><span class="ic">${ok?I.check:I.x}</span><div><b>${msg}</b>${extra}${exFb({ref:w},ok)}</div><button class="btn primary" id="pu-next">${S.ti+1<S.tasks.length?"Tiếp theo →":"Xem kết quả →"}</button></div>`;
   const nb=$("pu-next");if(nb)nb.focus();
 }
 function puMc(i){
@@ -5847,14 +5851,14 @@ const EXF=(()=>{
 function exPerm(o,w){let h=0;for(const c of w)h=(h*31+c.charCodeAt(0))>>>0;const idx=o.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){h=(h*1103515245+12345)>>>0;const j=h%(i+1);[idx[i],idx[j]]=[idx[j],idx[i]]}return idx}
 /* ---- thẻ giải thích ---- */
 const EXL=["Là gì","Kiến thức nền","Trong thép ODS và khi đọc bài báo"];
-function exCard(w,inQueue){
+function exCard(w,inQueue,compact){
   const e=exGet(w.w);if(!e)return "";
   const rd=exRead()[exKey(w.w)],id="exq-"+exKey(w.w).replace(/[^a-z0-9]/g,"_");
   const ps=(e.d||[]).map((p,i)=>`<div class="ex-p"><span class="ex-l">${EXL[i]||""}</span><p>${esc(p)}</p></div>`).join("");
-  const pre=(e.pre||[]).length?`<div class="ex-pre"><span class="ex-l">Cần biết trước</span>${e.pre.map(p=>`<button class="chip" data-exgo="${esc(p)}">${esc(p)}${exHas(p)?"":" ·"}</button>`).join("")}</div>`:"";
-  const q=e.q?`<div class="ex-q" id="${id}"><span class="ex-l">Tự kiểm tra</span><p>${esc(e.q.q)}</p>${exPerm(e.q.o,w.w).map(i=>{const o=e.q.o[i],a=EX.ans[id];return `<button class="ex-o${a!=null?(i===e.q.a?" ok":i===a?" bad":""):""}" data-exq="${id}|${i}|${esc(w.w)}" ${a!=null?"disabled":""}>${esc(o)}</button>`}).join("")}${EX.ans[id]!=null?`<p class="ex-why">${esc(e.q.why||"")}</p>`:""}</div>`:"";
+  const pre=(e.pre||[]).length?`<div class="ex-pre"><span class="ex-l">Cần biết trước</span>${e.pre.map(p=>compact?`<span class="chip">${esc(p)}</span>`:`<button class="chip" data-exgo="${esc(p)}">${esc(p)}${exHas(p)?"":" ·"}</button>`).join("")}</div>`:"";
+  const q=e.q&&!compact?`<div class="ex-q" id="${id}"><span class="ex-l">Tự kiểm tra</span><p>${esc(e.q.q)}</p>${exPerm(e.q.o,w.w).map(i=>{const o=e.q.o[i],a=EX.ans[id];return `<button class="ex-o${a!=null?(i===e.q.a?" ok":i===a?" bad":""):""}" data-exq="${id}|${i}|${esc(w.w)}" ${a!=null?"disabled":""}>${esc(o)}</button>`}).join("")}${EX.ans[id]!=null?`<p class="ex-why">${esc(e.q.why||"")}</p>`:""}</div>`:"";
   return `<div class="ex-card">${EXF[e.fig]?`<div class="ex-fig">${EXF[e.fig]}</div>`:""}${ps}${e.conf?`<div class="ex-conf"><span class="ex-l">Dễ nhầm</span><p>${esc(e.conf)}</p></div>`:""}${pre}${q}
-   <div class="ex-act"><button class="btn sm ${rd===1?"primary":""}" data-exmark="1|${esc(w.w)}">${rd===1?"✓ Đã hiểu":"Đã hiểu"}</button><button class="btn sm ${rd===2?"warn":""}" data-exmark="2|${esc(w.w)}">${rd===2?"Đang đánh dấu: chưa hiểu":"Chưa hiểu"}</button>${inQueue?`<button class="btn sm" data-exnext="1">Từ kế tiếp →</button>`:""}</div></div>`;
+   ${compact?"":`<div class="ex-act"><button class="btn sm ${rd===1?"primary":""}" data-exmark="1|${esc(w.w)}">${rd===1?"✓ Đã hiểu":"Đã hiểu"}</button><button class="btn sm ${rd===2?"warn":""}" data-exmark="2|${esc(w.w)}">${rd===2?"Đang đánh dấu: chưa hiểu":"Chưa hiểu"}</button>${inQueue?`<button class="btn sm" data-exnext="1">Từ kế tiếp →</button>`:""}</div>`}</div>`;
 }
 /* ---- thêm nút “Giải thích” vào từng dòng thuật ngữ ---- */
 mgTermRows=function(list){
@@ -5921,6 +5925,16 @@ document.addEventListener("click",e=>{
   if(d.excur!=null){EX.cur=+d.excur;exRefresh();return}
   if(d.exunsure!=null){const Q=exQueue(),R=exRead(),i=Q.findIndex(x=>R[exKey(x.w)]===2);if(i>=0)EX.cur=i;exRefresh();return}
 });
+
+/* khung “Kiến thức nền” trong phần phản hồi của quiz: tự mở khi trả lời sai */
+function exFb(q,ok){
+  try{
+    const r=q&&q.ref,w=r&&(r.w||r.word);if(!w)return "";
+    exLoad();const e=exGet(w);if(!e)return "";
+    return `<details class="ex-fold"${ok?"":" open"}><summary>Kiến thức nền: ${esc(w)}</summary>${exCard({w:w},false,true)}</details>`;
+  }catch(x){return ""}
+}
+setTimeout(()=>{try{exLoad()}catch(e){}},4000);
 </script>
 </body>
 </html>
