@@ -1569,7 +1569,7 @@ function loadVIndex(force){
   if(VIDX||vIdxLoading||(!force&&Date.now()-vIdxFail<20000))return;
   vIdxLoading=true;
   // bộ chính + bộ Vật liệu (file riêng _index-mat.json, thiếu thì bỏ qua); bộ chính lỗi thì để trống và thử lại, không khoá danh sách bộ từ
-  call("getPacks",["vocab/_index.json","vocab/_index-mat.json","vocab/_index-matg.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);[a[1],a[2]].forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
+  call("getPacks",["vocab/_index.json","vocab/_index-mat.json","vocab/_index-matg.json","vocab/_index-phim.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);[a[1],a[2],a[3]].forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
 }
 const vSets=()=>(VIDX&&VIDX.sets)||[];
 function extTopic(u,set){return VU[u.id]||(VU[u.id]={id:u.id,en:u.title,vi:u.vi||"",desc:u.vi||"",ext:true,set:set.id,setName:set.name,n:u.n,words:null})}
