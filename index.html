@@ -13,7 +13,9 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icons/favicon-64.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap&subset=vietnamese">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap&subset=vietnamese" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap&subset=vietnamese"></noscript>
 <style>
 /* Climbing the Rock: lộ trình như một tuyến leo núi. Mỗi bài là một mốc, XP là mét leo, các trại là cột mốc tiến độ. */
 :root{
@@ -1479,17 +1481,19 @@ const BOOKS=[{key:"grammar",name:"Collins Grammar",units:GUNITS.map(u=>u.en)},{k
 const HOLIDAYS={"2026-12-25":"Giáng sinh","2027-01-01":"Năm mới","2027-02-08":"Tết/Seollal (nghỉ bù)"};
 const SRS=[0,1,3,7,14,30,60];
 const TASKS={paragraph:{label:"Đoạn văn 150 từ",min:150,max:200,paras:[1,1]},intro:{label:"Mở bài",min:25,max:80,paras:[1,1]},task1:{label:"Task 1",min:150,max:220,paras:[3,4]},task2:{label:"Task 2",min:250,max:320,paras:[4,5]}};
+let PLAN_START="2026-11-02";
+const planStartDate=()=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(PLAN_START);return new Date(+m[1],+m[2]-1,+m[3])};
 function buildPlan(){
   const G=BOOKS[0].units,L=BOOKS[1].units;
   // Tuần 0 (26–30/10): khởi động tự chọn, không tính nợ. Lộ trình bắt buộc bắt đầu thứ Hai 2/11/2026.
-  const w0=new Date(2026,9,26),warm=[
+  const _ps=planStartDate(),w0=addDays(_ps,-7),warm=[
     {am:{task:"Làm quen: 1 lượt trộn Xưởng từ + ôn từ đến hạn"},pm:{task:"Reading: làm thử 1 bài trên web, xem lời giải"}},
     {am:{task:"Grammar U1 Collins: đọc trước lý thuyết"},pm:{task:"Listening: nghe thử 1 section, chép chính tả đoạn khó"}},
     {am:{task:"Xưởng từ: mở Cây gốc từ, học 1 gốc"},pm:{task:"Speaking Part 1: nói 1 chủ đề, nộp rồi nhắn Claude \"chấm bài\""}},
     {am:{task:"Sổ từ phim: thêm từ mới gặp trong tuần"},pm:{task:"Writing: viết đoạn 150 từ, nộp rồi nhắn \"chấm bài\""}},
     {am:{task:"Ôn từ đến hạn"},pm:{task:"Sửa bài theo nhận xét, chuẩn bị sách cho tuần 1"}}];
   const weeks=[{n:0,label:"Tuần 0",units:"Khởi động (tự chọn, không tính nợ)",days:warm.map((d,i)=>({...d,date:addDays(w0,i),opt:true}))}];
-  const start=new Date(2026,10,2);
+  const start=_ps;
   for(let w=1;w<=12;w++){
     const mon=addDays(start,(w-1)*7), gA=w<=10?2*w-1:null, gB=w<=10?2*w:null;
     const gAt=gA?`Grammar U${gA} ${G[gA-1]}`:"Grammar: bù unit còn nợ", gBt=gB?`Grammar U${gB} ${G[gB-1]}`:"Grammar: ôn tổng U1–20";
@@ -1519,6 +1523,8 @@ function buildPlan(){
   return weeks;
 }
 const PLAN=buildPlan(), ALLDAYS=PLAN.flatMap(w=>w.days);
+const fmtVN=k=>{const a=String(k).split("-");return +a[2]+"/"+(+a[1])+"/"+a[0]};
+function replan(ps){if(!/^\d{4}-\d{2}-\d{2}$/.test(ps||"")||ps===PLAN_START)return false;PLAN_START=ps;const np=buildPlan();PLAN.length=0;np.forEach(w=>PLAN.push(w));ALLDAYS.length=0;np.forEach(w=>w.days.forEach(d=>ALLDAYS.push(d)));try{openWeek=null}catch(e){}return true}
 
 /* ================= Trạng thái ================= */
 let state={days:{},units:{grammar:{},listening:{},reading:{}}};
@@ -1607,7 +1613,29 @@ function findLesson(key){
 let toastT=null;
 function toast(t,err){const el=$("toast");el.textContent=t;el.className="toast"+(err?" err":"");el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,err?6000:2600)}
 let pending=0;
+/* v10: nội dung (getPack/getPacks) lưu trên máy theo phiên bản gói (IndexedDB). Phiên bản đổi (nạp gói mới) thì tự tải lại. */
+let packVerOk=ls.get("ielts-pv","")!=="";
+const PC=(()=>{let dbp=null;
+  const open=()=>dbp||(dbp=new Promise((res,rej)=>{try{const r=indexedDB.open("climb-pack",1);r.onupgradeneeded=()=>{r.result.createObjectStore("p")};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);r.onblocked=()=>rej(new Error("blocked"))}catch(e){rej(e)}}));
+  const tx=(mode,fn)=>open().then(db=>new Promise((res,rej)=>{const t=db.transaction("p",mode),rq=fn(t.objectStore("p"));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)}));
+  return{get:k=>tx("readonly",st=>st.get(k)).catch(()=>undefined),
+    put:(k,v)=>tx("readwrite",st=>st.put(v,k)).catch(()=>{}),
+    prune:ver=>open().then(db=>{const t=db.transaction("p","readwrite"),st=t.objectStore("p"),rq=st.openKeyCursor();rq.onsuccess=()=>{const c=rq.result;if(!c)return;if(String(c.key).split("|")[0]!==String(ver))st.delete(c.key);c.continue()}}).catch(()=>{}),
+    clear:()=>tx("readwrite",st=>st.clear()).catch(()=>{})}})();
+const hasStr=v=>typeof v==="string"&&v.length>0;
+async function packCached(fn,args,quiet){
+  const ver=packVer,K=p=>ver+"|"+p;
+  if(fn==="getPack"){
+    const h=await PC.get(K(args[0]));if(hasStr(h))return h;
+    const r=await callRaw0(fn,args,quiet);if(hasStr(r)&&ver===packVer)PC.put(K(args[0]),r);return r}
+  const paths=args[0]||[],hits=await Promise.all(paths.map(p=>PC.get(K(p)))),miss=paths.filter((p,i)=>!hasStr(hits[i]));
+  if(!miss.length)return hits;
+  const got=await callRaw0(fn,[miss,...args.slice(1)],quiet);let j=0;
+  return paths.map((p,i)=>{if(hasStr(hits[i]))return hits[i];const r=got[j++];if(hasStr(r)&&ver===packVer)PC.put(K(p),r);return r})}
 function callRaw(fn,args,quiet){
+  if(packVerOk&&(fn==="getPack"||fn==="getPacks")&&typeof indexedDB!=="undefined")return packCached(fn,args,quiet);
+  return callRaw0(fn,args,quiet)}
+function callRaw0(fn,args,quiet){
   pending++;
   /* đọc gói nội dung (getPack/getPacks) tự thử lại tối đa 2 lần khi lỗi mạng/máy chủ chậm; PIN sai hoặc không có file thì không thử lại */
   const tries=(fn==="getPack"||fn==="getPacks")?3:1;
@@ -1746,7 +1774,7 @@ function renderHome(){
   if(day){const r=dayRec(day.k);
     const sess=(slot,time,t)=>`<label class="task ${r[slot]?"on":""}"><input type="checkbox" data-day="${day.k}" data-slot="${slot}" ${r[slot]?"checked":""}><span class="tick">${I.check}</span><span class="grow"><span class="t-time">${time}</span><span class="t-title">${esc(t.task)}</span></span>${planPackBtn(t.task)}</label>`;
     todo+=`<div class="todo-sec">${day.opt?"Khởi động (tự chọn)":"Bắt buộc · lộ trình sách"}</div>`+sess("am","Ca sáng 07:50 · 50 phút · "+(day.opt?"làm quen":"trong sách"),day.am)+sess("pm","Ca tối 21:30 · 70 phút · "+(day.opt?"làm quen":"trong sách"),day.pm);
-  }else if(todayISO<"2026-11-02"){todo+=`<div class="todo-sec">Lộ trình bắt buộc bắt đầu thứ Hai 2/11</div>`}
+  }else if(todayISO<PLAN_START){todo+=`<div class="todo-sec">Lộ trình bắt buộc bắt đầu thứ Hai ${fmtVN(PLAN_START).replace(/\/\d+$/,"")}</div>`}
   todo+=`<div class="todo-sec">Bổ trợ trên web</div>`;
   let lastSec="";
   todo+=P.items.map(it=>(it.sec&&it.sec!==lastSec?(lastSec=it.sec,`<div class="todo-sec">${esc(it.sec)} · ưu tiên ngang IELTS</div>`):"")+`<div class="task ${it.done?"on":""}"><span class="tick">${I.check}</span><span class="grow"><span class="t-time">${esc(it.time)} · khoảng ${it.min} phút</span><span class="t-title">${esc(it.title)}</span>${it.how?`<span class="t-how">${esc(it.how)}</span>`:""}</span>${it.btn&&!it.done?`<button class="btn sm ${it.primary?"primary":""}" ${it.btn}>${esc(it.label||"Làm")}</button>`:""}</div>`).join("");
@@ -1836,7 +1864,7 @@ function renderPath(){
    words:["Xưởng từ","Hiểu sâu và dùng đúng từ","Sổ từ phim & sách, dạng từ, kết hợp từ, nâng cấp từ, paraphrase và bẫy True/False/Not Given. Mỗi câu luyện có lịch ôn riêng."],
    week:["Chủ đề tuần","Mỗi tuần một chủ điểm","Học từ vựng, luyện dùng, viết và nói quanh cùng một chủ đề. Ngữ pháp và sách vẫn theo lịch học."],
    grammar:["Lộ trình ngữ pháp","Collins Grammar, 20 unit","Mỗi unit: tóm tắt lý thuyết bằng tiếng Việt, lỗi hay gặp, rồi 16 câu kiểm tra ở 3 mức Dễ, Vừa, Khó để lên hạng từ Sắt tới Kim cương. Unit đã tick xong trong sách được mở sẵn."],
-   plan:["Lịch học 2 giai đoạn","24 tuần · 2/11/2026 → 16/4/2027","Stage 1 (tuần 1–12, đến 22/1/2027) và Stage 2 (tuần 13–24, từ 25/1/2027). Stage 2: mỗi tuần một đề Cambridge (Cam 18, 19, 20), làm Listening, 3 bài Reading, Writing Task 1 và 2, Speaking, kèm từ vựng Destination B2; tuần thứ tư của mỗi quyển là thi thử có tính giờ. Mục tiêu cuối Stage 2: khoảng 5.5–6.0, mục tiêu cuối cùng 7.0. Stage 1: lộ trình bắt buộc theo sách: Collins Grammar (20 unit), Collins Listening và Collins Reading (12 unit mỗi cuốn), mỗi tuần 1 bài viết và luyện nói. Tài liệu trên web là phần bổ trợ. Tick từng ca sau khi học; ngày đỏ là ngày còn nợ, học bù rồi tick lại. Tuần 0 là khởi động tự chọn."]}[pathMode];
+   plan:["Lịch học 2 giai đoạn",`24 tuần · ${fmtVN(PLAN[1].days[0].k)} → ${fmtVN(PLAN[24].days[4].k)}`,"Stage 1 (tuần 1–12, đến "+fmtVN(PLAN[12].days[4].k)+") và Stage 2 (tuần 13–24, từ "+fmtVN(PLAN[13].days[0].k)+"). Stage 2: mỗi tuần một đề Cambridge (Cam 18, 19, 20), làm Listening, 3 bài Reading, Writing Task 1 và 2, Speaking, kèm từ vựng Destination B2; tuần thứ tư của mỗi quyển là thi thử có tính giờ. Mục tiêu cuối Stage 2: khoảng 5.5–6.0, mục tiêu cuối cùng 7.0. Stage 1: lộ trình bắt buộc theo sách: Collins Grammar (20 unit), Collins Listening và Collins Reading (12 unit mỗi cuốn), mỗi tuần 1 bài viết và luyện nói. Tài liệu trên web là phần bổ trợ. Tick từng ca sau khi học; ngày đỏ là ngày còn nợ, học bù rồi tick lại. Tuần 0 là khởi động tự chọn."]}[pathMode];
   let body="";
   if(pathMode==="vocab"){loadVIndex();
     const chips=`<div class="rfilters vsets"><button class="chip" data-vset="core" aria-pressed="${vset==="core"}">Chủ đề IELTS</button>${vSets().map(x=>`<button class="chip" data-vset="${x.id}" aria-pressed="${vset===x.id}">${esc(x.name)}</button>`).join("")}${!VIDX?(vIdxFail&&!vIdxLoading?`<button class="chip" data-vreload>Chưa tải được các bộ từ khác · Thử lại</button>`:`<span class="hint">đang tải bộ từ…</span>`):""}</div>`;
@@ -2750,7 +2778,7 @@ function fxSettingsDialog(){
    <div class="dlg-ft"><button class="btn ghost" data-logout style="margin-right:auto">Đăng xuất / đổi người</button><button class="btn" data-fxtest>Thử hiệu ứng</button><button class="btn primary" data-close>Xong</button></div>`);
 }
 document.addEventListener("click",e=>{if(!e.target.closest("[data-logout]"))return;if(outbox().some(x=>x.pin===PIN)&&!confirm("Còn kết quả chưa gửi được lên máy chủ. Đăng xuất thì chúng chờ tới lần người này đăng nhập lại. Tiếp tục?"))return;
-  ls.del("ielts-pin");ls.del("ielts-cache");PIN="";closeDlg();$("pin").value="";showPin("Nhập PIN của người dùng.")});
+  ls.del("ielts-pin");ls.del("ielts-cache");try{PC.clear()}catch(e){}PIN="";closeDlg();$("pin").value="";showPin("Nhập PIN của người dùng.")});
 document.addEventListener("click",e=>{
   if(e.target.closest("#altchip"))return fxSettingsDialog();
   if(e.target.closest("[data-fxtest]")){FX.celebrate(.7,`<span class="fl">✨</span>Hiệu ứng đang bật`)}
@@ -2777,7 +2805,7 @@ const rSrc=r=>`R:${r.id}|${r.title}`;
 const rWordsOf=id=>vocab.filter(v=>v.source.startsWith(`R:${id}|`));
 let rView=ls.get("ielts-rview","sets"),rSet=ls.get("ielts-rset",""),rTypeF="all";
 let RIDX=null,rIdxLoading=false;const PACKS={};
-let rstats={byType:{},latest:{},groupsDone:[]},rnotes={},packVer="1";
+let rstats={byType:{},latest:{},groupsDone:[]},rnotes={},packVer=ls.get("ielts-pv","1");
 
 /* ---------- tải dữ liệu ---------- */
 let rIdxFail=0;
@@ -4517,8 +4545,9 @@ window.addEventListener("unhandledrejection",ev=>{setTimeout(()=>rescueStudy("L�
 
 /* ================= Tải dữ liệu ================= */
 function applyState(s){
+  replan(s.planStart||"2026-11-02");
   state.days=s.days||{};state.units={grammar:{},listening:{},reading:{},...(s.units||{})};
-  subs=s.subs||[];vocab=s.vocab||[];xpLog=s.xp||[];progress=s.progress||{};aiEnabled=!!s.aiEnabled;readings=s.readings||[];rstats=s.rstats||{byType:{},latest:{},groupsDone:[]};rnotes=s.rnotes||{};bank=s.bank||[];if(s.packVer&&s.packVer!==packVer){packVer=s.packVer;RIDX=null}
+  subs=s.subs||[];vocab=s.vocab||[];xpLog=s.xp||[];progress=s.progress||{};aiEnabled=!!s.aiEnabled;readings=s.readings||[];rstats=s.rstats||{byType:{},latest:{},groupsDone:[]};rnotes=s.rnotes||{};bank=s.bank||[];if(s.packVer&&s.packVer!==packVer){packVer=s.packVer;RIDX=null}if(s.packVer){packVerOk=true;ls.set("ielts-pv",String(s.packVer));try{PC.prune(packVer)}catch(e){}}
   errLog=s.errors||[];evLog=s.events||[];chals=s.challenges||[];
   me=s.me||{name:"",key:""};buddies=s.buddies||[];hlMap=s.highlights||{};
   const mn=$("me-name");if(mn)mn.textContent="Lộ trình IELTS"+(me.name?" của "+me.name:"");
