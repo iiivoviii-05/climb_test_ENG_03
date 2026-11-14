@@ -1575,9 +1575,9 @@ function loadVIndex(force){
   if(VIDX||vIdxLoading||(!force&&Date.now()-vIdxFail<20000))return;
   vIdxLoading=true;
   // bộ chính + bộ Vật liệu (file riêng _index-mat.json, thiếu thì bỏ qua); bộ chính lỗi thì để trống và thử lại, không khoá danh sách bộ từ
-  call("getPacks",["vocab/_index.json","vocab/_index-mat.json","vocab/_index-matg.json","vocab/_index-phim.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);[a[1],a[2],a[3]].forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
+  call("getPacks",["vocab/_index.json",...(ODS?["vocab/_index-mat.json","vocab/_index-matg.json"]:[]),"vocab/_index-phim.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);a.slice(1).forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
 }
-const vSets=()=>(VIDX&&VIDX.sets)||[];
+const vSets=()=>((VIDX&&VIDX.sets)||[]).filter(x=>ODS||!/^mat/.test(x.id));
 function extTopic(u,set){return VU[u.id]||(VU[u.id]={id:u.id,en:u.title,vi:u.vi||"",desc:u.vi||"",ext:true,set:set.id,setName:set.name,n:u.n,words:null})}
 function extTopics(setId){const s=vSets().find(x=>x.id===setId);return s?s.units.map(u=>extTopic(u,s)):[]}
 function extLessons(t){
@@ -1613,6 +1613,7 @@ function findLesson(key){
 let toastT=null;
 function toast(t,err){const el=$("toast");el.textContent=t;el.className="toast"+(err?" err":"");el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,err?6000:2600)}
 let pending=0;
+let ODS=ls.get("ielts-ods","1")!=="0"; /* v10b: false = chế độ "gen" (không có Vật liệu/ODS) */
 /* v10: nội dung (getPack/getPacks) lưu trên máy theo phiên bản gói (IndexedDB). Phiên bản đổi (nạp gói mới) thì tự tải lại. */
 let packVerOk=ls.get("ielts-pv","")!=="";
 const PC=(()=>{let dbp=null;
@@ -1622,6 +1623,38 @@ const PC=(()=>{let dbp=null;
     put:(k,v)=>tx("readwrite",st=>st.put(v,k)).catch(()=>{}),
     prune:ver=>open().then(db=>{const t=db.transaction("p","readwrite"),st=t.objectStore("p"),rq=st.openKeyCursor();rq.onsuccess=()=>{const c=rq.result;if(!c)return;if(String(c.key).split("|")[0]!==String(ver))st.delete(c.key);c.continue()}}).catch(()=>{}),
     clear:()=>tx("readwrite",st=>st.clear()).catch(()=>{})}})();
+var WL_MODES_FULL=null;
+function odsApply(on){
+  const was=ODS;ODS=!!on;ls.set("ielts-ods",ODS?"1":"0");
+  try{document.querySelectorAll('[data-skill="mat"]').forEach(b=>{b.style.display=ODS?"":"none"})}catch(e){}
+  try{
+    if(!WL_MODES_FULL)WL_MODES_FULL=WL_MODES.slice();
+    WL_MODES.length=0;WL_MODES_FULL.filter(m=>ODS||m.k!=="mat").forEach(m=>WL_MODES.push(m));
+  }catch(e){}
+  if(was!==ODS){VIDX=null;RIDX=null;vIdxFail=0;rIdxFail=0;try{MATW=null}catch(e){}}
+  if(!ODS&&skill==="mat"){skill="reading";ls.set("ielts-skill",skill)}
+}
+const lifeSet=()=>vSets().find(x=>x.id==="phim")||null;
+function lifeNext(){
+  const us=extTopics("phim");if(!us.length)return null;
+  const cu=ls.get("ielts-vunit-phim",""),order=[us.find(t=>t.id===cu),...us].filter(Boolean);
+  for(const t of order){const L=topicLessons(t).find(l=>!passed(l.key)&&lessonUnlocked(l));if(L)return L}
+  return null;
+}
+const lifeToday=()=>Object.entries(progress).filter(([k,p])=>/^phim-\d+-\d+$/.test(k)&&p.status==="passed"&&p.updated===todayISO).length;
+function lifePlan(){
+  const sec="Từ vựng đời sống",dow=fromISO(todayISO).getDay(),weekend=dow===0||dow===6,items=[];
+  if(!weekend){
+    const nl=lifeNext(),nt=lifeToday();
+    if(nl)items.push({sec,time:"Đời sống · Cụm nói tự nhiên",min:15,title:nt>=1?"Đã xong 1 chặng cụm đời sống hôm nay":`${nl.title} · ${nl.topic.en}`,how:nt>=1?"Đủ cho hôm nay. Cụm đã học tự quay lại trong phần Ôn tập.":`${nl.n||(nl.words||[]).length} cụm dùng được ngay, có câu mẫu và nhãn sắc thái. Đọc to rồi tự đặt 1 câu về mình.`,done:nt>=1,btn:`data-open="${nl.key}"`,label:"Học",primary:true});
+    else if(VIDX&&!lifeSet())items.push({sec,time:"Đời sống · Cụm nói tự nhiên",min:15,title:"Chưa nạp bộ Tiếng Anh qua phim",how:"Cần nạp gói climb-content-phim.zip vào thư mục climb-data rồi chạy napNoiDung.",done:false});
+    else if(VIDX)items.push({sec,time:"Đời sống · Cụm nói tự nhiên",min:15,title:"Đã học hết bộ cụm đời sống",how:"Ôn lại trong phần Ôn tập.",done:true});
+    items.push({sec,time:"Đời sống · Dùng ngay",min:8,title:"Nói 3 câu có cụm vừa học (Speaking Part 1)",how:"Trả lời Part 1 bằng micro, cố đưa ít nhất 3 cụm hôm nay vào câu trả lời tự nhiên. Cụm đời sống dùng được cả trong bài thi lẫn nói chuyện thật.",done:subs.some(s=>s.type==="speaking"&&String(s.created).startsWith(todayISO)),btn:'data-goskill="speaking" data-spv="practice"',label:"Nói"});
+  }else{
+    items.push({sec,time:"Đời sống · Ôn tập",min:10,title:"Ôn từ và cụm đến hạn",how:"Cuối tuần chỉ ôn lại những gì đã học.",done:dueWords().length===0,btn:'data-review="start"',label:"Ôn"});
+  }
+  return items;
+}
 const hasStr=v=>typeof v==="string"&&v.length>0;
 async function packCached(fn,args,quiet){
   const ver=packVer,K=p=>ver+"|"+p;
@@ -1732,7 +1765,7 @@ function placeOnRoute(m){
 /* ================= Kế hoạch ngày (giữ lượng học vừa sức) ================= */
 // chặng từ vựng mới đã qua hôm nay
 const isVocabKey=k=>/^v\d+-\d$/.test(k)||/^[a-z]+\d*-\d+-(\d+|c)$/.test(k);
-function newToday(mat){return Object.entries(progress).filter(([k,p])=>isVocabKey(k)&&!k.endsWith("-c")&&p.status==="passed"&&p.updated===todayISO&&!!mat===k.startsWith("mat-")).length}
+function newToday(mat){return Object.entries(progress).filter(([k,p])=>isVocabKey(k)&&!k.endsWith("-c")&&p.status==="passed"&&p.updated===todayISO&&(mat?k.startsWith("mat-"):!/^(mat|matg|phim)-/.test(k))).length}
 const REVIEW_CAP=20;
 function dailyPlan(){
   const dow=fromISO(todayISO).getDay(),weekend=dow===0||dow===6;
@@ -1757,7 +1790,7 @@ function dailyPlan(){
     if(i===4)items.push({time:"Writing",min:45,title:"Viết đoạn 150 từ, nộp chấm",done:subs.some(s=>s.type==="writing"&&s.created.startsWith(todayISO)&&!MAT_REF.test(String(s.ref||""))),btn:'data-goskill="write"',label:"Mở"});
   }
   if(!VIDX)loadVIndex();if(!RIDX)loadRIndex();
-  items.push(...matPlan());
+  items.push(...(ODS?matPlan():lifePlan()));
   return {items,weekend,min:items.reduce((s,x)=>s+(x.done?0:x.min),0)};
 }
 document.addEventListener("click",e=>{const g=e.target.closest("[data-goskill]");if(g){skill=g.dataset.goskill;ls.set("ielts-skill",skill);if(g.dataset.spv){spView=g.dataset.spv;ls.set("ielts-spview",spView)}setTab("skills")}});
@@ -1773,7 +1806,7 @@ function renderHome(){
   let todo="";
   if(day){const r=dayRec(day.k);
     const sess=(slot,time,t)=>`<label class="task ${r[slot]?"on":""}"><input type="checkbox" data-day="${day.k}" data-slot="${slot}" ${r[slot]?"checked":""}><span class="tick">${I.check}</span><span class="grow"><span class="t-time">${time}</span><span class="t-title">${esc(t.task)}</span></span>${planPackBtn(t.task)}</label>`;
-    todo+=`<div class="todo-sec">${day.opt?"Khởi động (tự chọn)":"Bắt buộc · lộ trình sách"}</div>`+sess("am","Ca sáng 07:50 · 50 phút · "+(day.opt?"làm quen":"trong sách"),day.am)+sess("pm","Ca tối 21:30 · 70 phút · "+(day.opt?"làm quen":"trong sách"),day.pm);
+    todo+=`<div class="todo-sec">${day.opt?"Khởi động (tự chọn)":"Bắt buộc · lộ trình sách"}</div>`+sess("am",""+(ODS?"Ca sáng 07:50":"Ca 1")+" · 50 phút · "+(day.opt?"làm quen":"trong sách"),day.am)+sess("pm",""+(ODS?"Ca tối 21:30":"Ca 2")+" · 70 phút · "+(day.opt?"làm quen":"trong sách"),day.pm);
   }else if(todayISO<PLAN_START){todo+=`<div class="todo-sec">Lộ trình bắt buộc bắt đầu thứ Hai ${fmtVN(PLAN_START).replace(/\/\d+$/,"")}</div>`}
   todo+=`<div class="todo-sec">Bổ trợ trên web</div>`;
   let lastSec="";
@@ -2812,7 +2845,7 @@ let rIdxFail=0;
 function loadRIndex(force){
   if(RIDX||rIdxLoading||(!force&&Date.now()-rIdxFail<20000))return;
   rIdxLoading=true;
-  call("getPacks",["reading/_index.json","reading/_index-mat.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("reading index");const d=JSON.parse(a[0]);try{if(a[1]){const m=JSON.parse(a[1]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}RIDX=d;rIdxLoading=false;if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat();else if(tab==="home")render()})
+  call("getPacks",ODS?["reading/_index.json","reading/_index-mat.json"]:["reading/_index.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("reading index");const d=JSON.parse(a[0]);try{if(a[1]){const m=JSON.parse(a[1]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}RIDX=d;rIdxLoading=false;if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat();else if(tab==="home")render()})
    .catch(()=>{rIdxLoading=false;rIdxFail=Date.now();if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat()});
 }
 function loadPack(id){
@@ -2820,7 +2853,7 @@ function loadPack(id){
   const it=rItem(id);
   return call("getPack",`reading/${it?it.set:id.split("-")[0]}/${id}.json`,packVer).then(s=>{const p=JSON.parse(s);if(!p.id)p.id=id;PACKS[id]=p;return p});
 }
-const rSets=()=>(RIDX&&RIDX.sets)||[];
+const rSets=()=>((RIDX&&RIDX.sets)||[]).filter(x=>ODS||!/^mat/.test(x.id));
 const rItem=id=>{for(const s of rSets())for(const it of s.items)if(it.id===id)return {...it,set:s.id,setName:s.name};return null};
 const rBest=id=>{const p=progress["r:"+id];return p?p.best:null};
 const typeAcc=t=>{const v=rstats.byType[t];return v&&v[1]?Math.round(v[0]/v[1]*100):null};
@@ -3699,7 +3732,7 @@ const SK={mat:["Vật liệu · ODS","Học chuyên ngành song song với IELTS
   listening:["Listening","Nghe đề ngay trên web (âm thanh lấy từ Drive), chỉnh tốc độ, tua 5 giây, chấm điểm rồi xem transcript và lời giải."]};
 function renderSkills(){
   document.querySelectorAll("[data-skill]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.skill===skill));
-  if(!SK[skill])skill="reading";
+  if(!SK[skill]||(skill==="mat"&&!ODS))skill="reading";
   ["reading","speaking","write","listening","mat"].forEach(k=>$("sk-"+k).hidden=k!==skill);
   $("sk-title").textContent=SK[skill][0];$("sk-lead").textContent=SK[skill][1];
   ({reading:renderReading,speaking:renderSpeaking,write:renderWrite,listening:renderListening,mat:renderMat})[skill]();if(typeof gbEntry==="function")gbEntry();
@@ -4545,6 +4578,7 @@ window.addEventListener("unhandledrejection",ev=>{setTimeout(()=>rescueStudy("L�
 
 /* ================= Tải dữ liệu ================= */
 function applyState(s){
+  odsApply(s.mode!=="gen");
   replan(s.planStart||"2026-11-02");
   state.days=s.days||{};state.units={grammar:{},listening:{},reading:{},...(s.units||{})};
   subs=s.subs||[];vocab=s.vocab||[];xpLog=s.xp||[];progress=s.progress||{};aiEnabled=!!s.aiEnabled;readings=s.readings||[];rstats=s.rstats||{byType:{},latest:{},groupsDone:[]};rnotes=s.rnotes||{};bank=s.bank||[];if(s.packVer&&s.packVer!==packVer){packVer=s.packVer;RIDX=null}if(s.packVer){packVerOk=true;ls.set("ielts-pv",String(s.packVer));try{PC.prune(packVer)}catch(e){}}
@@ -4559,7 +4593,7 @@ function applyState(s){
    Thiếu file nào thì phần đó báo "chưa nạp", phần còn lại vẫn chạy. */
 const MAT="mat";
 let MATW=null,matwLoading=false,matwFail=0,matV=ls.get("ielts-matv","today"),matWT=ls.get("ielts-matwt","task1");
-function loadMatW(force){
+function loadMatW(force){if(!ODS)return;
   if(MATW||matwLoading||(!force&&Date.now()-matwFail<20000))return;
   matwLoading=true;
   call("getPack","writing/mat.json",packVer).then(s=>{MATW=JSON.parse(s);matwLoading=false;matRerender()}).catch(()=>{matwLoading=false;matwFail=Date.now();matRerender()});
@@ -5591,14 +5625,14 @@ const MG_SECS=[["learn","Học theo chương"],["term","Thuật ngữ"],["abbr",
 const mgNorm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/Đ/g,"d").toLowerCase();
 const matgUnits=()=>extTopics("matg");
 function mgRerender(){if(S||RD||DT||SP)return;if(tab==="skills"&&skill==="mat"&&matV==="dict"){const q=$("mg-q"),keep=q&&document.activeElement===q;renderMat();if(keep){const n=$("mg-q");if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length)}catch(e){}}}}}
-function loadMatRef(force){
+function loadMatRef(force){if(!ODS)return;
   if(MG.ref)return Promise.resolve(MG.ref);
   if(MG.refLoading)return MG.refLoading;
   if(!force&&Date.now()-MG.refFail<20000)return Promise.resolve(null);
   MG.refLoading=callRaw("getPack",["vocab/matg/_ref.json",packVer],true).then(s=>{MG.ref=JSON.parse(s);MG.refLoading=false;mgRerender();return MG.ref}).catch(()=>{MG.refLoading=false;MG.refFail=Date.now();return null});
   return MG.refLoading;
 }
-function loadMatAll(force){
+function loadMatAll(force){if(!ODS)return;
   if(MG.all||MG.allLoading||!VIDX)return;
   const us=matgUnits();if(!us.length)return;
   if(!force&&Date.now()-MG.allFail<20000)return;
@@ -5831,7 +5865,7 @@ setInterval(()=>{if(skill==="write"&&wView==="main")wPrevNote()},1500);
 const EX={idx:null,idxLoading:false,idxFail:0,data:{},loading:{},open:new Set(),ans:{},cur:0};
 const exRead=()=>{try{return JSON.parse(ls.get("ielts-mgx-read","{}"))||{}}catch(e){return {}}};
 const exSave=o=>ls.set("ielts-mgx-read",JSON.stringify(o));
-function exLoad(){
+function exLoad(){if(!ODS)return;
   if(EX.idx===null){
     if(EX.idxLoading||Date.now()-EX.idxFail<20000)return;
     EX.idxLoading=true;
