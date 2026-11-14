@@ -1192,6 +1192,72 @@ select.inp{width:100%}
 .rdchip.ok{background:var(--ok);color:#06210f}
 .rdchip.mid{background:var(--sun);color:var(--sun-ink,#3a2500)}
 .prevnote{margin-top:6px;padding:8px 12px;border-radius:10px;background:var(--ok-soft);border-left:4px solid var(--ok);font-size:13px;line-height:1.5}
+
+/* ===== Kho quà ===== */
+.gf{display:flex;flex-direction:column;gap:12px;padding:16px}
+.gf .hd b{font-size:16px}
+.gf-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 4px;-webkit-overflow-scrolling:touch}
+.gf-row::-webkit-scrollbar{display:none}
+.gf-chip{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--sunk);color:var(--ink-2);font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
+.gf-chip.locked{opacity:.55}
+.gf-chip.unlocked{background:var(--sun-soft);border-color:var(--sun);color:var(--sun-ink)}
+.gf-chip.opened{background:var(--surface);border-color:var(--line-2);color:var(--ink)}
+.gf-box{display:flex;gap:14px;align-items:center;width:100%;text-align:left;padding:14px 16px;border-radius:16px;border:1px dashed var(--line-2);background:var(--sunk);color:var(--ink);font:inherit;min-height:64px}
+.gf-box .gf-bi{font-size:30px;line-height:1;flex:none;filter:grayscale(1);opacity:.55}
+.gf-box .gf-bt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gf-box .gf-bt b{font-size:14.5px}
+.gf-box .gf-bt span{font-size:13px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+button.gf-box{cursor:pointer}
+.gf-box.ready{border:1.5px solid var(--sun);background:var(--sun-soft)}
+.gf-box.ready .gf-bi,.gf-box.done .gf-bi{filter:none;opacity:1}
+.gf-box.ready .gf-bt span{color:var(--sun-ink)}
+.gf-box.done{border-style:solid;border-color:var(--line);background:var(--surface)}
+@media (prefers-reduced-motion:no-preference){.gf-box.ready .gf-bi{animation:gfwob 2.4s ease-in-out infinite}}
+@keyframes gfwob{0%,100%{transform:rotate(0)}8%{transform:rotate(-9deg)}16%{transform:rotate(8deg)}24%{transform:rotate(0)}}
+/* hộp quà trên núi */
+.gfm{cursor:pointer}
+.gfm rect{stroke:none}
+.gfm path{fill:none;stroke-width:1.4;stroke-linecap:round}
+.gfm .halo{fill:var(--sun);opacity:0}
+.gfm.locked rect{fill:rgba(255,255,255,.26)}.gfm.locked path{stroke:rgba(255,255,255,.42)}
+.gfm.unlocked rect{fill:var(--sun)}.gfm.unlocked path{stroke:#5a3a00}.gfm.unlocked .halo{opacity:.3}
+.gfm.opened rect{fill:#eef1ff}.gfm.opened path{stroke:var(--sun);stroke-width:1.8}
+@media (prefers-reduced-motion:no-preference){.gfm.unlocked .halo{animation:gfp 1.9s ease-in-out infinite}}
+@keyframes gfp{0%,100%{opacity:.12}50%{opacity:.5}}
+/* hộp thoại quà */
+.dlg.gf-dlg{max-width:560px}
+.gf-big{font-size:42px;line-height:1;flex:none}
+.gf-h .gf-vi{display:block}
+.gf-h .gf-en{display:block;font-size:.62em;font-weight:600;color:var(--ink-2);margin-top:4px;line-height:1.3}
+.gf-body{font-size:16px;line-height:1.65;color:var(--ink)}
+.gf-body .gf-vi{display:block}
+.gf-body .gf-en{display:block;margin-top:10px;font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.gf-qq{font-size:19px;font-weight:700;line-height:1.4}
+.gf-qdone{margin:0 0 10px;font-weight:700;color:var(--ink-2);font-size:14px}
+.gf-quiz{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.gf-orig{margin:0;padding-left:12px;border-left:3px solid var(--sun);font-style:italic;color:var(--ink-2);font-size:14px;line-height:1.5}
+.gf-speak{background:var(--sunk);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.gf-speak .kicker{font-size:12.5px;font-weight:800;color:var(--ink-2);margin-bottom:2px}
+.gf-sp{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}
+.gf-speak .kicker+.gf-sp{border-top:0}
+.gf-sp b{display:block;font-size:15px}
+.gf-sp span{display:block;font-size:13px;color:var(--ink-2);margin-top:2px}
+.gf-src{font-size:11.5px;line-height:1.5;color:var(--ink-3)}
+.gf-lang{margin-right:auto}
+.gf-lang button{padding:8px 12px}
+.gf-dlg .dlg-ft{align-items:center}
+.gf-dlg [data-gfstar][aria-pressed="true"]{background:var(--sun-soft);border-color:var(--sun);color:var(--sun-ink)}
+/* sổ sưu tầm */
+.gf-cats .chip{white-space:nowrap}
+.gf-cats .chip[aria-pressed="true"]{background:var(--night);color:var(--night-ink);border-color:transparent}
+.gf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:520px){.gf-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.gf-tile{display:flex;flex-direction:column;gap:6px;min-height:92px;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--sunk);text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.gf-tile .gf-ti{font-size:22px;line-height:1}
+.gf-tile .gf-tt{font-size:12.5px;font-weight:600;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.gf-tile.off{align-items:center;justify-content:center;font-size:26px;color:var(--ink-3);opacity:.5;border-style:dashed;cursor:default}
+.gf-dlg>*{flex:none}
+.gf-dlg .bar{height:8px}
 .ex-wrap{grid-column:1/-1;margin-top:6px}
 .ex-btn{background:var(--sunk);border:1px dashed var(--line-2)}
 .ex-card{grid-column:1/-1;margin-top:8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:10px}
@@ -1749,7 +1815,7 @@ function mountainSVG(m){
    <path d="M40 300 L210 120 L280 175 L380 40 L470 150 L520 120 L640 260 L640 300Z" fill="url(#gm)"/>
    <path d="M380 40 L408 76 L392 72 L380 86 L366 70 L352 78Z" fill="#eef1ff"/>
    <path id="route" d="M90 292 C150 270 180 250 200 228 S270 210 285 182 S330 150 340 128 S372 96 384 52" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.2" stroke-dasharray="5 6"/>
-   <g id="flags"></g><g id="me"></g>
+   <g id="flags"></g><g id="me"></g><g id="gifts"></g>
   </svg>`;
 }
 function placeOnRoute(m){
@@ -1758,6 +1824,7 @@ function placeOnRoute(m){
   const at=f=>p.getPointAtLength(L*Math.min(1,Math.max(0,f)));
   // cờ vàng = đã cắm cờ (qua thử thách); cờ trắng đậm = đủ mét nhưng chưa qua thử thách; mờ = chưa tới
   $("flags").innerHTML=CAMPS.slice(1).map((c,i)=>{const q=at((c.m-base)/(max-base)),reached=m>=c.m,ch=CAMPS===CAMPS1?chals.find(x=>x.m===c.m):null,flag=ch?ch.done:reached;return `<g transform="translate(${q.x},${q.y})"><line x1="0" y1="0" x2="0" y2="-16" stroke="#eef1ff" stroke-width="1.6"/><path d="M0 -16 L11 -12 L0 -8Z" fill="${flag?"var(--sun)":reached?"#eef1ff":"rgba(255,255,255,.45)"}"/></g>`}).join("");
+  try{gMarkers(at,base,max)}catch(e){}
   const q=at((m-base)/(max-base));
   $("me").innerHTML=`<circle cx="${q.x}" cy="${q.y}" r="12" fill="var(--sun)" opacity=".3"/><circle cx="${q.x}" cy="${q.y}" r="6.5" fill="var(--sun)" stroke="#fff" stroke-width="2.5"/>`;
 }
@@ -1832,6 +1899,7 @@ function renderHome(){
      </div>
      ${mountainSVG(m)}
    </section>
+   <div id="gf-home">${giftsHomeHTML(P)}</div>
    ${typeof wtMustHTML==="function"?wtMustHTML():""}
    ${focusHTML()}
    ${buddyHTML()}
@@ -2787,7 +2855,7 @@ function fxMilestones(){
   try{
     const uk=me.key?"-"+me.key:"",key="ielts-camp"+(CAMPS===CAMPS2?"2":"")+uk,ci=campOf(totalXp()),prev=ls.get(key,"");
     if(prev===""){ls.set(key,String(ci))}
-    else if(ci>+prev){ls.set(key,String(ci));setTimeout(()=>FX.celebrate(1.4,`<span class="fl">⛺</span>Lên ${esc(CAMPS[ci].n)}${CAMPS===CAMPS1&&ci?" · mở thử thách cắm cờ":""}!`),400)}
+    else if(ci>+prev){ls.set(key,String(ci));setTimeout(()=>FX.celebrate(1.4,`<span class="fl">⛺</span>Lên ${esc(CAMPS[ci].n)}${CAMPS===CAMPS1&&ci?" · mở thử thách cắm cờ":""}!${giftCampNote(ci)}`),400)}
     // cắm cờ mới (qua thử thách trại)
     const fl=chals.filter(c=>c.done).map(c=>c.n).join(","),pf=ls.get("ielts-flags"+uk,null);
     if(pf===null)ls.set("ielts-flags"+uk,fl);
@@ -2796,9 +2864,157 @@ function fxMilestones(){
 }
 function fxPlanDone(P){
   if(!P||!P.items.length||P.items.some(x=>!x.done))return;
+  try{giftPlanDone()}catch(e){}
   if(ls.get("ielts-plandone","")===todayISO)return;ls.set("ielts-plandone",todayISO);
   setTimeout(()=>FX.celebrate(1,`<span class="fl">🏁</span>Xong kế hoạch hôm nay`),500);
 }
+/* ================= Kho quà: quà mốc núi (11) + quà hằng ngày (121) =================
+   Nội dung nằm ở Drive: gifts/gifts.json (gói climb-content-gifts.zip). Trạng thái lưu localStorage theo người dùng
+   (ielts-gifts-m / -d / -star / -lang / -ok, hậu tố -<mã> nếu có). Mã chữ trong quà do tác giả viết, không sửa. */
+const GF={data:null,loading:false,fail:0,view:null,cat:"all",q:"",star:false,flip:{},from:""};
+const gUK=()=>me&&me.key?"-"+me.key:"";
+function gGet(k,d){try{const v=JSON.parse(ls.get("ielts-gifts-"+k+gUK(),"null"));return v==null?d:v}catch(e){return d}}
+function gSet(k,v){try{ls.set("ielts-gifts-"+k+gUK(),JSON.stringify(v))}catch(e){}}
+const gLang=()=>{const l=gGet("lang","both");return l==="vi"||l==="en"?l:"both"};
+function giftsLoad(force){
+  if(GF.data||GF.loading||(!force&&Date.now()-GF.fail<20000))return;
+  GF.loading=true;
+  callRaw("getPack",["gifts/gifts.json",packVer],true).then(r=>{
+    const d=JSON.parse(r);if(!d||!Array.isArray(d.milestones)||!Array.isArray(d.daily))throw new Error("gifts");
+    GF.data=d;GF.loading=false;gRefreshHome();
+  }).catch(()=>{GF.loading=false;GF.fail=Date.now();gRefreshHome()});
+}
+function gRefreshHome(){
+  try{
+    if(S||RD||DT||SP||SH||ER)return;
+    const el=$("gf-home");if(el)el.innerHTML=giftsHomeHTML(dailyPlan());
+    if(document.getElementById("route"))placeOnRoute(totalXp());
+  }catch(e){}
+}
+/* ---------- chữ theo ngôn ngữ ---------- */
+function gTxt(o,cls){
+  if(!o)return "";const l=gLang();
+  if(l==="vi")return `<span class="${cls||""}">${esc(o.vi)}</span>`;
+  if(l==="en")return `<span class="${cls||""}">${esc(o.en)}</span>`;
+  return `<span class="${cls||""}">${esc(o.vi)}</span><span class="gf-en">${esc(o.en)}</span>`;
+}
+const gPlain=o=>{if(!o)return "";const l=gLang();return l==="en"?o.en:o.vi};
+const gLangSeg=()=>`<div class="seg gf-lang" role="group" aria-label="Ngôn ngữ">${[["both","VI+EN"],["vi","VI"],["en","EN"]].map(([k,t])=>`<button data-gflang="${k}" aria-pressed="${gLang()===k}">${t}</button>`).join("")}</div>`;
+/* ---------- quà mốc ---------- */
+const gMs=()=>GF.data?GF.data.milestones:[];
+const gMsFor=c=>gMs().find(x=>x.expedition===(CAMPS===CAMPS2?2:1)&&x.m===c.m);
+function gMState(ms){return totalXp()<ms.m?"locked":gGet("m",[]).includes(ms.id)?"opened":"unlocked"}
+function gMarkers(at,base,max){
+  const g=document.getElementById("gifts");if(!g)return;
+  if(!GF.data){g.innerHTML="";return}
+  g.innerHTML=CAMPS.map(c=>{const ms=gMsFor(c);if(!ms)return "";const q=at((c.m-base)/(max-base)),st=gMState(ms);
+    return `<g class="gfm ${st}" data-gift="${esc(ms.id)}" transform="translate(${q.x+21},${q.y+3}) scale(1.55)" role="button" aria-label="Quà ${esc(c.n)}"><circle class="hit" r="16" fill="transparent"/><circle class="halo" r="12"/><rect x="-7" y="-6" width="14" height="12" rx="2.5"/><path d="M-7 -1.5H7M0 -6V6"/><path d="M0 -6C-3 -11 -8 -8 -4 -6M0 -6C3 -11 8 -8 4 -6"/></g>`}).join("");
+}
+function giftCampNote(ci){
+  try{if(GF.data&&CAMPS[ci]&&gMsFor(CAMPS[ci]))return `<small style="display:block;font-size:.55em;font-weight:600;margin-top:8px">Có quà ở trại này 🎁</small>`}catch(e){}
+  return "";
+}
+function gOpenMs(id){
+  const ms=gMs().find(x=>x.id===id);if(!ms)return;
+  if(totalXp()<ms.m){toast(`Còn ${fmt(ms.m-totalXp())} m nữa là mở quà này.`);return}
+  const o=gGet("m",[]);if(!o.includes(id)){o.push(id);gSet("m",o)}
+  GF.view={k:"ms",id};GF.from="";gRender();gRefreshHome();
+}
+function gMsHTML(ms){
+  const sp=(ms.speak||[]).map(s=>`<div class="gf-sp"><div><b>${esc(s.en)}</b>${gLang()==="en"?"":`<span>${esc(s.vi)}</span>`}</div>${canSpeak()?`<button class="btn sm" data-say="${esc(s.en)}" aria-label="Nghe: ${esc(s.en)}">🔊</button>`:""}</div>`).join("");
+  const o=ms.orig;
+  return `<div class="dlg-hd"><span class="gf-big" aria-hidden="true">${esc(ms.icon||"🎁")}</span><div class="grow"><div class="tiny muted" style="font-weight:700">${esc(ms.camp)} · ${fmt(ms.m)} m · chặng ${ms.expedition}</div><div class="h2 gf-h">${gTxt(ms.title,"gf-vi")}</div></div><button class="x" data-close aria-label="Đóng">✕</button></div>
+   <div class="gf-body">${gTxt(ms.body,"gf-vi")}</div>
+   ${o&&o.text?`<p class="gf-orig">${esc(o.text)}${o.roman?`<br>${esc(o.roman)}`:""}</p>`:""}
+   ${sp?`<div class="gf-speak"><div class="kicker">Để nói</div>${sp}</div>`:""}
+   ${(ms.src||[]).length?`<div class="gf-src">${ms.src.map(esc).join(" · ")}</div>`:""}
+   <div class="dlg-ft">${gLangSeg()}<button class="btn primary" data-close>Xong</button></div>`;
+}
+/* ---------- quà hằng ngày ---------- */
+const gDays=(a,b)=>{const t=s=>{const x=String(s).split("-");return Date.UTC(+x[0],+x[1]-1,+x[2])};return Math.round((t(b)-t(a))/864e5)};
+function gDailyFor(date){const D=GF.data.daily,n=D.length;return D[((gDays(PLAN_START,date)%n)+n)%n]}
+const gCat=id=>(GF.data.meta.categories||[]).find(c=>c.id===id)||{icon:"🎁",vi:id,en:id};
+const gUnlocked=P=>gGet("ok","")===todayISO||!!(P&&P.items&&P.items.length&&P.items.every(x=>x.done));
+function giftPlanDone(){if(gGet("ok","")!==todayISO)gSet("ok",todayISO)}
+const gCollected=()=>[...new Set(Object.values(gGet("d",{})))];
+function gOpenToday(){
+  if(!GF.data)return;
+  const P=dailyPlan();if(!gUnlocked(P)){toast("Hoàn thành nhiệm vụ hôm nay để mở quà.");return}
+  giftPlanDone();
+  const D=gGet("d",{});if(!D[todayISO]){D[todayISO]=gDailyFor(todayISO).id;gSet("d",D)}
+  GF.view={k:"d",id:D[todayISO]};GF.from="";gRender();gRefreshHome();
+}
+function gDailyHTML(g){
+  const c=gCat(g.cat),st=gGet("star",[]).includes(g.id),l=gLang(),cn=l==="en"?c.en:l==="vi"?c.vi:`${c.vi} · ${c.en}`;
+  const hid=g.q&&!GF.flip[g.id];
+  const main=hid
+    ?`<div class="gf-quiz"><div class="kicker">Bạn đoán xem</div><div class="gf-body gf-qq">${gTxt(g.q,"gf-vi")}</div><button class="btn primary" data-gfflip="${esc(g.id)}">Chạm để xem đáp án</button></div>`
+    :`<div class="gf-body">${g.q?`<p class="gf-qdone">${esc(gPlain(g.q))}</p>`:""}${gTxt(g.body,"gf-vi")}</div>`;
+  return `<div class="dlg-hd"><span class="gf-big" aria-hidden="true">${esc(c.icon)}</span><div class="grow"><div class="tiny muted" style="font-weight:700">${esc(cn)}</div><div class="h2 gf-h">${hid?"Quà hôm nay":gTxt(g.title,"gf-vi")}</div></div><button class="x" data-close aria-label="Đóng">✕</button></div>
+   ${main}
+   ${!hid&&(g.src||[]).length?`<div class="gf-src">${g.src.map(esc).join(" · ")}</div>`:""}
+   <div class="dlg-ft">${gLangSeg()}<button class="btn" data-gfstar="${esc(g.id)}" aria-pressed="${st}">${st?"⭐ Đã lưu":"☆ Lưu"}</button><button class="btn" data-gfcoll>${GF.from==="coll"?"← Sổ sưu tầm":"Sổ sưu tầm"}</button><button class="btn primary" data-close>Xong</button></div>`;
+}
+/* ---------- sổ sưu tầm ---------- */
+function gGridHTML(){
+  const D=GF.data.daily,have=new Set(gCollected()),star=gGet("star",[]),q=GF.q.trim().toLowerCase();
+  const tiles=D.filter(g=>GF.cat==="all"||g.cat===GF.cat).map(g=>{
+    if(!have.has(g.id)){return (q||GF.star)?"":`<div class="gf-tile off" aria-label="Chưa nhận">?</div>`}
+    if(GF.star&&!star.includes(g.id))return "";
+    if(q&&!(g.title.vi+" "+g.title.en).toLowerCase().includes(q))return "";
+    const c=gCat(g.cat);
+    return `<button class="gf-tile" data-gfd="${esc(g.id)}"><span class="gf-ti" aria-hidden="true">${esc(c.icon)}${star.includes(g.id)?" ⭐":""}</span><span class="gf-tt">${esc(gPlain(g.title))}</span></button>`}).join("");
+  return tiles||`<p class="hint" style="grid-column:1/-1">Chưa có quà nào khớp. Hoàn thành kế hoạch mỗi ngày để mở thêm.</p>`;
+}
+function gCollHTML(){
+  const n=gCollected().length,N=GF.data.daily.length,cats=GF.data.meta.categories||[],l=gLang();
+  return `<div class="dlg-hd"><span class="gf-big" aria-hidden="true">📒</span><div class="grow"><div class="tiny muted" style="font-weight:700">Sổ sưu tầm</div><div class="h2 gf-h">${n} / ${N} quà${n>=N?" · đã sưu tầm đủ":""}</div></div><button class="x" data-close aria-label="Đóng">✕</button></div>
+   <div class="bar sun"><i style="width:${Math.min(100,n/N*100)}%"></i></div>
+   <input class="inp" id="gf-q" type="search" placeholder="Tìm theo tiêu đề" value="${esc(GF.q)}" autocomplete="off">
+   <div class="rfilters gf-cats"><button class="chip" data-gfcat="all" aria-pressed="${GF.cat==="all"&&!GF.star}">Tất cả</button><button class="chip" data-gfstarf aria-pressed="${GF.star}">⭐ Đã gắn sao</button>${cats.map(c=>`<button class="chip" data-gfcat="${esc(c.id)}" aria-pressed="${GF.cat===c.id}">${esc(c.icon)} ${esc(l==="en"?c.en:c.vi)}</button>`).join("")}</div>
+   <div class="gf-grid" id="gf-grid">${gGridHTML()}</div>
+   <div class="dlg-ft">${gLangSeg()}<button class="btn primary" data-close>Xong</button></div>`;
+}
+function gGrid(){const el=$("gf-grid");if(el)el.innerHTML=gGridHTML()}
+/* ---------- khung chính trên trang chủ ---------- */
+function giftsHomeInner(P){
+  if(!GF.data){giftsLoad();return GF.fail?`<div class="hd"><b>Kho quà</b></div><p class="hint" style="margin:6px 0 0">Chưa nạp Kho quà. Đưa file climb-content-gifts.zip vào thư mục climb-data rồi chạy napNoiDung.</p>`:`<div class="hd"><b>Kho quà</b></div><p class="hint" style="margin:6px 0 0">Đang tải…</p>`}
+  const ms=gMs(),got=gCollected().length,N=GF.data.daily.length,D=gGet("d",{}),today=D[todayISO],un=gUnlocked(P);
+  const chips=ms.map(x=>{const st=gMState(x);return `<button class="gf-chip ${st}" data-gift="${esc(x.id)}" aria-label="Quà ${esc(x.camp)}, ${st==="locked"?"chưa mở":st==="opened"?"đã xem":"mở được"}"><span aria-hidden="true">${st==="locked"?"🔒":esc(x.icon||"🎁")}</span>${esc(x.camp)}</button>`}).join("");
+  let box;
+  if(today){const g=GF.data.daily.find(x=>x.id===today),c=g?gCat(g.cat):{icon:"🎁"};
+    box=`<button class="gf-box done" data-gfd="${esc(today)}"><span class="gf-bi" aria-hidden="true">${esc(c.icon)}</span><span class="gf-bt"><b>Quà hôm nay</b><span>${g?esc(gPlain(g.title)):""}</span></span></button>`}
+  else if(un)box=`<button class="gf-box ready" data-gfopen><span class="gf-bi" aria-hidden="true">🎁</span><span class="gf-bt"><b>Quà hôm nay đã sẵn sàng</b><span>Chạm để mở</span></span></button>`;
+  else{const t=(P&&P.items?P.items.length:0),d=(P&&P.items?P.items.filter(x=>x.done).length:0);
+    box=`<div class="gf-box"><span class="gf-bi" aria-hidden="true">🎁</span><span class="gf-bt"><b>Hoàn thành nhiệm vụ hôm nay để mở quà</b><span>${d}/${t} nhiệm vụ${t?"":""}</span></span></div>`}
+  return `<div class="hd"><b>Kho quà</b><button class="chip" data-gfcoll>📒 Sổ sưu tầm · ${got}/${N}</button></div>
+   <div class="gf-row">${chips}</div>${box}`;
+}
+const giftsHomeHTML=P=>`<div class="card gf">${giftsHomeInner(P)}</div>`;
+/* ---------- dựng khung hội thoại ---------- */
+function gRender(){
+  const v=GF.view;if(!v||!GF.data)return;
+  let html="";
+  if(v.k==="ms"){const ms=gMs().find(x=>x.id===v.id);if(!ms)return;html=gMsHTML(ms)}
+  else if(v.k==="d"){const g=GF.data.daily.find(x=>x.id===v.id);if(!g)return;html=gDailyHTML(g)}
+  else html=gCollHTML();
+  dlg(html,"gf-dlg");
+}
+document.addEventListener("click",e=>{
+  const t=e.target;if(!t.closest)return;
+  let b;
+  if((b=t.closest("[data-gift]"))){e.stopPropagation();return gOpenMs(b.dataset.gift)}
+  if(t.closest("[data-gfopen]"))return gOpenToday();
+  if((b=t.closest("[data-gfd]"))){const D=gCollected();if(D.includes(b.dataset.gfd)){GF.from=$("gf-grid")?"coll":"";GF.view={k:"d",id:b.dataset.gfd};gRender()}return}
+  if(t.closest("[data-gfcoll]")){if(!GF.data)return;GF.view={k:"coll"};GF.from="";gRender();return}
+  if((b=t.closest("[data-gflang]"))){gSet("lang",b.dataset.gflang);gRender();gRefreshHome();return}
+  if((b=t.closest("[data-gfflip]"))){GF.flip[b.dataset.gfflip]=1;gRender();return}
+  if((b=t.closest("[data-gfstar]"))){const id=b.dataset.gfstar,s=gGet("star",[]),i=s.indexOf(id);if(i>=0)s.splice(i,1);else s.push(id);gSet("star",s);gRender();return}
+  if((b=t.closest("[data-gfcat]"))){GF.cat=b.dataset.gfcat;GF.star=false;gRender();return}
+  if(t.closest("[data-gfstarf]")){GF.star=!GF.star;if(GF.star)GF.cat="all";gRender();return}
+});
+document.addEventListener("input",e=>{if(e.target&&e.target.id==="gf-q"){GF.q=e.target.value;gGrid()}});
+
 /* ---------- cài đặt âm thanh / rung + chuỗi ngày: bấm ô độ cao ---------- */
 function fxSettingsDialog(){
   const s=streakDays(),m=totalXp(),ci=campOf(m),nx=CAMPS[ci+1];
