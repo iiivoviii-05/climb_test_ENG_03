@@ -1285,6 +1285,12 @@ button.gf-box{cursor:pointer}
 .ex-fold>summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-2);padding:8px 0;list-style:revert}
 .ex-fold .ex-card{border:0;background:transparent;padding:4px 0 8px;margin-top:0}
 .ex-fold .ex-p p,.ex-fold .ex-conf p{font-size:13.5px;line-height:1.55}
+mark.eh{background:color-mix(in srgb,var(--bad) 18%,transparent);color:inherit;border-radius:3px;padding:0 1px;box-decoration-break:clone}
+.study{display:flex;flex-direction:column;gap:8px}
+details.study{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--sunk)}
+details.study>summary{cursor:pointer;font-weight:700}
+.study .cor p{margin:8px 0;line-height:1.6}
+.gstep{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-left:3px solid var(--ok);background:var(--sunk);border-radius:0 12px 12px 0;font-size:14px;line-height:1.55}
 </style>
 </head>
 <body>
@@ -2762,6 +2768,16 @@ function cmpHTML(s,g,list){
   const pg=parseG(prev),wc=t=>(String(t||"").match(/\S+/g)||[]).length,d=(+g.overall||0)-(+pg.overall||0);
   return `<div class="cmpline">So với lần trước cùng đề (${esc(prev.created.slice(8,10)+"/"+prev.created.slice(5,7))}): band ước tính ${esc(pg.overall)} → <b>${esc(g.overall)}</b> ${d>0?"▲":d<0?"▼":"="}${s.type==="speaking"?` · ${wc(prev.answer)} → ${wc(s.answer)} từ${prev.selfScore&&s.selfScore?` · ${esc(prev.selfScore)} → ${esc(s.selfScore)}`:""}`:""}. Chênh dưới 0.5 là trong sai số chấm của AI.</div>`;
 }
+function markAns(s,g){
+  let h=esc(s.answer);
+  if(g&&g.fixes)g.fixes.map(f=>f&&f.original).filter(Boolean).sort((a,b)=>b.length-a.length).forEach(o=>{const e=esc(o);if(h.indexOf(e)>=0)h=h.split(e).join('<mark class="eh">'+e+'</mark>')});
+  return h}
+function studyHTML(s,g){
+  if(!g||(!g.corrected&&!g.guide))return "";
+  const hasRW=!!parseRW(s);
+  const cor=g.corrected&&g.corrected.length?`<details class="study" ${hasRW?"open":""}><summary>Bản sửa (giữ ý của mày, sửa lỗi và diễn đạt tự nhiên)</summary>${hasRW?"":`<span class="hint">Nên tự sửa 3 lỗi chính ở trên trước khi xem bản này.</span>`}<div class="cor">${g.corrected.map(p=>`<p>${esc(p)}</p>`).join("")}</div></details>`:"";
+  const gd=g.guide&&g.guide.length?`<div class="study guide"><div class="lbl">Hướng dẫn</div>${g.guide.map((x,i)=>`<div class="gstep"><b>${i+1}. ${esc(x.t)}</b><span>${esc(x.d)}</span></div>`).join("")}</div>`:"";
+  return cor+gd}
 function renderSubs(){
   const sp=skill==="speaking",el=$(sp?"sp-subs":"w-subs");if(!el)return;
   const list=subs.filter(s=>sp?s.type==="speaking":s.type!=="speaking");
@@ -2769,10 +2785,10 @@ function renderSubs(){
   el.innerHTML=list.map(s=>{const g=parseG(s),done=!!(g||s.result||s.feedback),W=s.type==="writing";
     const head=g?`<span class="bandpill">${esc(g.overall)}</span>`:s.result?`<span class="pend chip ok">${esc(s.result)}</span>`:grading.has(s.id)?`<span class="pend chip sun">Đang chấm…</span>`:`<span class="pend chip sun">Chờ chấm</span>`;
     return `<details class="subm" data-sid="${esc(s.id)}" ${openSub===s.id?"open":""}><summary><span class="ttl">${esc(s.ref||s.type)}</span>${head}<span class="meta">${esc(s.created)}${s.minutes?", "+esc(s.minutes)+" phút":""}${s.selfScore?(s.type==="speaking"?", tốc độ ":", tự chấm ")+esc(s.selfScore):""}</span></summary>
-    <div class="s-body">${g?cmpHTML(s,g,list)+scoreCard(g,s.id,!parseRW(s))+rewriteHTML(s,g):s.feedback?`<div class="fix" style="border-color:var(--ok)"><b>Nhận xét</b><span class="pre">${esc(s.feedback)}</span></div>`:""}
+    <div class="s-body">${g?cmpHTML(s,g,list)+scoreCard(g,s.id,!parseRW(s))+rewriteHTML(s,g)+studyHTML(s,g):s.feedback?`<div class="fix" style="border-color:var(--ok)"><b>Nhận xét</b><span class="pre">${esc(s.feedback)}</span></div>`:""}
      ${!done&&(W||s.type==="speaking")&&aiEnabled&&!grading.has(s.id)?`<button class="btn sm primary" data-grade="${esc(s.id)}">Chấm ngay</button>`:""}
      ${!done&&!aiEnabled?`<div class="soft small">Nhắn Claude <b>"chấm bài"</b> trong Project để được chấm miễn phí (cùng thang điểm). Chấm xong, mở lại web là điểm hiện ở đây.</div>`:""}
-     ${s.prompt?`<div><div class="lbl">Đề</div><p class="pre muted">${esc(s.prompt)}</p></div>`:""}<div><div class="lbl">${s.type==="speaking"?"Bản ghi hội thoại":"Bài làm"}</div><p class="pre">${esc(s.answer)}</p></div></div></details>`}).join("");
+     ${s.prompt?`<div><div class="lbl">Đề</div><p class="pre muted">${esc(s.prompt)}</p></div>`:""}<div><div class="lbl">${s.type==="speaking"?"Bản ghi hội thoại":"Bài làm"}</div><p class="pre">${g&&s.type!=="speaking"?markAns(s,g):esc(s.answer)}</p>${g&&g.fixes&&g.fixes.length&&s.type!=="speaking"?`<span class="hint">Phần tô màu là chỗ có lỗi (xem câu sửa ở trên).</span>`:""}</div></div></details>`}).join("");
 }
 document.addEventListener("toggle",e=>{const d=e.target;if(d.classList&&d.classList.contains("subm")){if(d.open)openSub=d.dataset.sid;else if(openSub===d.dataset.sid)openSub=null}},true);
 document.addEventListener("click",e=>{
