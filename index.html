@@ -1866,10 +1866,10 @@ function dailyPlan(){
   const dow=fromISO(todayISO).getDay(),weekend=dow===0||dow===6;
   const day=ALLDAYS.find(x=>x.k===todayISO), wk=PLAN.find(w=>w.days.includes(day));
   const items=[];
-  const due=Math.min(REVIEW_CAP,dueWords().length);
+  const due=dueWords().length;
   const nv=nextVocab();
   if(!weekend&&nv)items.push({time:"Từ vựng mới",min:15,title:newToday()>=1?"Đã xong 1 chặng mới hôm nay":`${nv.title} · ${nv.topic.en}`,how:newToday()>=1?"Đủ mức gợi ý cho hôm nay. Muốn học thêm vẫn được, nhưng ôn lại từ cũ thường lợi hơn học dồn, nên ôn tập thay vì học mới.":`${nv.words.length||nv.n} từ mới, thẻ lật rồi kiểm tra`,done:newToday()>=1,btn:`data-open="${nv.key}"`,label:"Học",primary:true});
-  items.push({time:"Ôn tập",min:Math.max(3,Math.round(due*.4)),title:due?`Ôn ${due} từ đến hạn`:"Không có từ đến hạn",how:dueWords().length>REVIEW_CAP?`Còn ${dueWords().length-REVIEW_CAP} từ dời sang ngày mai để không quá tải.`:"",done:!due,btn:due>=1?'data-review="start"':"",label:"Ôn"});
+  items.push({time:"Ôn tập",min:Math.max(3,Math.round(due*.25)),title:due?`Ôn ${due} từ đến hạn`:"Không có từ đến hạn",how:due>=40?`Còn nhiều từ đến hạn. Làm từng lượt 12 từ, nghỉ giữa các lượt cũng được.`:"",done:!due,btn:due>=1?'data-review="start"':"",label:"Ôn"});
   items.push({time:"Xưởng từ",min:10,title:"Lượt trộn 17 câu",how:"Gốc từ, dạng từ, kết hợp từ, nâng cấp, paraphrase, bẫy T/F/NG và từ trong sổ phim",done:ls.get("ielts-wl-day","")===todayISO,btn:'data-wlmix="1"',label:"Luyện"});
   if(day&&wk&&wk.n>=1){const i=wk.days.indexOf(day);
     const gu=i===0?2*wk.n-1:i===3?2*wk.n:null;
@@ -1886,6 +1886,15 @@ function dailyPlan(){
   }
   if(!VIDX)loadVIndex();if(!RIDX)loadRIndex();
   items.push(...(ODS?matPlan():lifePlan()),...flowTasks());
+  if(dow===0&&typeof wkWords==="function"){
+    const W=wkWords();
+    wkReadings().slice().reverse().forEach(rd=>items.unshift({time:"Kiểm tra tuần · Đọc",min:15,title:`Bài đọc tuần: ${rd.title}`,how:"Bài đọc dùng chính các từ mày đã học. Câu hỏi hỏi nghĩa từ trong ngữ cảnh.",done:wkReadingDone(rd),btn:`data-ropen="${rd.id}"`,label:"Mở bài"}));
+    if(W.all.length>=8)items.unshift({time:"Kiểm tra tuần",min:WK_MIN,title:`Bài kiểm tra tuần · ${W.all.length} từ × 2 kiểu`,how:"Trắc nghiệm các từ đã lên mốc 4 trở lên và vài từ khác xen kẽ. Bài này thay phần ôn của các từ mốc cao trong tuần.",done:wkDone(),btn:'data-wktest="1"',label:"Làm bài"});
+  }
+  {const back=dueWords().length;
+   if(back>=40){const keep=items.filter(i=>!/^(Từ vựng mới|Vật liệu · Từ vựng|Đời sống · Cụm nói tự nhiên|Từ nối|Miêu tả|Phòng thí nghiệm ·)/.test(i.time));
+    const ot=keep.find(i=>i.time==="Ôn tập");if(ot)ot.how=`Từ mới nghỉ hôm nay vì còn ${back} từ đến hạn (từ 40 trở lên thì dọn trước). Xuống dưới 40 thì học từ mới lại. Muốn học thêm vẫn bấm ở Lộ trình.`;
+    items.length=0;items.push(...keep)}}
   return {items,weekend,min:items.reduce((s,x)=>s+(x.done?0:x.min),0)};
 }
 document.addEventListener("click",e=>{const g=e.target.closest("[data-goskill]");if(g){skill=g.dataset.goskill;ls.set("ielts-skill",skill);if(g.dataset.spv){spView=g.dataset.spv;ls.set("ielts-spview",spView)}setTab("skills")}});
@@ -2224,7 +2233,7 @@ function showQ(){
   const q=S.qs[S.qi];S.answered=false;
   const n=S.qs.length;
   studyFrame(S.review?"result":"quiz",`
-   <div class="qhd"><div><div class="tiny">${S.review==="wl"?esc(S.wlTitle||"Xưởng từ"):S.review?"Ôn tập":"Bài kiểm tra "+(S.L.kind==="grammar"?"ngữ pháp":"từ vựng")} · Câu ${S.qi+1}/${n}${q.retry?" · làm lại câu sai":""}</div>
+   <div class="qhd"><div><div class="tiny">${S.review==="wl"?esc(S.wlTitle||"Xưởng từ"):S.review==="wk"?"Kiểm tra tuần <span id=\"wk-timer\"></span>":S.review?"Ôn tập":"Bài kiểm tra "+(S.L.kind==="grammar"?"ngữ pháp":"từ vựng")} · Câu ${S.qi+1}/${n}${q.retry?" · làm lại câu sai":""}</div>
      <div class="qtext ${q.sent?"sent":""}">${q.html}</div>${q.hint?`<div class="hint">${esc(q.hint)}</div>`:""}</div>
      <div class="qtime" id="qtime"><div class="tiny">Thời gian</div><b class="num" id="qt">0:${pad(q.time)}</b><div class="bar"><i id="qbar" style="width:100%"></i></div></div></div>
    ${q.listen?`<div><button class="btn primary" data-say="${esc(q.listen)}" id="q-listen">${I.sound} Nghe lại</button></div>`:""}
@@ -2249,7 +2258,7 @@ function answer(given){
   if(!q.retry)S.firstOk[q.id]=(q.id in S.firstOk?S.firstOk[q.id]:true)&&ok;
   if(ok)S.xp+=q.retry?5:10;
   // ôn tập: câu sai quay lại cuối lượt, tối đa 2 lần nữa (từ khó luôn được luyện tới khi đúng)
-  if(!ok&&S.review&&(q.retry||0)<2){S.qs.push({...q,retry:(q.retry||0)+1})}
+  if(!ok&&S.review&&S.review!=="wk"&&(q.retry||0)<2){S.qs.push({...q,retry:(q.retry||0)+1})}
   const right=q.type==="mcq"?q.opts[q.ans]:q.show;
   {const opts=document.querySelectorAll(".opt"),el=q.type==="mcq"?opts[given]:$("q-in");
    if(ok)FX.ok(el||$("q-fb"),"✓");else FX.bad(el||$("q-in"),q.type==="mcq"?opts[q.ans]:null)}
@@ -2333,6 +2342,7 @@ document.addEventListener("keydown",e=>{
 /* ================= Ôn tập (sổ từ, ôn cách quãng, câu ngữ pháp sai) ================= */
 const LEVELS=[{n:"Mới",test:b=>b===0,c:"var(--ink-3)"},{n:"Đang học",test:b=>b>=1&&b<=2,c:"var(--sun)"},{n:"Quen",test:b=>b>=3&&b<=4,c:"var(--link)"},{n:"Thuộc",test:b=>b>=5,c:"var(--ok)"}];
 // v9.2: từ khó = đã quên ít nhất 2 lần, hoặc đã quên 1 lần mà còn ở hộp thấp, hoặc vừa học mà chưa nhớ
+const isRet=v=>!!v&&String(v.due||"")>="2099"; // v13: từ đã "bỏ ôn" (ngày ôn 2099-12-31)
 // v13: từ khó = quên ≥2 lần và chưa leo lại tới hộp 4 (20 ngày); quên 1 lần thì chỉ khó khi còn ở hộp 1–2. Leo lại hộp 4 là gỡ nhãn.
 const isHard=v=>!!v.meaning&&(((v.lapses||0)>=2&&v.box<=3)||((v.lapses||0)>=1&&v.box<=2));
 const hardWords=()=>vocab.filter(isHard).sort((a,b)=>(b.lapses||0)-(a.lapses||0)||a.box-b.box);
@@ -2342,7 +2352,7 @@ function renderReview(){
   const due=dueWords(),gw=grammarWrong(),usable=vocab.filter(v=>v.meaning);
   const tot=vocab.length||1;
   $("v-review").innerHTML=`
-   <div><span class="eyebrow">Ôn tập cách quãng</span><h1 class="h1">Nhắc lại đúng lúc sắp quên</h1><p class="lead">Từ qua bài kiểm tra tự vào sổ này. Nhớ thì lần ôn sau giãn ra 1 → 3 → 7 → 14 → 30 → 60 ngày; quên thì quay lại ngày mai.</p></div>
+   <div><span class="eyebrow">Ôn tập cách quãng</span><h1 class="h1">Nhắc lại đúng lúc sắp quên</h1><p class="lead">Từ qua bài kiểm tra tự vào sổ này. Nhớ thì lần ôn sau giãn ra 1 → 3 → 9 → 20 → 36 → 63 → 120 ngày. Quên thì tụt mốc: từ đã quen (mốc 4 trở lên) quên lần đầu chỉ tụt về mốc 2, quên nữa là từ trọng yếu về mốc 1.</p></div>
    <div class="grid2">
     <div class="card cont"><div class="kicker">Từ vựng đến hạn</div><div class="ttl num" style="font-size:44px">${due.length}</div>
       <div class="mastery">${LEVELS.map(l=>`<i style="width:${vocab.filter(v=>l.test(v.box)).length/tot*100}%;background:${l.c}"></i>`).join("")}</div>
@@ -2351,6 +2361,7 @@ function renderReview(){
       ${usable.length<4?`<p class="hint">Cần ít nhất 4 từ trong sổ. Học một bài ở Lộ trình hoặc thêm từ bên dưới.</p>`:""}</div>
     <div class="card cont"><div class="kicker">Từ khó · đã quên hoặc chưa vững</div><div class="ttl num" style="font-size:44px">${hardWords().length}</div><p class="hint">Từ mày đã trả lời sai. Mỗi từ khó được hỏi 2 kiểu (nhận nghĩa và tự gõ), sai thì quay lại tới khi đúng, và lịch ôn ngắn hơn cho tới khi vững. Lượt ôn hằng ngày cũng đưa từ khó lên trước.</p>
       <button class="btn primary" data-review="hard" ${hardWords().length&&usable.length>=4?"":"disabled"}>Ôn kỹ ${Math.min(10,hardWords().length)} từ khó ${I.arrow}</button></div>
+    ${typeof wkCardHTML==="function"?wkCardHTML():""}
     <div class="card cont"><div class="kicker">Câu ngữ pháp làm sai</div><div class="ttl num" style="font-size:44px">${gw.length}</div><p class="hint">Câu sai ở lần làm gần nhất của mỗi unit. Làm lại cho đến khi đúng hết.</p>
       <button class="btn primary" data-review="grammar" ${gw.length?"":"disabled"}>Làm lại câu sai ${I.arrow}</button></div>
    </div>
@@ -2383,7 +2394,7 @@ function renderWordList(){
   const el=$("x-list");if(!el)return;
   const q=($("x-search").value||"").trim().toLowerCase();
   const list=vocab.filter(v=>!q||v.word.toLowerCase().includes(q)||v.meaning.toLowerCase().includes(q)).sort((a,b)=>a.due.localeCompare(b.due)||a.word.localeCompare(b.word));
-  el.innerHTML=list.length?list.slice(0,300).map(v=>`<div class="wrow ed"><div><div class="w">${esc(v.word)}${isHard(v)?`<span class="hardchip">khó · quên ${v.lapses}</span>`:""}</div><div class="m">${v.meaning?esc(v.meaning):'<span style="color:var(--bad)">chưa có nghĩa, bấm ✎ để thêm</span>'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="lv">${[1,2,3,4,5,6,7].map(i=>`<i class="${v.box>=i?"on":""}"></i>`).join("")}</span><span class="tiny muted">${v.box===0?"mới":v.due<=todayISO?"đến hạn":"ôn "+dm(v.due)}</span></div><button class="edit" data-wedit="${esc(v.id)}" aria-label="Sửa ${esc(v.word)}">✎</button><button class="del" data-del="${esc(v.id)}" aria-label="Xóa ${esc(v.word)}">×</button></div>`).join(""):`<p class="hint" style="padding:16px">${vocab.length?"Không tìm thấy từ này.":"Sổ từ đang trống. Học một bài ở Lộ trình, từ sẽ tự vào đây."}</p>`;
+  el.innerHTML=list.length?list.slice(0,300).map(v=>`<div class="wrow ed"><div><div class="w">${esc(v.word)}${isRet(v)?`<span class="hardchip" style="background:var(--sunk);color:var(--ink-3)">đã bỏ ôn</span>`:isHard(v)?`<span class="hardchip">khó · quên ${v.lapses}</span>`:""}</div><div class="m">${v.meaning?esc(v.meaning):'<span style="color:var(--bad)">chưa có nghĩa, bấm ✎ để thêm</span>'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="lv">${[1,2,3,4,5,6,7].map(i=>`<i class="${v.box>=i?"on":""}"></i>`).join("")}</span><span class="tiny muted">${isRet(v)?"bỏ ôn":v.box===0?"mới":v.due<=todayISO?"đến hạn":"ôn "+dm(v.due)}</span></div><button class="edit" data-retire="${esc(v.id)}" aria-label="${isRet(v)?"Cho ôn lại ":"Bỏ ôn "}${esc(v.word)}" title="${isRet(v)?"Cho ôn lại":"Đã chắc, bỏ ôn"}">${isRet(v)?"↺":"✓"}</button><button class="edit" data-wedit="${esc(v.id)}" aria-label="Sửa ${esc(v.word)}">✎</button><button class="del" data-del="${esc(v.id)}" aria-label="Xóa ${esc(v.word)}">×</button></div>`).join(""):`<p class="hint" style="padding:16px">${vocab.length?"Không tìm thấy từ này.":"Sổ từ đang trống. Học một bài ở Lộ trình, từ sẽ tự vào đây."}</p>`;
 }
 document.addEventListener("input",e=>{if(e.target.id==="x-search")renderWordList();if(e.target.id==="b-text")renderBulk()});
 document.addEventListener("click",e=>{
@@ -2468,20 +2479,21 @@ function finishReview(correct,total,score){
   const done=r=>{applyR(r);showEarned(r)};
   let use=null;
   if(S.review==="wl"){finishWL(correct,total).then(done).catch(earnFail);ls.set(S.wlMode==="mat"?"ielts-matdrill-day":"ielts-wl-day",todayISO)}
-  else if(S.review==="vocab"||S.review==="hard"){
+  else if(S.review==="vocab"||S.review==="hard"||S.review==="wk"){
     const results=Object.keys(S.firstOk).map(id=>({id,ok:S.firstOk[id]}));
     // từ đã quen (hộp 3+) và vừa nhớ đúng: mời tự viết một câu để biến "nhận ra" thành "dùng được"
     use=pickUsage(results.filter(r=>r.ok).map(r=>r.id));
-    save("saveLesson",{kind:"review",results,correct,answered:total}).then(done).catch(earnFail);
+    save("saveLesson",{kind:"review",results,correct,answered:total,week:S.review==="wk"}).then(done).catch(earnFail);
+    if(S.review==="wk")ls.set("ielts-wk-"+weekKey(),"1");
   }else{
     // câu đã làm đúng thì bỏ khỏi danh sách sai của unit
     const fixed=new Set(Object.keys(S.firstOk).filter(id=>S.firstOk[id]));
     GUNITS.forEach(u=>{const k="g"+u.n,p=progress[k];if(p&&p.wrong&&p.wrong.some(id=>fixed.has(id))){p.wrong=p.wrong.filter(id=>!fixed.has(id));call("saveLessonResult",{key:k,fix:true,wrong:p.wrong}).catch(()=>{})}});
     save("saveLesson",{kind:"gwrong",results:[],correct,answered:total}).then(done).catch(earnFail);
   }
-  const C=2*Math.PI*74,isV=S.review==="vocab"||S.review==="hard";
+  const C=2*Math.PI*74,isV=S.review==="vocab"||S.review==="hard"||S.review==="wk";
   studyFrame("result",`<div class="result"><div class="score-ring"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="74" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="85" cy="85" r="74" fill="none" stroke="var(--ok)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-score/100)}"/></svg><div class="v num">${score}%</div></div>
-   <div class="h1">${S.review==="hard"?"Xong lượt ôn kỹ từ khó":"Xong lượt ôn"}</div><p class="lead">Đúng ngay lần đầu ${correct}/${total} câu · ${earnedHTML()}</p>${S.review==="hard"?`<p class="hint" style="margin:0">Ôn kỹ ngoài lịch chỉ cộng mét cho từ đã đến hạn. Từ sai lần này quay lại ngày mai; từ đúng giữ nguyên lịch ôn.</p>`:""}
+   <div class="h1">${S.review==="hard"?"Xong lượt ôn kỹ từ khó":S.review==="wk"?"Xong bài kiểm tra tuần":"Xong lượt ôn"}</div><p class="lead">Đúng ngay lần đầu ${correct}/${total} câu · ${earnedHTML()}</p>${S.review==="hard"?`<p class="hint" style="margin:0">Ôn kỹ ngoài lịch chỉ cộng mét cho từ đã đến hạn. Từ sai lần này quay lại ngày mai; từ đúng giữ nguyên lịch ôn.</p>`:""}
    ${use?usageHTML(use):""}
    <div class="wrongs">${S.answers.filter(a=>!a.q.retry).map(a=>`<div ${isV?'style="grid-template-columns:auto 1fr auto"':""}><span style="color:${a.ok?"var(--ok)":"var(--bad)"}">${a.ok?"✓":"✗"}</span><span><b>${esc(a.q.type==="mcq"?a.q.opts[a.q.ans]:a.q.show)}</b> <span class="muted">${esc(a.q.ref?a.q.ref.vi:a.q.why||"")}</span>${isV&&!a.ok?` <span class="hardchip">${lapseNote(a.q.id)}</span>`:""}</span>${isV?`<button class="edit" data-wedit="${esc(a.q.id)}" aria-label="Sửa từ">✎</button>`:""}</div>`).join("")}</div>
    <button class="btn primary" id="rv-done">Xong</button>${fricBtn("review")}</div>`);
@@ -3103,7 +3115,7 @@ let rIdxFail=0;
 function loadRIndex(force){
   if(RIDX||rIdxLoading||(!force&&Date.now()-rIdxFail<20000))return;
   rIdxLoading=true;
-  call("getPacks",ODS?["reading/_index.json","reading/_index-mat.json"]:["reading/_index.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("reading index");const d=JSON.parse(a[0]);try{if(a[1]){const m=JSON.parse(a[1]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}RIDX=d;rIdxLoading=false;if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat();else if(tab==="home")render()})
+  call("getPacks",ODS?["reading/_index.json","reading/_index-mat.json","reading/_index-wk.json"]:["reading/_index.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("reading index");const d=JSON.parse(a[0]);try{if(a[1]){const m=JSON.parse(a[1]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}try{if(a[2]){const m=JSON.parse(a[2]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}RIDX=d;rIdxLoading=false;if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat();else if(tab==="home")render()})
    .catch(()=>{rIdxLoading=false;rIdxFail=Date.now();if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat()});
 }
 function loadPack(id){
@@ -3121,7 +3133,7 @@ function retryList(){
   return out.sort((a,b)=>a.date.localeCompare(b.date));
 }
 function nextPassage(setId){
-  const sets=setId?rSets().filter(s=>s.id===setId):rSets().filter(s=>s.id!=="mat");
+  const sets=setId?rSets().filter(s=>s.id===setId):rSets().filter(s=>s.id!=="mat"&&s.id!=="wk");
   for(const s of sets)for(const it of s.items)if(rBest(it.id)==null)return it.id;
   return null;
 }
@@ -6256,6 +6268,57 @@ function exFb(q,ok){
   }catch(x){return ""}
 }
 setTimeout(()=>{try{exLoad()}catch(e){}},4000);
+/* ===== v13: bài kiểm tra tuần, bỏ từ, tự dừng từ mới khi tồn đọng ===== */
+const WK_MIN=50,WK_MAXHI=48,WK_MIX=12,WK_PAUSE=40;
+// thứ Hai của tuần chứa hôm nay (khoá "đã làm bài tuần này")
+const weekKey=()=>{const dow=(fromISO(todayISO).getDay()+6)%7;return addISO(todayISO,-dow)};
+const wkDone=()=>ls.get("ielts-wk-"+weekKey(),"")==="1";
+// từ vào bài: mọi từ ở mốc 4 trở lên sắp đến hạn trong 6 ngày (bài thi thay phần ôn của chúng) + vài từ mốc 1–3 xen kẽ
+function wkWords(){
+  const usable=vocab.filter(v=>v.meaning&&!isRet(v)),lim=addISO(todayISO,6);
+  const hi=usable.filter(v=>v.box>=4&&v.due<=lim).sort((a,b)=>a.due.localeCompare(b.due)||(b.lapses||0)-(a.lapses||0)).slice(0,WK_MAXHI);
+  const ids=new Set(hi.map(v=>v.id));
+  const mix=shuffle(usable.filter(v=>v.box>=1&&v.box<=3&&!ids.has(v.id))).slice(0,WK_MIX);
+  return {hi,mix,all:[...hi,...mix]};
+}
+// các bài đọc của tuần mới nhất (bộ "wk"): những bài cùng nhãn "test" với bài cuối bộ
+function wkReadings(){
+  if(typeof rSets!=="function")return [];const s=rSets().find(x=>x.id==="wk");if(!s||!s.items.length)return [];
+  const last=s.items[s.items.length-1].test;return s.items.filter(x=>x.test===last)}
+function wkReadingDone(it){const l=(rstats.latest||{})[it.id];return !!(l&&l.date>=weekKey())}
+function startWeekTest(){
+  const W=wkWords(),pool=vocab.filter(v=>v.meaning);
+  if(pool.length<4)return toast("Cần ít nhất 4 từ trong sổ.",true);
+  if(W.all.length<8)return toast("Tuần này chưa đủ từ để kiểm tra (cần ít nhất 8 từ ở mốc 4 trở lên sắp đến hạn, hoặc từ mốc 1–3).",true);
+  const qs=[];
+  W.all.forEach(v=>{qs.push(srsQ(v,pool,"mean"));qs.push(srsQ(v,pool,"word"))});
+  S={L:{key:"rv-wk",kind:"vocab",checkpoint:true},review:"wk",phase:"quiz",xp:0,qs:spreadPairs(qs),wkStart:Date.now()};
+  $("study").hidden=false;document.body.style.overflow="hidden";S.qi=0;S.answers=[];S.firstOk={};
+  clearInterval(window.__wkT);
+  window.__wkT=setInterval(()=>{const el=$("wk-timer");
+    if(!S||S.review!=="wk"||S.phase==="result"||$("study").hidden){if(!el)clearInterval(window.__wkT);return}
+    if(!el)return;const sec=Math.max(0,WK_MIN*60-Math.round((Date.now()-S.wkStart)/1000));
+    el.textContent="⏱ "+String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0")+" còn lại";el.style.color=sec===0?"var(--bad)":""},1000);
+  showQ();
+}
+function wkCardHTML(){
+  const W=wkWords(),rds=wkReadings(),ok=W.all.length>=8;
+  return `<div class="card cont"><div class="kicker">Bài kiểm tra tuần${wkDone()?" · tuần này đã làm":""}</div><div class="ttl num" style="font-size:44px">${W.all.length}</div>
+   <p class="hint">${W.hi.length} từ mốc 4 trở lên sắp đến hạn (bài này thay phần ôn của chúng) + ${W.mix.length} từ mốc 1–3 xen kẽ. Mỗi từ hỏi 2 chiều trắc nghiệm (từ → nghĩa và nghĩa → từ), chỉ tính nhớ khi đúng cả hai. Khoảng ${WK_MIN} phút.</p>
+   <button class="btn primary" data-wktest="1" ${ok?"":"disabled"}>${ok?"Làm bài kiểm tra tuần":"Chưa đủ từ"} ${I.arrow}</button>
+   ${rds.map(rd=>`<button class="btn ghost" style="margin-top:8px" data-ropen="${esc(rd.id)}">${wkReadingDone(rd)?"✓ ":""}Bài đọc tuần: ${esc(rd.title)}</button>`).join("")}</div>`;
+}
+// bỏ ôn / cho ôn lại một từ
+function retireToggle(id){
+  const v=vocab.find(x=>x.id===id);if(!v)return;const on=!isRet(v);
+  if(on&&!confirm(`Bỏ ôn "${v.word}"? Từ vẫn nằm trong sổ nhưng sẽ không bao giờ đến hạn nữa.`))return;
+  vocab=vocab.map(x=>x.id===id?{...x,box:on?7:4,due:on?"2099-12-31":addISO(todayISO,3)}:x);render();
+  call("retireWord",id,on).then(l=>{vocab=l;render();toast(on?"Đã bỏ ôn từ này.":"Từ này quay lại lịch ôn (3 ngày nữa).")}).catch(()=>toast("Chưa lưu được, thử lại sau.",true));
+}
+document.addEventListener("click",e=>{
+  const w=e.target.closest("[data-wktest]");if(w){startWeekTest();return}
+  const r=e.target.closest("[data-retire]");if(r)retireToggle(r.dataset.retire);
+});
 </script>
 </body>
 </html>
