@@ -1551,7 +1551,7 @@ const GOALS=[250,400,600];
 /* ================= Lịch 12 tuần ================= */
 const BOOKS=[{key:"grammar",name:"Collins Grammar",units:GUNITS.map(u=>u.en)},{key:"listening",name:"Collins Listening",units:["On the move","Being young","Climate","Family structures","Starting university","Fame","Alternative energy","Migration","At the gym","At the office","Local languages","Practice test"]},{key:"reading",name:"Collins Reading",units:["Family matters","Healthcare","Getting an education","Water","Non-verbal clues","Scientists at work","The job market","Twenty-somethings","Community spirit","On the move","Cultural differences","Practice test"]}];
 const HOLIDAYS={"2026-12-25":"Giáng sinh","2027-01-01":"Năm mới","2027-02-08":"Tết/Seollal (nghỉ bù)"};
-const SRS=[0,1,3,7,14,30,60];
+const SRS=[0,1,3,9,20,36,63,120]; // v13: khoảng cách (ngày) từ lần ôn đúng gần nhất tới lần ôn sau; hộp 7 lặp mãi mỗi 120 ngày
 const TASKS={paragraph:{label:"Đoạn văn 150 từ",min:150,max:200,paras:[1,1]},intro:{label:"Mở bài",min:25,max:80,paras:[1,1]},task1:{label:"Task 1",min:150,max:220,paras:[3,4]},task2:{label:"Task 2",min:250,max:320,paras:[4,5]}};
 let PLAN_START="2026-11-02";
 const planStartDate=()=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(PLAN_START);return new Date(+m[1],+m[2]-1,+m[3])};
@@ -2333,7 +2333,8 @@ document.addEventListener("keydown",e=>{
 /* ================= Ôn tập (sổ từ, ôn cách quãng, câu ngữ pháp sai) ================= */
 const LEVELS=[{n:"Mới",test:b=>b===0,c:"var(--ink-3)"},{n:"Đang học",test:b=>b>=1&&b<=2,c:"var(--sun)"},{n:"Quen",test:b=>b>=3&&b<=4,c:"var(--link)"},{n:"Thuộc",test:b=>b>=5,c:"var(--ok)"}];
 // v9.2: từ khó = đã quên ít nhất 2 lần, hoặc đã quên 1 lần mà còn ở hộp thấp, hoặc vừa học mà chưa nhớ
-const isHard=v=>!!v.meaning&&((v.lapses||0)>=2||((v.lapses||0)>=1&&v.box<=2));
+// v13: từ khó = quên ≥2 lần và chưa leo lại tới hộp 4 (20 ngày); quên 1 lần thì chỉ khó khi còn ở hộp 1–2. Leo lại hộp 4 là gỡ nhãn.
+const isHard=v=>!!v.meaning&&(((v.lapses||0)>=2&&v.box<=3)||((v.lapses||0)>=1&&v.box<=2));
 const hardWords=()=>vocab.filter(isHard).sort((a,b)=>(b.lapses||0)-(a.lapses||0)||a.box-b.box);
 function dueWords(){return vocab.filter(v=>v.meaning&&(v.box===0||v.due<=todayISO))}
 function grammarWrong(){const out=[];GUNITS.forEach(u=>{const p=progress["g"+u.n];if(p&&p.wrong)p.wrong.forEach(id=>{const i=+String(id).split(":")[1];if(u.quiz[i])out.push({u,i})})});return out}
@@ -2382,7 +2383,7 @@ function renderWordList(){
   const el=$("x-list");if(!el)return;
   const q=($("x-search").value||"").trim().toLowerCase();
   const list=vocab.filter(v=>!q||v.word.toLowerCase().includes(q)||v.meaning.toLowerCase().includes(q)).sort((a,b)=>a.due.localeCompare(b.due)||a.word.localeCompare(b.word));
-  el.innerHTML=list.length?list.slice(0,300).map(v=>`<div class="wrow ed"><div><div class="w">${esc(v.word)}${isHard(v)?`<span class="hardchip">khó · quên ${v.lapses}</span>`:""}</div><div class="m">${v.meaning?esc(v.meaning):'<span style="color:var(--bad)">chưa có nghĩa, bấm ✎ để thêm</span>'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="lv">${[1,2,3,4,5,6].map(i=>`<i class="${v.box>=i?"on":""}"></i>`).join("")}</span><span class="tiny muted">${v.box===0?"mới":v.due<=todayISO?"đến hạn":"ôn "+dm(v.due)}</span></div><button class="edit" data-wedit="${esc(v.id)}" aria-label="Sửa ${esc(v.word)}">✎</button><button class="del" data-del="${esc(v.id)}" aria-label="Xóa ${esc(v.word)}">×</button></div>`).join(""):`<p class="hint" style="padding:16px">${vocab.length?"Không tìm thấy từ này.":"Sổ từ đang trống. Học một bài ở Lộ trình, từ sẽ tự vào đây."}</p>`;
+  el.innerHTML=list.length?list.slice(0,300).map(v=>`<div class="wrow ed"><div><div class="w">${esc(v.word)}${isHard(v)?`<span class="hardchip">khó · quên ${v.lapses}</span>`:""}</div><div class="m">${v.meaning?esc(v.meaning):'<span style="color:var(--bad)">chưa có nghĩa, bấm ✎ để thêm</span>'}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="lv">${[1,2,3,4,5,6,7].map(i=>`<i class="${v.box>=i?"on":""}"></i>`).join("")}</span><span class="tiny muted">${v.box===0?"mới":v.due<=todayISO?"đến hạn":"ôn "+dm(v.due)}</span></div><button class="edit" data-wedit="${esc(v.id)}" aria-label="Sửa ${esc(v.word)}">✎</button><button class="del" data-del="${esc(v.id)}" aria-label="Xóa ${esc(v.word)}">×</button></div>`).join(""):`<p class="hint" style="padding:16px">${vocab.length?"Không tìm thấy từ này.":"Sổ từ đang trống. Học một bài ở Lộ trình, từ sẽ tự vào đây."}</p>`;
 }
 document.addEventListener("input",e=>{if(e.target.id==="x-search")renderWordList();if(e.target.id==="b-text")renderBulk()});
 document.addEventListener("click",e=>{
@@ -2460,6 +2461,9 @@ function startReview(kind){
 }
 // tách hai câu của cùng một từ ra xa nhau để không nhìn câu trước đoán câu sau
 function spreadPairs(qs){const out=shuffle(qs);for(let i=1;i<out.length;i++)if(out[i].id===out[i-1].id){const j=out.findIndex((q,k)=>k>i&&q.id!==out[i].id&&(k+1>=out.length||out[k+1].id!==out[i].id));if(j>0)[out[i],out[j]]=[out[j],out[i]]}return out}
+// v13: nhãn sau khi sai (khớp luật ở Ma.gs): từ đã quen (hộp ≥4) sai lần đầu chỉ tụt xuống hộp 2; sai nữa là từ trọng yếu về hộp 1
+function lapseNote(id){const v=vocab.find(x=>x.id===id);if(!v)return "thành từ khó · ôn lại ngày mai";const l=v.lapses||0;
+  if(v.box>=4&&l===0)return "tụt xuống mốc 2 · ôn lại sau 2 ngày";if(l>=1)return "từ trọng yếu · ôn lại ngày mai";return "thành từ khó · ôn lại ngày mai"}
 function finishReview(correct,total,score){
   const done=r=>{applyR(r);showEarned(r)};
   let use=null;
@@ -2479,7 +2483,7 @@ function finishReview(correct,total,score){
   studyFrame("result",`<div class="result"><div class="score-ring"><svg viewBox="0 0 170 170"><circle cx="85" cy="85" r="74" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="85" cy="85" r="74" fill="none" stroke="var(--ok)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-score/100)}"/></svg><div class="v num">${score}%</div></div>
    <div class="h1">${S.review==="hard"?"Xong lượt ôn kỹ từ khó":"Xong lượt ôn"}</div><p class="lead">Đúng ngay lần đầu ${correct}/${total} câu · ${earnedHTML()}</p>${S.review==="hard"?`<p class="hint" style="margin:0">Ôn kỹ ngoài lịch chỉ cộng mét cho từ đã đến hạn. Từ sai lần này quay lại ngày mai; từ đúng giữ nguyên lịch ôn.</p>`:""}
    ${use?usageHTML(use):""}
-   <div class="wrongs">${S.answers.filter(a=>!a.q.retry).map(a=>`<div ${isV?'style="grid-template-columns:auto 1fr auto"':""}><span style="color:${a.ok?"var(--ok)":"var(--bad)"}">${a.ok?"✓":"✗"}</span><span><b>${esc(a.q.type==="mcq"?a.q.opts[a.q.ans]:a.q.show)}</b> <span class="muted">${esc(a.q.ref?a.q.ref.vi:a.q.why||"")}</span>${isV&&!a.ok?` <span class="hardchip">thành từ khó · ôn lại ngày mai</span>`:""}</span>${isV?`<button class="edit" data-wedit="${esc(a.q.id)}" aria-label="Sửa từ">✎</button>`:""}</div>`).join("")}</div>
+   <div class="wrongs">${S.answers.filter(a=>!a.q.retry).map(a=>`<div ${isV?'style="grid-template-columns:auto 1fr auto"':""}><span style="color:${a.ok?"var(--ok)":"var(--bad)"}">${a.ok?"✓":"✗"}</span><span><b>${esc(a.q.type==="mcq"?a.q.opts[a.q.ans]:a.q.show)}</b> <span class="muted">${esc(a.q.ref?a.q.ref.vi:a.q.why||"")}</span>${isV&&!a.ok?` <span class="hardchip">${lapseNote(a.q.id)}</span>`:""}</span>${isV?`<button class="edit" data-wedit="${esc(a.q.id)}" aria-label="Sửa từ">✎</button>`:""}</div>`).join("")}</div>
    <button class="btn primary" id="rv-done">Xong</button>${fricBtn("review")}</div>`);
   FX.ring();if(total&&correct===total)FX.celebrate(.9,`<span class="fl">✅</span>Ôn sạch hết`);
 }
@@ -3102,18 +3106,10 @@ function loadRIndex(force){
   call("getPacks",ODS?["reading/_index.json","reading/_index-mat.json"]:["reading/_index.json"],packVer).then(a=>{if(!a||!a[0])throw new Error("reading index");const d=JSON.parse(a[0]);try{if(a[1]){const m=JSON.parse(a[1]);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}RIDX=d;rIdxLoading=false;if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat();else if(tab==="home")render()})
    .catch(()=>{rIdxLoading=false;rIdxFail=Date.now();if(busy())return;if(tab==="skills"&&skill==="reading")renderReading();else if(tab==="skills"&&skill==="mat")renderMat()});
 }
-/* Mở bài nào thì lúc rảnh tải trước 2 bài kế tiếp cùng bộ vào cache máy: bài sau mở tức thì, không chờ máy chủ. */
-function warmNext(kind,id){try{
-  const sets=kind==="l"?lSets():((RIDX&&RIDX.sets)||[]),dir=kind==="l"?"listening":"reading";
-  for(const s of sets){const i=(s.items||[]).findIndex(x=>x.id===id);if(i<0)continue;
-    const paths=s.items.slice(i+1,i+3).filter(x=>!PACKS[x.id]).map(x=>`${dir}/${s.id}/${x.id}.json`);
-    if(paths.length)setTimeout(()=>{try{callRaw("getPacks",[paths,packVer],true).catch(()=>{})}catch(e){}},1500);
-    return}
-}catch(e){}}
 function loadPack(id){
-  if(PACKS[id]){warmNext("r",id);return Promise.resolve(PACKS[id])}
+  if(PACKS[id])return Promise.resolve(PACKS[id]);
   const it=rItem(id);
-  return call("getPack",`reading/${it?it.set:id.split("-")[0]}/${id}.json`,packVer).then(s=>{const p=JSON.parse(s);if(!p.id)p.id=id;PACKS[id]=p;warmNext("r",id);return p});
+  return call("getPack",`reading/${it?it.set:id.split("-")[0]}/${id}.json`,packVer).then(s=>{const p=JSON.parse(s);if(!p.id)p.id=id;PACKS[id]=p;return p});
 }
 const rSets=()=>((RIDX&&RIDX.sets)||[]).filter(x=>ODS||!/^mat/.test(x.id));
 const rItem=id=>{for(const s of rSets())for(const it of s.items)if(it.id===id)return {...it,set:s.id,setName:s.name};return null};
@@ -3399,7 +3395,7 @@ function notesPane(){
    <label class="fld" style="margin-top:12px">Ghi chú cho bài này<textarea id="rd-notes" rows="4" placeholder="Bẫy gặp phải, chiến lược, ý chính từng đoạn…">${esc(RD.note.notes||"")}</textarea></label>
    <button type="button" class="btn sm primary" data-savenotes style="margin-top:8px">Lưu ghi chú</button>
    <div class="lbl" style="margin-top:16px">Từ mày đã lưu từ bài này (${ws.length})</div>
-   ${ws.length?`<div class="wlist" style="border:1px solid var(--line);border-radius:12px">${ws.map(v=>`<div class="wrow" style="grid-template-columns:minmax(0,1fr) auto auto"><div><div class="w">${esc(v.word)}</div><div class="m">${esc(v.meaning)}</div></div><span class="lv">${[1,2,3,4,5,6].map(i=>`<i class="${v.box>=i?"on":""}"></i>`).join("")}</span><button type="button" class="edit" data-wedit="${esc(v.id)}" aria-label="Sửa ${esc(v.word)}">✎</button></div>`).join("")}</div>
+   ${ws.length?`<div class="wlist" style="border:1px solid var(--line);border-radius:12px">${ws.map(v=>`<div class="wrow" style="grid-template-columns:minmax(0,1fr) auto auto"><div><div class="w">${esc(v.word)}</div><div class="m">${esc(v.meaning)}</div></div><span class="lv">${[1,2,3,4,5,6,7].map(i=>`<i class="${v.box>=i?"on":""}"></i>`).join("")}</span><button type="button" class="edit" data-wedit="${esc(v.id)}" aria-label="Sửa ${esc(v.word)}">✎</button></div>`).join("")}</div>
    <button type="button" class="btn sm" data-rstudy="${esc(p.id)}" style="margin-top:8px">Ôn từ bài này ${I.arrow}</button>`:`<p class="hint">Bôi đen một từ trong đoạn văn để tra nghĩa hoặc lưu vào sổ.</p>`}`;
 }
 
@@ -3795,7 +3791,7 @@ function openListening(id,opt){
   const it=lItem(id);
   if(!PACKS[id])toast("Đang mở đề…");
   const path=`listening/${it?it.set:id.split("-")[0]}/${id}.json`;
-  (PACKS[id]?Promise.resolve(PACKS[id]):call("getPack",path,packVer).then(s=>{const p=JSON.parse(s);p.kind=p.kind||"listening";PACKS[id]=p;return p})).then(p=>{warmNext("l",id);return p})
+  (PACKS[id]?Promise.resolve(PACKS[id]):call("getPack",path,packVer).then(s=>{const p=JSON.parse(s);p.kind=p.kind||"listening";PACKS[id]=p;return p}))
    .then(p=>{if(p.kind==="dictation")showDictation(p);else showReading(p,opt||{});lPlayerMount(p)}).catch(e=>toast("Không mở được đề này. "+String((e&&e.message)||e).replace(/^Error:\s*/,"").slice(0,90),true));
 }
 document.addEventListener("click",e=>{
