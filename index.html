@@ -1291,6 +1291,63 @@ details.study{border:1px solid var(--line);border-radius:12px;padding:10px 12px;
 details.study>summary{cursor:pointer;font-weight:700}
 .study .cor p{margin:8px 0;line-height:1.6}
 .gstep{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-left:3px solid var(--ok);background:var(--sunk);border-radius:0 12px 12px 0;font-size:14px;line-height:1.55}
+/* ---- Phát âm ---- */
+.pr-body{margin-top:14px;display:flex;flex-direction:column;gap:14px}
+.pr-ipa{font-family:"Noto Sans","Segoe UI","Charis SIL","Doulos SIL","Gentium Plus",system-ui,sans-serif;font-weight:700;letter-spacing:.01em}
+.pr-ipa.big{font-size:34px;line-height:1}
+.pr-ipa.bad{color:var(--bad)}
+.pr-hero .pr-chips,.pr-chips{display:flex;flex-wrap:wrap;gap:8px}
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px}
+.pr-sym{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:78px;padding:10px 6px;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;color:var(--ink);cursor:pointer;font:inherit;position:relative}
+.pr-sym b{font-size:25px;line-height:1.1;font-family:"Noto Sans","Segoe UI","Charis SIL","Doulos SIL",system-ui,sans-serif}
+.pr-sym span{font-size:12px;color:var(--ink-2);font-weight:600}
+.pr-sym.p1{border-color:var(--ink-3,var(--line))}
+.pr-sym.p1::after{content:"";position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--sun)}
+.pr-sym.weak{border-color:var(--bad);background:var(--bad-soft)}
+.pr-sym.good{border-color:var(--ok);background:var(--ok-soft)}
+.pr-sym:active{transform:scale(.97)}
+.pr-sym:focus-visible,.pr-opt:focus-visible{outline:3px solid var(--link);outline-offset:2px}
+.pr-det{display:flex;gap:14px;margin-top:12px;align-items:flex-start}
+.pr-mouth{display:flex;gap:6px;align-items:center;flex:none}
+.pr-mouth img{width:92px;height:92px;border-radius:16px;object-fit:cover;background:#4a4d52;border:1px solid var(--line)}
+.pr-arr{color:var(--ink-2);font-weight:800}
+.pr-pairs{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.pr-pair{display:flex;gap:8px;align-items:center}
+.pr-pair .chip.tgt{border-color:var(--ok);color:var(--ok)}
+.pr-end summary{padding:14px 16px;font-weight:700;cursor:pointer;list-style:none}
+.pr-end summary::-webkit-details-marker{display:none}
+.pr-end+.pr-end{border-top:1px solid var(--line)}
+.pr-endb{padding:0 16px 16px}
+.pr-menu{display:flex;flex-direction:column;gap:8px}
+.pr-mrow{display:flex;gap:8px;align-items:stretch}
+.pr-mrow .btn:first-child{flex:1;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:10px 14px;height:auto;min-height:52px;text-align:left}
+.pr-mrow .btn.sm{flex:none;white-space:normal;max-width:96px;line-height:1.2;text-align:center}
+.pr-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pr-opts.two{grid-template-columns:1fr 1fr}
+.pr-opt{display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;font:inherit;cursor:pointer;min-height:76px}
+.pr-opt b{font-size:28px;line-height:1.1}.pr-opt.two b,.pr-opts.two .pr-opt b{font-size:18px}
+.pr-opt span{font-size:12.5px;color:var(--ink-2);font-weight:600}
+.pr-opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.pr-opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.pr-fb{border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5}
+.pr-fb.ok{background:var(--ok-soft)}.pr-fb.bad{background:var(--bad-soft)}
+button.playing{opacity:.7}
+.chip.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+button.chip.on{background:var(--night);color:var(--night-ink);border-color:var(--night)}
+.pr-say{display:flex;flex-direction:column;gap:2px;margin-top:12px}
+.pr-text{font-size:26px;font-weight:800;letter-spacing:-.01em;line-height:1.25;margin:4px 0}
+.pr-r{margin-top:10px;padding:12px 14px;background:var(--sunk);border:1px solid var(--line);border-radius:12px}
+.pr-heard{font-size:18px;font-weight:700;margin:2px 0 4px}
+.pr-score{font-size:34px;line-height:1}
+.pr-err{padding:8px 0;border-top:1px dashed var(--line);font-size:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pr-err:first-of-type{border-top:0}
+.btn.rec{background:var(--bad);border-color:var(--bad);color:#fff}
+@media (max-width:420px){.pr-det{flex-direction:column}.pr-text{font-size:22px}.pr-mouth img{width:84px;height:84px}}
+@media (prefers-reduced-motion:reduce){.pr-sym:active{transform:none}}
+
+@media (max-width:480px){.seg[aria-label="Kỹ năng"]{display:flex;flex-wrap:wrap;width:100%;overflow:visible}.seg[aria-label="Kỹ năng"] button{padding:9px 6px!important;font-size:13.5px!important;white-space:nowrap;flex:1 1 30%!important;min-width:0}}
+
+.pr-body .chip{width:auto;flex:none}
 </style>
 </head>
 <body>
@@ -1319,10 +1376,11 @@ details.study>summary{cursor:pointer;font-weight:700}
 
   <section class="view" id="v-skills" hidden>
    <div class="hd"><div><span class="eyebrow" id="sk-eyebrow">Kỹ năng</span><h1 class="h1" id="sk-title">Reading</h1><p class="lead" id="sk-lead"></p></div>
-    <div class="seg" role="group" aria-label="Kỹ năng"><button data-skill="reading">Reading</button><button data-skill="speaking">Speaking</button><button data-skill="write">Writing</button><button data-skill="listening">Listening</button><button data-skill="mat">Vật liệu</button></div></div>
+    <div class="seg" role="group" aria-label="Kỹ năng"><button data-skill="reading">Reading</button><button data-skill="speaking">Speaking</button><button data-skill="write">Writing</button><button data-skill="listening">Listening</button><button data-skill="pron">Phát âm</button><button data-skill="mat">Vật liệu</button></div></div>
    <div id="sk-reading" class="view"></div>
    <div id="sk-speaking" class="view"></div>
    <div id="sk-listening" class="view"></div>
+   <div id="sk-pron" class="view"></div>
    <div id="sk-mat" class="view"></div>
    <div id="sk-write" class="view">
     <div class="seg rnav" id="w-nav"></div>
@@ -1880,6 +1938,7 @@ function dailyPlan(){
       if(i===3&&rt.length)items.push({time:"Reading",min:15,title:`Làm lại ${rt.reduce((s,x)=>s+x.wrong.length,0)} câu sai`,how:"Câu sai từ 7 ngày trước, rồi xem lại bảng đồng nghĩa",done:rDone,btn:'data-rretrylist',label:"Làm"});
       else items.push({time:"Reading",min:25,title:nxi?`Bài tiếp theo: ${nxi.title}`:"Một bài trong bộ đề",how:"Làm khoảng 20 phút, xem giải thích từng câu, lưu từ mới",done:rDone,btn:nx?`data-ropen="${nx}"`:'data-goskill="reading"',label:"Làm"})}
     if(i===1||i===5)items.push({time:"Listening",min:30,title:"Một đề nghe trên web",how:"Nghe 1 lần như thi thật, nộp, rồi nghe lại đoạn câu sai ở tốc độ chậm",done:Object.entries(rstats.latest||{}).some(([id,v])=>v.date===todayISO&&typeof lItem==="function"&&lItem(id)),btn:'data-goskill="listening"',label:"Mở"});
+    if(i===0||i===2||i===4)items.push({time:"Phát âm",min:10,title:"10 phút phát âm",how:"Nghe phân biệt một nhóm âm, rồi ghi âm vài từ hoặc câu và nghe lại",done:ls.get("ielts-pron-day","")===todayISO,btn:'data-goskill="pron"',label:"Luyện"});
     if(i===1)items.push({time:"Speaking",min:10,title:"Nhại theo bài mẫu (shadowing)",how:"Cẩm nang → chọn chủ đề → Nhại theo một bài mẫu",done:ls.get("ielts-shadow-day","")===todayISO,btn:'data-goskill="speaking" data-spv="guide"',label:"Mở"});
     if(i===2)items.push({time:"Speaking",min:10,title:"Part 1 với giám khảo AI",how:"5 câu, nói bằng micro trên bàn phím",done:subs.some(s=>s.type==="speaking"&&s.created.startsWith(todayISO)),btn:'data-goskill="speaking" data-spv="practice"',label:"Mở"});
     if(i===4)items.push({time:"Writing",min:45,title:"Viết đoạn 150 từ, nộp chấm",done:subs.some(s=>s.type==="writing"&&s.created.startsWith(todayISO)&&!MAT_REF.test(String(s.ref||""))),btn:'data-goskill="write"',label:"Mở"});
@@ -3997,16 +4056,16 @@ document.addEventListener("click",e=>{
 document.addEventListener("click",e=>{const b=e.target.closest("[data-lsec]");if(!b||!LP)return;const i=+b.dataset.lsec-1;if(!LP.p.audio[i])return;const A=LP.el.querySelector("audio");if(A)A.pause();LP.i=i;LP.el.innerHTML="";lpDraw();FX.soft(b)});
 
 /* ================= Kỹ năng: Reading · Speaking · Writing ================= */
-const SK={mat:["Vật liệu · ODS","Học chuyên ngành song song với IELTS: thuật ngữ, bài đọc khoa học kiểu IELTS, Writing Task 1 về quy trình và biểu đồ vật liệu, câu học thuật cho luận văn."],reading:["Reading","Bộ đề có lời giải từng câu, luyện theo dạng câu hỏi, bài tự dán và AI soạn đề. Bôi đen để tra từ theo ngữ cảnh."],
+const SK={pron:["Phát âm","Bảng 47 âm tiếng Anh với giọng Oxford, khẩu hình, cặp từ dễ nhầm với người Việt, bài nghe phân biệt và ghi âm để nghe lại hoặc chấm."],mat:["Vật liệu · ODS","Học chuyên ngành song song với IELTS: thuật ngữ, bài đọc khoa học kiểu IELTS, Writing Task 1 về quy trình và biểu đồ vật liệu, câu học thuật cho luận văn."],reading:["Reading","Bộ đề có lời giải từng câu, luyện theo dạng câu hỏi, bài tự dán và AI soạn đề. Bôi đen để tra từ theo ngữ cảnh."],
   speaking:["Speaking","Luyện với giám khảo: nghe câu hỏi, trả lời bằng micro trên bàn phím, nhận gợi ý và điểm 3 tiêu chí."],
   write:["Writing","Viết, nộp, nhận điểm 4 tiêu chí kèm câu sửa."],
   listening:["Listening","Nghe đề ngay trên web (âm thanh lấy từ Drive), chỉnh tốc độ, tua 5 giây, chấm điểm rồi xem transcript và lời giải."]};
 function renderSkills(){
   document.querySelectorAll("[data-skill]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.skill===skill));
   if(!SK[skill]||(skill==="mat"&&!ODS))skill="reading";
-  ["reading","speaking","write","listening","mat"].forEach(k=>$("sk-"+k).hidden=k!==skill);
+  ["reading","speaking","write","listening","mat","pron"].forEach(k=>$("sk-"+k).hidden=k!==skill);
   $("sk-title").textContent=SK[skill][0];$("sk-lead").textContent=SK[skill][1];
-  ({reading:renderReading,speaking:renderSpeaking,write:renderWrite,listening:renderListening,mat:renderMat})[skill]();if(typeof gbEntry==="function")gbEntry();
+  ({reading:renderReading,speaking:renderSpeaking,write:renderWrite,listening:renderListening,mat:renderMat,pron:()=>typeof renderPron==="function"?renderPron():setTimeout(renderSkills,80)})[skill]();if(typeof gbEntry==="function")gbEntry();
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-skill]");if(b){skill=b.dataset.skill;ls.set("ielts-skill",skill);renderSkills()}});
 
@@ -6320,6 +6379,304 @@ document.addEventListener("click",e=>{
   const w=e.target.closest("[data-wktest]");if(w){startWeekTest();return}
   const r=e.target.closest("[data-retire]");if(r)retireToggle(r.dataset.retire);
 });
+
+/* ================= Phát âm: bảng 47 âm (Oxford) + khẩu hình + nghe phân biệt + ghi âm/chấm =================
+   Nguồn: gói climb-data/pron (pron.json + au-iso/au-w-*.json). Chấm máy tùy chọn qua OpenPronounce chạy trên máy tính. */
+var PR={view:ls.get("ielts-pview","chart"),data:null,loading:false,fail:false,aud:{},audP:{},ear:null,pset:ls.get("ielts-pset","hard"),psnd:ls.get("ielts-psnd",""),pi:0,recs:{},
+  srv:ls.get("ielts-psrv","http://127.0.0.1:8000"),srvOK:null,sr:ls.get("ielts-psr",/iPhone|iPad|iPod/.test(navigator.userAgent)?"0":"1")==="1",setup:false,busy:null};
+var PR_SILENT="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+var PR_P2S={"oʊ":"ou","ɹ":"r","ɡ":"g","ɝ":"er","ɚ":"schwa","ɛ":"e","ɑː":"aa","ɑ":"aa","ɔː":"oo","ɔ":"oo","ɐ":"uh","i":"ii","u":"uu","ɾ":"t","ʔ":"t","ɫ":"l","ɪ":"ih","aɪ":"ai","aʊ":"au","ɔɪ":"oi","eɪ":"ei","eə":"ea","ɪə":"ia","ʊə":"ua"};
+function prStat(){try{return JSON.parse(ls.get("ielts-pron-stat","{}"))||{}}catch(e){return {}}}
+function prStatSave(o){ls.set("ielts-pron-stat",JSON.stringify(o))}
+function prMark(id,ok){const o=prStat();const r=o[id]||(o[id]={ok:0,n:0});r.n++;if(ok)r.ok++;prStatSave(o);ls.set("ielts-pron-day",todayISO)}
+function prSnd(id){return PR.data&&PR.data.sounds.find(s=>s.id===id)}
+function prLoad(){
+  if(PR.data||PR.loading)return;PR.loading=true;PR.fail=false;
+  call("getPack","pron/pron.json",packVer).then(s=>{PR.data=JSON.parse(s)}).catch(()=>{PR.fail=true}).then(()=>{PR.loading=false;if(typeof skill!=="undefined"&&skill==="pron")renderPron()});
+  prBundle("iso").catch(()=>{});
+}
+/* tải gói âm thanh theo nhóm (iso | w-c | w-v | w-d), giữ trong bộ nhớ */
+function prBundle(k){
+  if(PR.aud[k])return Promise.resolve(PR.aud[k]);
+  if(PR.audP[k])return PR.audP[k];
+  return PR.audP[k]=call("getPack","pron/au-"+k+".json",packVer).then(s=>{PR.aud[k]=JSON.parse(s);return PR.aud[k]}).catch(e=>{delete PR.audP[k];throw e});
+}
+function prPlay(id,kind){
+  /* mở khóa phát âm trên iPhone ngay trong thao tác chạm, rồi mới tải âm thanh */
+  if(!PR.au)PR.au=new Audio();
+  const a=PR.au;try{a.pause();a.src=PR_SILENT;a.play().catch(()=>{})}catch(e){}
+  const s=prSnd(id);if(!s)return Promise.resolve();
+  const k=kind==="iso"?"iso":"w-"+s.t;
+  return prBundle(k).then(d=>{const b=d[id];if(!b)throw new Error("x");return new Promise(res=>{a.onended=res;a.onerror=res;a.src="data:audio/mpeg;base64,"+b;a.play().catch(()=>{toast("Trình duyệt chặn phát âm thanh. Chạm lại lần nữa.",true);res()})})}).catch(()=>{toast("Chưa tải được âm thanh. Kiểm tra gói pron trong climb-data.",true)});
+}
+function prIpa(s){return `<span class="pr-ipa">/${esc(s.ipa)}/</span>`}
+function prMouth(s){const m=PR.data.mouth;return `<div class="pr-mouth">${s.m.map((x,i)=>(i?`<span class="pr-arr">→</span>`:"")+`<img alt="Khẩu hình ${esc(s.ipa)}" src="${m[x]||""}">`).join("")}</div>`}
+function prWeak(id){const r=prStat()[id];return r&&r.n>=3?r.ok/r.n:null}
+
+/* ---------- giao diện chính ---------- */
+function renderPron(){
+  if(!window.PR||!$("sk-pron"))return setTimeout(()=>{if(typeof skill!=="undefined"&&skill==="pron")renderPron()},60);
+  prLoad();
+  const views=[["chart","Bảng âm","Bảng âm"],["ear","Nghe phân biệt","Nghe"],["say","Luyện nói","Nói"]];
+  const body=!PR.data?(PR.fail?`<div class="card"><p class="hint">Chưa tải được bài phát âm. Cần thả gói <b>climb-content-pron.zip</b> vào thư mục climb-data rồi chạy <b>napNoiDung()</b>.</p><button class="btn sm" data-prreload>Thử lại</button></div>`:skelHTML()):
+   ({chart:prChartHTML,ear:prEarHTML,say:prSayHTML}[PR.view]||prChartHTML)();
+  $("sk-pron").innerHTML=`<div class="seg rnav">${views.map(([k,n,m])=>`<button data-pview="${k}" aria-pressed="${PR.view===k}"><span class="lg">${n}</span><span class="sm">${m}</span></button>`).join("")}</div><div class="pr-body">${body}</div>`;
+  if(PR.data&&PR.view==="say")prSayAfter();
+}
+function prChartHTML(){
+  const D=PR.data,pri1=D.sounds.filter(s=>s.p===1);
+  const grp=(t,n)=>`<h2 class="h2">${n}</h2><div class="pr-grid">${D.sounds.filter(s=>s.t===t).map(s=>{const w=prWeak(s.id);return `<button class="pr-sym p${s.p}${w!=null&&w<.7?" weak":w!=null&&w>=.9?" good":""}" data-prsnd="${s.id}" aria-label="Âm ${esc(s.ipa)}, ví dụ ${esc(s.ex)}"><b>${esc(s.ipa)}</b><span>${esc(s.ex)}</span></button>`}).join("")}</div>`;
+  return `<div class="card cont pr-hero"><div class="kicker">Ưu tiên cho người Việt</div><div class="ttl">Học ${pri1.length} âm này trước</div>
+    <p class="hint" style="margin:6px 0 10px">Đây là những âm tiếng Việt không có hoặc dễ bị thay bằng âm khác, ảnh hưởng nhiều nhất đến điểm Speaking. Chạm vào từng âm để nghe, xem khẩu hình và cặp từ dễ nhầm.</p>
+    <div class="pr-chips">${pri1.map(s=>`<button class="chip" data-prsnd="${s.id}"><b class="pr-ipa">${esc(s.ipa)}</b> ${esc(s.ex)}</button>`).join("")}</div></div>
+   <div class="soft small" style="margin-top:12px">Chấm tròn đậm là âm ưu tiên. Âm viền đỏ là âm mày hay nghe nhầm trong bài Nghe phân biệt, viền xanh là âm đã nghe chắc.</div>
+   ${grp("c","Phụ âm")}${grp("v","Nguyên âm")}${grp("d","Nguyên âm đôi")}
+   <h2 class="h2">Âm cuối và đuôi từ</h2>
+   <div class="card pad0">${D.end.map((e,i)=>`<details class="pr-end"><summary>${esc(e.n)}</summary><div class="pr-endb"><p class="small">${esc(e.tip)}</p><div class="pr-chips">${e.w.split(", ").map(w=>`<button class="chip" data-prtts="${esc(w)}">${I.volume||"🔊"} ${esc(w)}</button>`).join("")}</div><button class="btn sm" style="margin-top:10px" data-prends="${i}">Ghi âm và chấm nhóm này</button></div></details>`).join("")}</div>
+   <p class="hint" style="margin-top:12px">${esc(D.credit)}</p>`;
+}
+function prDetail(id){
+  const s=prSnd(id);if(!s)return;
+  const pr=["","Ưu tiên cao","Quan trọng","Ít gặp"][s.p];
+  dlg(`<div class="dlg-hd"><div class="grow"><div class="tiny muted" style="font-weight:700">${s.t==="c"?"Phụ âm":s.t==="v"?"Nguyên âm":"Nguyên âm đôi"} · ${pr}</div><div class="h2"><span class="pr-ipa big">/${esc(s.ipa)}/</span> <span class="muted" style="font-weight:600">${esc(s.ex)}</span></div></div><button class="x" data-close aria-label="Đóng">✕</button></div>
+   <div class="pr-det">${prMouth(s)}<div class="grow">
+     <div class="row" style="gap:8px"><button class="btn primary sm" data-prplay="${s.id}:iso">▶ Nghe âm</button><button class="btn sm" data-prplay="${s.id}:w">▶ Nghe từ "${esc(s.ex)}"</button></div>
+     <p class="small" style="margin:10px 0 0"><b>Cách đặt miệng.</b> ${esc(s.tip)}</p></div></div>
+   <div class="soft small" style="margin-top:10px"><b>Lỗi người Việt hay gặp.</b> ${esc(s.trap)}</div>
+   ${s.pairs.length?`<h3 class="h3" style="margin-top:14px">Cặp từ dễ nhầm</h3><p class="hint">Từ đầu tiên chứa âm đang học. Chạm để nghe giọng đọc của máy (Anh-Anh).</p>
+   <div class="pr-pairs">${s.pairs.map(([a,b])=>`<div class="pr-pair"><button class="chip tgt" data-prtts="${esc(a)}">${esc(a)}</button><span class="muted">↔</span><button class="chip" data-prtts="${esc(b)}">${esc(b)}</button></div>`).join("")}</div>
+   <div class="row" style="margin-top:12px"><button class="btn primary" data-prdrill="${s.id}">Ghi âm và chấm các cặp từ này</button></div>`:`<div class="row" style="margin-top:12px"><button class="btn primary" data-prdrill="${s.id}">Luyện câu có âm này</button></div>`}`);
+}
+document.addEventListener("click",e=>{
+  const T=e.target;let b;
+  if(b=T.closest("[data-pview]")){PR.view=b.dataset.pview;ls.set("ielts-pview",PR.view);renderPron();return}
+  if(b=T.closest("[data-prreload]")){PR.fail=false;renderPron();return}
+  if(b=T.closest("[data-prsnd]")){prDetail(b.dataset.prsnd);return}
+  if(b=T.closest("[data-prplay]")){const [id,k]=b.dataset.prplay.split(":");b.classList.add("playing");prPlay(id,k).then(()=>b.classList.remove("playing"));return}
+  if(b=T.closest("[data-prtts]")){speak(b.dataset.prtts);return}
+  if(b=T.closest("[data-prdrill]")){const id=b.dataset.prdrill;PR.pset=prSnd(id)&&prSnd(id).pairs.length?"pair":"sent";PR.psnd=id;PR.pi=0;PR.view="say";ls.set("ielts-pview","say");ls.set("ielts-pset",PR.pset);ls.set("ielts-psnd",id);closeDlg();renderPron();window.scrollTo({top:0});return}
+  if(b=T.closest("[data-prends]")){PR.pset="end";PR.psnd=b.dataset.prends;PR.pi=0;PR.view="say";ls.set("ielts-pview","say");ls.set("ielts-pset","end");ls.set("ielts-psnd",PR.psnd);renderPron();window.scrollTo({top:0});return}
+});
+
+/* ---------- Nghe phân biệt ---------- */
+function prEarMenu(){
+  const D=PR.data,st=prStat();
+  const weakIds=D.sounds.filter(s=>{const w=prWeak(s.id);return w!=null&&w<.7}).map(s=>s.id);
+  return `<div class="card cont"><div class="kicker">Nghe phân biệt · 10 câu</div><div class="ttl">Nghe một âm, chọn đúng ký hiệu</div>
+    <p class="hint" style="margin:6px 0 12px">Máy phát âm riêng lẻ (giọng Oxford). Chọn ký hiệu mày vừa nghe. Luyện tai trước thì miệng mới nói đúng.</p>
+    ${weakIds.length?`<button class="btn sun" data-prearstart="weak" style="margin-bottom:10px">Ôn ${weakIds.length} âm hay nhầm →</button>`:""}
+    <div class="pr-menu">${D.groups.map((g,i)=>{const done=g.ids.reduce((a,id)=>{const r=st[id];return a+(r?r.n:0)},0);return `<div class="pr-mrow"><button class="btn" data-prearstart="g${i}"><b>${esc(g.n)}</b><span class="hint">${g.ids.map(id=>"/"+esc(prSnd(id).ipa)+"/").join(" ")}${done?` · đã nghe ${done} lượt`:""}</span></button><button class="btn sm ghost" data-prearstart="p${i}" title="Nghe hai âm, chọn giống hay khác">Giống hay khác</button></div>`}).join("")}</div>
+    <button class="btn primary" data-prearstart="all" style="margin-top:12px">Trộn tất cả nhóm →</button></div>`;
+}
+function prEarHTML(){
+  const E=PR.ear;if(!E)return prEarMenu();
+  if(E.done){const ok=E.res.filter(x=>x.ok).length,bad=[...new Set(E.res.filter(x=>!x.ok).flatMap(x=>x.q.mode==="p"?[x.q.a,x.q.b]:[x.q.t]))];
+    return `<div class="card cont"><div class="kicker">Kết quả</div><div class="ttl num">${ok}/${E.res.length} đúng</div>
+     <p class="hint" style="margin:8px 0">${ok===E.res.length?"Tai mày phân biệt tốt nhóm âm này.":"Chạm từng âm sai để nghe lại cách đặt miệng, rồi làm thêm một lượt."}</p>
+     ${bad.length?`<div class="pr-chips" style="margin:8px 0">${bad.map(id=>`<button class="chip" data-prsnd="${id}"><b class="pr-ipa">${esc(prSnd(id).ipa)}</b> ${esc(prSnd(id).ex)}</button>`).join("")}</div>`:""}
+     <div class="row" style="margin-top:12px"><button class="btn primary" data-prearstart="${E.key}">Làm lại ${E.res.length} câu khác</button><button class="btn" data-prearmenu>Về danh sách</button></div></div>`}
+  const q=E.qs[E.i],n=E.qs.length;
+  const head=`<div class="qhd"><div class="tiny">Câu ${E.i+1}/${n}</div><button class="btn sm ghost" data-prearmenu>Thoát</button></div>`;
+  if(q.mode==="p"){
+    return `<div class="card cont">${head}<div class="ttl">Hai âm này giống hay khác?</div><p class="hint" style="margin:6px 0 12px">Nghe lần lượt âm 1 rồi âm 2.</p>
+      <div class="row" style="margin-bottom:14px"><button class="btn primary" data-prear2="play">▶ Nghe cả hai</button></div>
+      <div class="pr-opts two">${["same","diff"].map(k=>`<button class="pr-opt${E.ans?(k===q.right?" ok":k===E.pick?" bad":""):""}" data-prear2="${k}" ${E.ans?"disabled":""}><b>${k==="same"?"Giống":"Khác"}</b></button>`).join("")}</div>
+      ${E.ans?`<div class="pr-fb ${E.pick===q.right?"ok":"bad"}" style="margin-top:12px"><span>${E.pick===q.right?"Đúng.":"Chưa đúng."} Âm 1 là <b class="pr-ipa">${esc(prSnd(q.a).ipa)}</b>, âm 2 là <b class="pr-ipa">${esc(prSnd(q.b).ipa)}</b>${q.a===q.b?" (cùng một âm)":""}.</span></div><div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn primary" data-prearnext>${E.i+1<n?"Câu tiếp theo →":"Xem kết quả →"}</button></div>`:""}</div>`}
+  const t=prSnd(q.t);
+  return `<div class="card cont">${head}<div class="ttl">Mày vừa nghe âm nào?</div>
+    <div class="row" style="margin:10px 0 14px"><button class="btn primary" data-prearplay>▶ Nghe lại</button></div>
+    <div class="pr-opts">${q.opts.map(id=>{const s=prSnd(id);return `<button class="pr-opt${E.ans?(id===q.t?" ok":id===E.pick?" bad":""):""}" data-prearpick="${id}" ${E.ans?"disabled":""}><b class="pr-ipa">${esc(s.ipa)}</b><span>${esc(s.ex)}</span></button>`}).join("")}</div>
+    ${E.ans?`<div class="pr-fb ${E.pick===q.t?"ok":"bad"}" style="margin-top:12px"><span>${E.pick===q.t?"Đúng.":"Chưa đúng."} Âm vừa nghe là <b class="pr-ipa">${esc(t.ipa)}</b> như trong "${esc(t.ex)}". ${esc(t.tip)}</span></div>
+      <div class="row" style="justify-content:space-between;margin-top:10px"><button class="btn" data-prsnd="${t.id}">Xem cách đặt miệng</button><button class="btn primary" data-prearnext>${E.i+1<n?"Câu tiếp theo →":"Xem kết quả →"}</button></div>`:""}</div>`;
+}
+function prShuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function prEarStart(key){
+  const D=PR.data;let pool=[],mode="s";
+  if(key==="all"||key==="weak"){pool=D.groups.map((g,i)=>i)}
+  else{pool=[+key.slice(1)];mode=key[0]==="p"?"p":"s"}
+  let ids=null;
+  if(key==="weak"){const w=new Set(D.sounds.filter(s=>{const x=prWeak(s.id);return x!=null&&x<.7}).map(s=>s.id));ids=w}
+  const qs=[];
+  for(let k=0;k<10;k++){
+    const gi=pool[k%pool.length],g=D.groups[gi];
+    const cand=ids?g.ids.filter(x=>ids.has(x)):g.ids;
+    const base=cand.length?cand:g.ids;
+    if(mode==="p"){const same=Math.random()<.4,a=base[Math.floor(Math.random()*base.length)];let b=a;if(!same){const others=g.ids.filter(x=>x!==a);b=others[Math.floor(Math.random()*others.length)]}
+      qs.push({mode:"p",a,b,right:a===b?"same":"diff"})}
+    else{const t=base[Math.floor(Math.random()*base.length)];qs.push({mode:"s",t,opts:prShuffle(g.ids)})}
+  }
+  PR.ear={key,qs:prShuffle(qs),i:0,res:[],ans:false,pick:null,done:false};
+  renderPron();prEarAuto();
+}
+function prEarAuto(){
+  const E=PR.ear;if(!E||E.done)return;const q=E.qs[E.i];
+  setTimeout(()=>{if(PR.ear!==E||E.i!==E.qs.indexOf(q)||E.ans)return;if(q.mode==="s")prPlay(q.t,"iso")},350);
+}
+document.addEventListener("click",e=>{
+  const T=e.target,E=PR.ear;let b;
+  if(b=T.closest("[data-prearstart]")){prEarStart(b.dataset.prearstart);return}
+  if(T.closest("[data-prearmenu]")){PR.ear=null;renderPron();return}
+  if(!E||E.done)return;
+  const q=E.qs[E.i];
+  if(T.closest("[data-prearplay]")){prPlay(q.t,"iso");return}
+  if(b=T.closest("[data-prear2]")){
+    const k=b.dataset.prear2;
+    if(k==="play"){prPlay(q.a,"iso").then(()=>new Promise(r=>setTimeout(r,500))).then(()=>prPlay(q.b,"iso"));return}
+    if(E.ans)return;E.ans=true;E.pick=k;const ok=k===q.right;E.res.push({q,ok});prMark(q.a,ok);if(q.a!==q.b)prMark(q.b,ok);renderPron();return}
+  if(b=T.closest("[data-prearpick]")){if(E.ans)return;const id=b.dataset.prearpick;E.ans=true;E.pick=id;const ok=id===q.t;E.res.push({q,ok});prMark(q.t,ok);renderPron();prPlay(q.t,"iso");return}
+  if(T.closest("[data-prearnext]")){E.i++;E.ans=false;E.pick=null;if(E.i>=E.qs.length)E.done=true;renderPron();if(!E.done)prEarAuto();else window.scrollTo({top:0});return}
+});
+
+/* ---------- Luyện nói: ghi âm, nghe lại, chấm ---------- */
+function prItems(){
+  const D=PR.data,set=PR.pset;
+  if(set==="hard"){
+    let L=[];try{L=(typeof hardWords==="function"?hardWords():[]).map(v=>v.word)}catch(e){}
+    if(L.length<8){try{L=L.concat((dueWords()||[]).map(v=>v.word).filter(w=>!L.includes(w)))}catch(e){}}
+    if(L.length<8){try{L=L.concat(vocab.filter(v=>v.meaning&&!isRet(v)).sort((a,b)=>(b.lapses||0)-(a.lapses||0)).map(v=>v.word).filter(w=>!L.includes(w)))}catch(e){}}
+    return L.filter(w=>/^[A-Za-z][A-Za-z' \-]*$/.test(w)).slice(0,15).map(w=>({text:w}))}
+  if(set==="pair"){
+    const s=prSnd(PR.psnd)||D.sounds.find(x=>x.pairs.length&&x.p===1);
+    return s.pairs.flatMap(([a,b])=>[{text:a,sound:s.id,tgt:1},{text:b,sound:s.id,tgt:0}]).filter(x=>x.tgt||1).slice(0,12)}
+  if(set==="sent"){
+    const L=PR.psnd?D.sent.filter(x=>x.s===PR.psnd):D.sent;
+    return (L.length?L:D.sent).map(x=>({text:x.t,sound:x.s}))}
+  if(set==="end"){const g=D.end[+PR.psnd||0];return g.w.split(", ").map(w=>({text:w}))}
+  return [];
+}
+function prSayHTML(){
+  const D=PR.data,items=prItems(),it=items[PR.pi]||items[0];
+  const sets=[["hard","Từ của mày","Các từ hay quên trong sổ từ"],["pair","Cặp từ dễ nhầm","Chọn trong bảng âm"],["sent","Câu mẫu","Câu có âm khó và câu kiểu IELTS"],["end","Đuôi từ","Âm cuối, -s, -ed"]];
+  const sel=PR.pset==="pair"?`<label class="fld">Âm<select id="pr-snd">${D.sounds.filter(s=>s.pairs.length).map(s=>`<option value="${s.id}" ${s.id===PR.psnd?"selected":""}>/${esc(s.ipa)}/ ${esc(s.ex)}</option>`).join("")}</select></label>`
+   :PR.pset==="sent"?`<label class="fld">Âm<select id="pr-snd"><option value="">Tất cả câu</option>${[...new Set(D.sent.map(x=>x.s))].map(id=>`<option value="${id}" ${id===PR.psnd?"selected":""}>/${esc(prSnd(id).ipa)}/ ${esc(prSnd(id).ex)}</option>`).join("")}</select></label>`
+   :PR.pset==="end"?`<label class="fld">Nhóm<select id="pr-snd">${D.end.map((e,i)=>`<option value="${i}" ${String(i)===String(PR.psnd)?"selected":""}>${esc(e.n)}</option>`).join("")}</select></label>`:"";
+  const eng=PR.srvOK===true?`<span class="chip ok">Chấm máy đang bật</span>`:`<span class="chip">Chưa bật chấm máy</span>`;
+  return `<div class="card cont"><div class="pr-chips" style="margin-bottom:10px">${sets.map(([k,n])=>`<button class="chip${PR.pset===k?" on":""}" data-prset="${k}" aria-pressed="${PR.pset===k}">${n}</button>`).join("")}</div>${sel}
+    ${it?`<div class="pr-say"><div class="tiny muted" style="font-weight:700">${PR.pi+1}/${items.length}</div>
+      <div class="pr-text">${esc(it.text)}</div>
+      ${it.sound&&prSnd(it.sound)?`<div class="tiny muted">Âm mục tiêu: <button class="linkbtn" data-prsnd="${it.sound}">/${esc(prSnd(it.sound).ipa)}/</button></div>`:""}
+      <div class="row" style="gap:8px;margin:12px 0">
+        <button class="btn sm" data-prtts="${esc(it.text)}">🔊 Nghe mẫu</button>
+        <button class="btn primary sm" id="pr-rec" data-prrec>● Ghi âm</button>
+        <button class="btn sm" id="pr-play" data-prplayrec hidden>▶ Nghe lại</button>
+        <button class="btn sun sm" id="pr-score" data-prscore hidden>Chấm</button></div>
+      <div id="pr-res"></div>
+      <div class="row" style="justify-content:space-between;margin-top:12px"><button class="btn sm ghost" data-prnav="-1" ${PR.pi?"":"disabled"}>← Trước</button><button class="btn sm" data-prnav="1">${PR.pi+1<items.length?"Tiếp →":"Về đầu"}</button></div></div>`
+     :`<div class="soft small">Chưa có từ trong nhóm này. ${PR.pset==="hard"?"Học thêm từ và ôn vài hôm, từ hay quên sẽ xuất hiện ở đây.":""}</div>`}</div>
+   <div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h3 class="h3">Chấm phát âm</h3><span>${eng}</span></div>
+    <label class="mini" style="margin-top:10px"><input type="checkbox" id="pr-sr" ${PR.sr?"checked":""}><span><b>Nhận diện giọng của trình duyệt</b><br><span class="hint">Cho biết máy nghe mày nói thành từ gì. Nhanh, không cần cài, nhưng hay "đoán hộ" nên chỉ để tham khảo. Trên iPhone có thể tranh micro với ghi âm: tắt nếu ghi âm bị lỗi.</span></span></label>
+    <div class="row" style="margin-top:10px"><button class="btn sm" data-prsetup>${PR.setup?"Đóng hướng dẫn":"Bật chấm từng âm trên máy tính"}</button><button class="btn sm ghost" data-prping>Kiểm tra kết nối</button></div>
+    ${PR.setup?prSetupHTML():""}</div>
+   <p class="hint">Ghi âm chỉ lưu tạm trong trình duyệt, không gửi đi đâu ngoài máy chấm của mày.</p>`;
+}
+function prSetupHTML(){
+  return `<div class="soft small" style="margin-top:10px"><b>Chấm từng âm bằng OpenPronounce (miễn phí, chạy trên máy tính Windows của mày).</b>
+   <ol class="steps" style="margin-top:8px"><li>Giải nén OpenPronounce, chạy <b>CAI_DAT_VA_CHAY_LOCALHOST.cmd</b> một lần để cài (cần mạng, lần chấm đầu tải khoảng 2 GB mô hình).</li>
+   <li>Chép hai file <b>climb_pron_server.py</b> và <b>CHAY_CHO_WEB_IELTS.cmd</b> (Claude gửi kèm) vào cùng thư mục với server.py.</li>
+   <li>Mỗi lần luyện: bấm đúp <b>CHAY_CHO_WEB_IELTS.cmd</b> và để cửa sổ đen mở.</li>
+   <li>Mở web này bằng Chrome hoặc Edge trên chính máy đó, bấm <b>Kiểm tra kết nối</b>. Lần đầu Chrome hỏi quyền truy cập mạng nội bộ, chọn Cho phép.</li></ol>
+   <label class="fld">Địa chỉ máy chấm<input id="pr-srv" value="${esc(PR.srv)}" autocapitalize="off" autocomplete="off"></label>
+   <p class="hint" style="margin-top:6px">Điện thoại không nối được máy chấm này (iPhone chặn). Trên điện thoại dùng ghi âm, nghe lại và nhận diện giọng.</p></div>`;
+}
+function prSayAfter(){}
+function prPing(){
+  const url=PR.srv.replace(/\/$/,"")+"/health",ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),3000);
+  return fetch(url,{signal:ctl.signal}).then(r=>r.json()).then(j=>{clearTimeout(t);PR.srvOK=j&&j.status==="ok"}).catch(()=>{clearTimeout(t);PR.srvOK=false});
+}
+document.addEventListener("click",e=>{
+  const T=e.target;let b;
+  if(b=T.closest("[data-prset]")){PR.pset=b.dataset.prset;PR.pi=0;PR.recs={};if(PR.pset!=="pair"&&PR.pset!=="sent"&&PR.pset!=="end")PR.psnd="";else if(PR.pset==="end")PR.psnd=PR.psnd&&!isNaN(+PR.psnd)?PR.psnd:"0";else if(PR.pset==="sent")PR.psnd="";ls.set("ielts-pset",PR.pset);ls.set("ielts-psnd",PR.psnd);renderPron();return}
+  if(b=T.closest("[data-prnav]")){const L=prItems();PR.pi=(PR.pi+ +b.dataset.prnav+L.length)%Math.max(1,L.length);PR.recs={};renderPron();return}
+  if(T.closest("[data-prsetup]")){PR.setup=!PR.setup;renderPron();return}
+  if(T.closest("[data-prping]")){const bb=T.closest("[data-prping]");bb.textContent="Đang kiểm tra…";prPing().then(()=>{toast(PR.srvOK?"Đã kết nối máy chấm.":"Chưa thấy máy chấm. Kiểm tra cửa sổ đen và địa chỉ.",!PR.srvOK);renderPron()});return}
+  if(T.closest("[data-prrec]"))return prRecToggle();
+  if(T.closest("[data-prplayrec]")){const r=PR.recs.cur;if(r&&r.url){const a=new Audio(r.url);a.play().catch(()=>{})}return}
+  if(T.closest("[data-prscore]"))return prScore();
+});
+document.addEventListener("change",e=>{
+  const T=e.target;
+  if(T.id==="pr-snd"){PR.psnd=T.value;PR.pi=0;PR.recs={};ls.set("ielts-psnd",PR.psnd);renderPron()}
+  if(T.id==="pr-sr"){PR.sr=T.checked;ls.set("ielts-psr",PR.sr?"1":"0")}
+});
+document.addEventListener("input",e=>{if(e.target.id==="pr-srv"){PR.srv=e.target.value.trim();ls.set("ielts-psrv",PR.srv);PR.srvOK=null}});
+
+function prSRClass(){return window.SpeechRecognition||window.webkitSpeechRecognition}
+async function prRecToggle(){
+  const b=$("pr-rec");if(!b)return;
+  if(PR.rec&&PR.rec.state==="recording"){PR.rec.stop();if(PR.sr1){try{PR.sr1.stop()}catch(e){}}return}
+  const it=prItems()[PR.pi];if(!it)return;
+  PR.recs.cur={text:it.text,blob:null,url:null,heard:null};
+  let sr=null,srP=Promise.resolve(null);
+  const SRC=PR.sr&&prSRClass();
+  if(SRC){try{sr=new SRC();sr.lang="en-GB";sr.interimResults=false;sr.maxAlternatives=3;
+    srP=new Promise(res=>{let out=null;sr.onresult=ev=>{out=Array.from(ev.results[0]||[]).map(x=>x.transcript)};sr.onerror=()=>res(out);sr.onend=()=>res(out)});sr.start();PR.sr1=sr}catch(e){sr=null}}
+  let stream=null,rec=null;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream)}catch(err){
+    if(!sr){toast("Trình duyệt không cho ghi âm trong khung này. Mở web ở trang GitHub trong Chrome/Safari, hoặc bật nhận diện giọng.",true);return}}
+  const chunks=[];
+  const fin=async()=>{
+    if(stream)stream.getTracks().forEach(t=>t.stop());
+    const heard=await Promise.race([srP,new Promise(r=>setTimeout(()=>r(null),2500))]);
+    const R=PR.recs.cur;if(!R||R.text!==it.text)return;
+    if(chunks.length){R.blob=new Blob(chunks,{type:(rec&&rec.mimeType)||"audio/mp4"});R.url=URL.createObjectURL(R.blob)}
+    R.heard=heard;if(sr)try{sr.stop()}catch(e){}
+    const bb=$("pr-rec");if(bb){bb.textContent="● Ghi lại";bb.classList.remove("rec")}
+    const p=$("pr-play");if(p)p.hidden=!R.url;const s=$("pr-score");if(s)s.hidden=false;
+    prScore();
+  };
+  if(rec){rec.ondataavailable=ev=>{if(ev.data&&ev.data.size)chunks.push(ev.data)};rec.onstop=fin;rec.start();PR.rec=rec}
+  else{PR.rec={state:"recording",stop(){this.state="inactive";fin()}};}
+  b.textContent="■ Dừng";b.classList.add("rec");
+  setTimeout(()=>{if(PR.rec&&PR.rec.state==="recording"&&(it.text.length<30))PR.rec.stop()},it.text.length>30?20000:6000);
+}
+/* so khớp từ giữa câu mẫu và chữ máy nghe được */
+function prNorm(t){return String(t||"").toLowerCase().replace(/[^a-z' ]/g," ").split(/\s+/).filter(Boolean)}
+function prSRCompare(exp,heardList){
+  const E=prNorm(exp),cands=(heardList||[]).map(prNorm);
+  let best=null,bs=-1;
+  cands.forEach(H=>{const hs=new Set(H);const m=E.filter(w=>hs.has(w)).length;if(m>bs){bs=m;best=H}});
+  if(!best)return null;
+  const hs=new Set(best),miss=E.filter(w=>!hs.has(w));
+  return {heard:best.join(" "),miss,score:Math.round((E.length-miss.length)/Math.max(1,E.length)*100)};
+}
+function prIpaChips(err){
+  /* tìm các âm trong cách đọc chuẩn mà máy không nghe thấy rồi gợi ý bài tương ứng */
+  const exp=String(err.expected||""),act=String(err.actual||""),ids=[];
+  const syms=PR.data.sounds.map(s=>[s.ipa,s.id]).sort((a,b)=>b[0].length-a[0].length);
+  const tok=str=>{const out=[];let i=0;str=str.replace(/[ːˈˌ.]/g,"");while(i<str.length){let m=null;for(const k of Object.keys(PR_P2S).concat(syms.map(x=>x[0])).sort((a,b)=>b.length-a.length)){if(str.startsWith(k,i)){m=k;break}}if(m){out.push(m);i+=m.length}else{out.push(str[i]);i++}}return out};
+  const E=tok(exp),A=tok(act),aset=new Set(A);
+  E.forEach(p=>{if(!aset.has(p)){const id=(PR.data.sounds.find(s=>s.ipa===p)||{}).id||PR_P2S[p];if(id&&prSnd(id)&&!ids.includes(id))ids.push(id)}});
+  return ids.slice(0,3);
+}
+async function prScore(){
+  const R=PR.recs.cur,box=$("pr-res");if(!R||!box)return;
+  const parts=[];
+  if(R.heard&&R.heard.length){const c=prSRCompare(R.text,R.heard);
+    if(c)parts.push(`<div class="pr-r"><div class="tiny muted" style="font-weight:700">Trình duyệt nghe thành</div><div class="pr-heard">“${esc(c.heard)}”</div>${c.miss.length?`<div class="small">Chưa nghe rõ: ${c.miss.map(w=>`<b>${esc(w)}</b>`).join(", ")}</div>`:`<div class="small" style="color:var(--ok)"><b>Khớp hết các từ.</b></div>`}</div>`);
+    else parts.push(`<div class="pr-r small muted">Trình duyệt không nghe được gì. Nói to và gần micro hơn rồi thử lại.</div>`)}
+  else if(PR.sr&&prSRClass())parts.push(`<div class="pr-r small muted">Trình duyệt chưa nhận ra giọng. Thử lại, nói rõ và đủ dài.</div>`);
+  box.innerHTML=parts.join("")+(R.blob?`<div id="pr-srvres"></div>`:"");
+  if(R.blob){
+    const slot=$("pr-srvres");
+    if(PR.srvOK===null)await prPing();
+    if(PR.srvOK&&slot){
+      slot.innerHTML=`<div class="pr-r small muted">Đang chấm từng âm… lần đầu có thể lâu vì máy tải mô hình.</div>`;
+      try{
+        const fd=new FormData();fd.append("file",R.blob,"rec."+(/webm/.test(R.blob.type)?"webm":/ogg/.test(R.blob.type)?"ogg":"m4a"));fd.append("expected_text",R.text);fd.append("lang","en");
+        const r=await fetch(PR.srv.replace(/\/$/,"")+"/pronunciation",{method:"POST",body:fd});
+        if(!r.ok)throw new Error("HTTP "+r.status);
+        const j=await r.json();if($("pr-srvres")!==slot)return;
+        const sc=Math.round(j.score||0),errs=(j.differences&&j.differences.errors)||[];
+        slot.innerHTML=`<div class="pr-r"><div class="row" style="align-items:baseline;gap:10px"><b class="num pr-score" style="color:${sc>=75?"var(--ok)":sc>=55?"var(--ink)":"var(--bad)"}">${sc}</b><span class="small muted">/100 chấm máy (Wav2Vec2)</span></div>
+          ${errs.length?errs.map(er=>{const ids=prIpaChips(er);return `<div class="pr-err"><b>${esc(er.word)}</b> <span class="muted">chuẩn</span> <span class="pr-ipa">/${esc(er.expected)}/</span> <span class="muted">nghe thấy</span> <span class="pr-ipa bad">/${esc(er.actual||"…")}/</span>${ids.map(id=>` <button class="chip" data-prsnd="${id}">xem /${esc(prSnd(id).ipa)}/</button>`).join("")}</div>`}).join(""):`<div class="small" style="color:var(--ok)"><b>Không có từ nào bị lệch rõ.</b></div>`}
+          <p class="hint" style="margin-top:6px">Máy học bằng giọng Mỹ, nên /ɹ/, /oʊ/ có thể lệch so với bảng Anh-Anh ở trên. Lấy lỗi lặp lại nhiều lần làm chuẩn.</p></div>`;
+        ls.set("ielts-pron-day",todayISO);prHist(R.text,sc);
+      }catch(err){if($("pr-srvres")===slot)slot.innerHTML=`<div class="pr-r small" style="color:var(--bad)">Không chấm được: ${esc(String(err.message||err))}. Kiểm tra cửa sổ đen còn mở không.</div>`;PR.srvOK=null}
+    }else if(slot){slot.innerHTML=`<div class="pr-r small muted">Bấm <b>Nghe mẫu</b> rồi <b>Nghe lại</b> để so giọng. Muốn chấm từng âm thì bật chấm máy ở phần bên dưới (chỉ máy tính).</div>`}
+  }
+  ls.set("ielts-pron-day",todayISO);
+}
+function prHist(text,sc){try{const h=JSON.parse(ls.get("ielts-pron-hist","{}"))||{};const a=h[text]||(h[text]=[]);a.push(sc);if(a.length>5)a.shift();const ks=Object.keys(h);if(ks.length>300)delete h[ks[0]];ls.set("ielts-pron-hist",JSON.stringify(h))}catch(e){}}
 </script>
 </body>
 </html>
