@@ -1348,6 +1348,22 @@ button.chip.on{background:var(--night);color:var(--night-ink);border-color:var(-
 @media (max-width:480px){.seg[aria-label="Kỹ năng"]{display:flex;flex-wrap:wrap;width:100%;overflow:visible}.seg[aria-label="Kỹ năng"] button{padding:9px 6px!important;font-size:13.5px!important;white-space:nowrap;flex:1 1 30%!important;min-width:0}}
 
 .pr-body .chip{width:auto;flex:none}
+
+.idi-fb{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.idi-hd{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+.idi-hd b{margin-right:4px;color:var(--ink)}
+.idi-tag{font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--sunk);border:1px solid var(--line);color:var(--ink-2)}
+.idi-tag.p1{background:var(--sun-soft,#fff3cf);border-color:transparent;color:var(--ink)}
+.idi-tag.st{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.idi-row{display:grid;grid-template-columns:104px 1fr;gap:10px;font-size:13.5px;line-height:1.5}
+.idi-k{color:var(--ink-2);font-weight:700}
+.idi-v{color:var(--ink);font-weight:500}
+.idi-v code{font-family:inherit;font-weight:700;background:var(--sunk);padding:1px 6px;border-radius:6px}
+.idi-v mark{background:var(--sun-soft,#fff3cf);color:inherit;border-radius:4px;padding:0 2px}
+.idi-v .say{vertical-align:middle;margin-left:6px;display:inline-flex;align-items:center;justify-content:center;width:32px;height:28px;padding:0;border-radius:99px;background:var(--surface,#fff);border:1px solid var(--line);color:var(--ink)}
+.idi-v .say svg{width:16px;height:16px}
+.idi-vi{color:var(--ink-2);font-size:13px;margin-top:2px}
+@media (max-width:560px){.idi-row{grid-template-columns:1fr;gap:2px}}
 </style>
 </head>
 <body>
@@ -1693,7 +1709,7 @@ function topicLessons(t){
 function lessonUnlocked(L){
   if(L.kind==="grammar"){const n=L.unit.n;if(n===1||passed("g"+(n-1))||passed("g"+n)||state.units.grammar[n-1]||state.units.grammar[n]||ls.get("ielts-open-g"+n,""))return true;return false}
   const ls_=topicLessons(L.topic);const i=ls_.findIndex(x=>x.key===L.key);
-  if(L.checkpoint)return ls_.slice(0,4).every(x=>passed(x.key));
+  if(L.checkpoint)return L.topic.set==="idi"?ls_.filter(x=>!x.checkpoint).every(x=>passed(x.key)):ls_.slice(0,4).every(x=>passed(x.key));
   return i===0||passed(ls_[i-1].key)||passed(L.key);
 }
 const grammarLesson=u=>({key:"g"+u.n,kind:"grammar",unit:u,title:`Unit ${u.n}: ${u.en}`});
@@ -1705,19 +1721,19 @@ function loadVIndex(force){
   if(VIDX||vIdxLoading||(!force&&Date.now()-vIdxFail<20000))return;
   vIdxLoading=true;
   // bộ chính + bộ Vật liệu (file riêng _index-mat.json, thiếu thì bỏ qua); bộ chính lỗi thì để trống và thử lại, không khoá danh sách bộ từ
-  call("getPacks",["vocab/_index.json",...(ODS?["vocab/_index-mat.json","vocab/_index-matg.json"]:[]),"vocab/_index-phim.json","vocab/_index-noi.json","vocab/_index-mota.json",...(ODS?["vocab/_index-lab.json"]:[])],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);a.slice(1).forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
+  call("getPacks",["vocab/_index.json",...(ODS?["vocab/_index-mat.json","vocab/_index-matg.json"]:[]),"vocab/_index-phim.json","vocab/_index-noi.json","vocab/_index-mota.json","vocab/_index-idi.json",...(ODS?["vocab/_index-lab.json"]:[])],packVer).then(a=>{if(!a||!a[0])throw new Error("vocab index");const d=JSON.parse(a[0]);a.slice(1).forEach(z=>{try{if(z){const m=JSON.parse(z);d.sets=(d.sets||[]).filter(x=>!(m.sets||[]).some(y=>y.id===x.id)).concat(m.sets||[])}}catch(e){}});VIDX=d;vIdxLoading=false;idxLoaded()}).catch(()=>{vIdxLoading=false;vIdxFail=Date.now();idxLoaded()});
 }
 const vSets=()=>((VIDX&&VIDX.sets)||[]).filter(x=>ODS||!/^(mat|lab)/.test(x.id));
 function extTopic(u,set){return VU[u.id]||(VU[u.id]={id:u.id,en:u.title,vi:u.vi||"",desc:u.vi||"",ext:true,set:set.id,setName:set.name,n:u.n,words:null})}
 function extTopics(setId){const s=vSets().find(x=>x.id===setId);return s?s.units.map(u=>extTopic(u,s)):[]}
 function extLessons(t){
   // k chặng ~8 từ; bỏ chặng rỗng ở cuối (vd 137 từ: 9 từ/chặng → 16 chặng, không phải 17)
-  const n=t.n||(t.words||[]).length,k0=Math.max(1,Math.round(n/8)),sz=Math.max(1,Math.ceil(n/k0)),k=Math.max(1,Math.ceil(n/sz)),out=[];
+  const n=t.n||(t.words||[]).length,idi=t.set==="idi",k0=idi?Math.ceil(n/2):Math.max(1,Math.round(n/8)),sz=idi?2:Math.max(1,Math.ceil(n/k0)),k=Math.max(1,Math.ceil(n/sz)),out=[];
   for(let i=0;i<k;i++){const a=i*sz,b=Math.min(n,a+sz);out.push({key:`${t.id}-${i+1}`,kind:"vocab",topic:t,no:i+1,words:t.words?t.words.slice(a,b):[],n:b-a,title:`Chặng ${pad(i+1)}`})}
-  if(n>=16)out.push({key:`${t.id}-c`,kind:"vocab",topic:t,no:k+1,words:t.words||[],n,checkpoint:true,title:"Kiểm tra cuối unit"});
+  if(n>=(idi?6:16))out.push({key:`${t.id}-c`,kind:"vocab",topic:t,no:k+1,words:t.words||[],n,checkpoint:true,title:"Kiểm tra cuối unit"});
   return out;
 }
-const vWords=d=>d.words.map(w=>({w:w.w,pos:w.pos||"",ipa:w.ipa?"/"+w.ipa.replace(/^\/|\/$/g,"")+"/":"",vi:w.vi,use:w.note||"",ex:w.ex?[w.ex]:[],syn:w.syn||""}));
+const vWords=d=>d.words.map(w=>({w:w.w,pos:w.pos||"",ipa:w.ipa?"/"+w.ipa.replace(/^\/|\/$/g,"")+"/":"",vi:w.vi,use:w.note||"",ex:w.ex?[w.ex]:[],syn:w.syn||"",pri:w.pri||0,star:w.star||0,exvi:w.exvi||""}));
 const vBundles={};
 function loadUnit(t){
   if(t.words)return Promise.resolve(t);
@@ -1793,6 +1809,7 @@ function setNext(id){
   return null}
 const setToday=id=>Object.entries(progress).filter(([k,p])=>new RegExp("^"+id+"-\d+-\d+$").test(k)&&p.status==="passed"&&p.updated===todayISO).length;
 const FLOW_SETS=[
+  {id:"idi",time:"Thành ngữ · Nói tự nhiên hơn",min:6,pack:"climb-content-idi.zip",name:"Thành ngữ IELTS",how:"1 đến 2 cụm, học theo thứ tự ưu tiên. Đọc ngữ cảnh và câu mẫu, nói một câu về chính mày (và với cụm ưu tiên 1, viết một câu lập luận Task 2), rồi làm bài kiểm tra: phần giải thích sau mỗi câu có cách dùng.",doneT:"Đã xong chặng thành ngữ hôm nay"},
   {id:"noi",time:"Từ nối · Nói và viết không bị bí",pack:"climb-content-viet.zip",name:"Từ nối",how:"Một chặng khoảng 9 cụm nối, có nhãn nói hay viết và câu mẫu. Đọc to, rồi dùng ít nhất 2 cụm khi tự nói hoặc viết hôm nay.",doneT:"Đã xong 1 chặng từ nối hôm nay"},
   {id:"mota",time:"Miêu tả · Từ cụ thể thay từ chung chung",pack:"climb-content-viet.zip",name:"Miêu tả chi tiết",how:"Một chặng khoảng 7 từ theo cảnh, mỗi từ ghi rõ nó thay từ general nào. Học xong thì tả lại một cảnh quen thuộc bằng 2 câu tiếng Anh.",doneT:"Đã xong 1 chặng miêu tả hôm nay"},
   {id:"lab",time:"Phòng thí nghiệm · Thao tác bằng tiếng Anh",pack:"climb-content-viet.zip",name:"Thao tác phòng thí nghiệm",how:"Một chặng khoảng 7 từ về thao tác và dụng cụ: vặn, tháo, xoay, lấy một ít, nhỏ giọt, mài, đánh bóng. Đọc câu mẫu rồi tự mô tả một bước thí nghiệm của mày.",doneT:"Đã xong 1 chặng thao tác phòng thí nghiệm hôm nay",odsOnly:true}];
@@ -1802,7 +1819,7 @@ function flowTasks(){
   for(const f of FLOW_SETS){
     if(f.odsOnly&&!ODS)continue;
     const nl=setNext(f.id),nt=setToday(f.id),has=vSets().some(x=>x.id===f.id);
-    if(nl)out.push({sec,time:f.time,min:10,title:nt>=1?f.doneT:`${nl.title} · ${nl.topic.en}`,how:nt>=1?"Đủ cho hôm nay. Từ đã học tự quay lại trong phần Ôn tập.":f.how,done:nt>=1,btn:`data-open="${nl.key}"`,label:"Học",primary:true});
+    if(nl)out.push({sec,time:f.time,min:f.min||10,title:nt>=1?f.doneT:`${nl.title} · ${nl.topic.en}`,how:nt>=1?"Đủ cho hôm nay. Từ đã học tự quay lại trong phần Ôn tập.":f.how,done:nt>=1,btn:`data-open="${nl.key}"`,label:"Học",primary:true});
     else if(VIDX&&!has)out.push({sec,time:f.time,min:10,title:`Chưa nạp bộ ${f.name}`,how:`Cần nạp gói ${f.pack} vào thư mục climb-data rồi chạy napNoiDung.`,done:false});
     else if(VIDX)out.push({sec,time:f.time,min:10,title:`Đã học hết bộ ${f.name}`,how:"Ôn lại trong phần Ôn tập.",done:true});
   }
@@ -1918,7 +1935,7 @@ function placeOnRoute(m){
 /* ================= Kế hoạch ngày (giữ lượng học vừa sức) ================= */
 // chặng từ vựng mới đã qua hôm nay
 const isVocabKey=k=>/^v\d+-\d$/.test(k)||/^[a-z]+\d*-\d+-(\d+|c)$/.test(k);
-function newToday(mat){return Object.entries(progress).filter(([k,p])=>isVocabKey(k)&&!k.endsWith("-c")&&p.status==="passed"&&p.updated===todayISO&&(mat?k.startsWith("mat-"):!/^(mat|matg|phim|noi|mota|lab)-/.test(k))).length}
+function newToday(mat){return Object.entries(progress).filter(([k,p])=>isVocabKey(k)&&!k.endsWith("-c")&&p.status==="passed"&&p.updated===todayISO&&(mat?k.startsWith("mat-"):!/^(mat|matg|phim|noi|mota|lab|idi)-/.test(k))).length}
 const REVIEW_CAP=20;
 function dailyPlan(){
   const dow=fromISO(todayISO).getDay(),weekend=dow===0||dow===6;
@@ -1951,7 +1968,7 @@ function dailyPlan(){
     if(W.all.length>=8)items.unshift({time:"Kiểm tra tuần",min:WK_MIN,title:`Bài kiểm tra tuần · ${W.all.length} từ × 2 kiểu`,how:"Trắc nghiệm các từ đã lên mốc 4 trở lên và vài từ khác xen kẽ. Bài này thay phần ôn của các từ mốc cao trong tuần.",done:wkDone(),btn:'data-wktest="1"',label:"Làm bài"});
   }
   {const back=dueWords().length;
-   if(back>=40){const keep=items.filter(i=>!/^(Từ vựng mới|Vật liệu · Từ vựng|Đời sống · Cụm nói tự nhiên|Từ nối|Miêu tả|Phòng thí nghiệm ·)/.test(i.time));
+   if(back>=40){const keep=items.filter(i=>!/^(Từ vựng mới|Vật liệu · Từ vựng|Đời sống · Cụm nói tự nhiên|Từ nối|Miêu tả|Thành ngữ ·|Phòng thí nghiệm ·)/.test(i.time));
     const ot=keep.find(i=>i.time==="Ôn tập");if(ot)ot.how=`Từ mới nghỉ hôm nay vì còn ${back} từ đến hạn (từ 40 trở lên thì dọn trước). Xuống dưới 40 thì học từ mới lại. Muốn học thêm vẫn bấm ở Lộ trình.`;
     items.length=0;items.push(...keep)}}
   return {items,weekend,min:items.reduce((s,x)=>s+(x.done?0:x.min),0)};
@@ -2148,7 +2165,7 @@ function openLessonDialog(key){
   const L=findLesson(key);if(!L)return;
   if(L.topic&&L.topic.ext&&!L.topic.words){toast("Đang tải từ…");return loadUnit(L.topic).then(()=>openLessonDialog(key)).catch(e=>toast("Không tải được unit này. "+String((e&&e.message)||e).replace(/^Error:\s*/,"").slice(0,90),true))}
   const g=L.kind==="grammar";const lv=g?gLevel(L.unit.n):1,pk=g?gKey(L.unit.n,lv):key;const ok=passed(pk),open=lessonUnlocked(L)&&(!g||gLvOpen(L.unit.n,lv)),pr=progress[pk];
-  const nLearn=g?L.unit.points.length+1:L.checkpoint?0:L.words.length, nQ=L.checkpoint?20:16;
+  const nLearn=g?L.unit.points.length+1:L.checkpoint?0:L.words.length, nQ=L.checkpoint?20:(L.topic&&L.topic.set==="idi"?Math.max(6,L.words.reduce((a,w)=>a+(w.pri===1?4:3),0)):16);
   const status=ok?`<b>Đã đạt ${pr.best}%</b><span class="hint">Làm lại để ôn, điểm cao nhất được giữ.</span>`:pr?`<b>Lần trước đạt ${pr.best}%, chưa qua</b><span class="hint">Cần 80% để mở chặng tiếp theo. Ôn lại phần học rồi làm lại.</span>`:open?`<b>Chưa làm bài</b><span class="hint">Bắt đầu phần học, sau đó hoàn thành bài kiểm tra để lưu điểm.</span>`:`<b>Đang khóa</b><span class="hint">${g?"Hoàn thành unit trước, hoặc tick unit này đã học trong sách ở Lịch học.":"Hoàn thành bài trước để mở bài này."}</span>`;
   dlg(`<div class="dlg-hd"><span class="badge">${g?L.unit.n:L.checkpoint?"★":pad(L.no)}</span><div class="grow"><div class="tiny muted" style="font-weight:700">${g?"Ngữ pháp · "+esc(L.unit.vi):"Từ vựng · "+esc(L.topic.en)}</div><div class="h2">${esc(g?L.unit.en:L.title)}</div></div><button class="x" data-close aria-label="Đóng">${I.x.replace('viewBox','width="16" height="16" viewBox')}</button></div>
    ${g?lvlPickHTML(L.unit.n):""}
@@ -2207,7 +2224,7 @@ function showLearn(){
      <div class="face back"><span class="corner">Nghĩa · cách dùng · ví dụ</span>
        <div class="mean">${esc(w.vi)}</div>
        ${w.use?`<div class="usage"><span class="tag">${w.custom?"Nguồn":"Cách dùng"}</span><span>${esc(w.use)}</span></div>`:""}
-       <div class="exs">${w.ex.map((x,i)=>`<div class="ex"><i>${pad(i+1)}</i><span>${hiWord(x,w.w)}</span></div>`).join("")}</div>
+       <div class="exs">${w.ex.map((x,i)=>`<div class="ex"><i>${pad(i+1)}</i><span>${hiWord(x,w.w)}${i===0&&w.exvi?`<small class="idi-vi" style="display:block">${esc(w.exvi)}</small>`:""}</span></div>`).join("")}</div>
        <div class="back-ft"><span>${w.syn?`Đồng nghĩa: <b>${esc(w.syn)}</b>`:""}</span><span style="display:flex;gap:8px;align-items:center">${esc(w.ipa||"")} <button class="say" data-say="${esc(w.w)}">${I.sound} Nghe</button></span></div></div>
    </div></div>
    <div class="judge"><button class="btn danger" id="j-again" disabled>↺ Cần ôn</button><button class="btn ok" id="j-ok" disabled>✓ Đã nhớ</button></div>
@@ -2283,12 +2300,13 @@ function startQuiz(){
   if(S.review)S.qs=S.qs||[];
   else if(L.kind==="grammar")S.qs=shuffle(grammarQuestions(L.unit,null,S.level));
   else if(L.custom)S.qs=vocabQuestions(L.words,L.topic.words,customN());
-  else S.qs=vocabQuestions(L.words,L.topic.words,L.checkpoint?20:16);
+  else S.qs=vocabQuestions(L.words,L.topic.words,L.topic&&L.topic.set==="idi"?(L.checkpoint?20:Math.max(6,L.words.reduce((a,w)=>a+(w.pri===1?4:3),0))):(L.checkpoint?20:16));
   S.qi=0;S.answers=[];S.firstOk={};
   showQ();
 }
 let qTimer=null;
 function showQ(){
+  try{idiLoad()}catch(e){}
   const q=S.qs[S.qi];S.answered=false;
   const n=S.qs.length;
   studyFrame(S.review?"result":"quiz",`
@@ -2522,7 +2540,7 @@ function startReview(kind){
     if(kind==="hard"){list=hardWords().slice(0,10);if(!list.length)return toast("Không có từ khó nào. Tốt!")}
     else{const d=dueWords();list=[...shuffle(d.filter(isHard)),...shuffle(d.filter(v=>!isHard(v)))].slice(0,12);if(!list.length)return toast("Hôm nay không còn từ đến hạn.")}
     // từ khó: hỏi 2 lần, một câu nhận nghĩa và một câu tự gõ/điền từ; sai câu nào cũng tính là chưa nhớ
-    const qs=[];list.forEach(v=>{if(isHard(v)){qs.push(srsQ(v,pool,Math.random()<.5?"mean":"word"));qs.push(srsQ(v,pool,v.example&&Math.random()<.5?"cloze":"type"))}else qs.push(srsQ(v,pool))});
+    const qs=[];list.forEach(v=>{if(isHard(v)){qs.push(srsQ(v,pool,Math.random()<.5?"mean":"word"));qs.push(srsQ(v,pool,v.example&&Math.random()<.5?"cloze":"type"))}else if(idiPri(v.word)===1){qs.push(srsQ(v,pool,Math.random()<.5?"mean":"word"));qs.push(srsQ(v,pool,v.example&&Math.random()<.5?"cloze":"type"))}else qs.push(srsQ(v,pool))});
     S={L:{key:"rv-v",kind:"vocab",checkpoint:true},review:kind==="hard"?"hard":"vocab",phase:"quiz",xp:0,qs:kind==="hard"?shuffle(qs):qs};
     S.qs=spreadPairs(qs);
   }
@@ -6320,7 +6338,33 @@ document.addEventListener("click",e=>{
 });
 
 /* khung “Kiến thức nền” trong phần phản hồi của quiz: tự mở khi trả lời sai */
-function exFb(q,ok){
+/* ===== v15: Thành ngữ IELTS, cách dùng hiện trong phần giải thích sau khi trả lời ===== */
+var IDI={map:null,loading:false,fail:0};
+function idiLoad(){
+  if(IDI.map||IDI.loading||!VIDX||Date.now()-IDI.fail<20000)return;
+  const s=(VIDX.sets||[]).find(x=>x.id==="idi");if(!s)return;
+  IDI.loading=true;
+  Promise.all([...new Set(s.units.map(u=>u.b))].map(b=>callRaw("getPack",[`vocab/idi/${b}.json`,packVer],true).then(JSON.parse))).then(arr=>{
+    const m={};arr.forEach(d=>Object.values(d).forEach(u=>(u.words||[]).forEach(w=>{m[w.w.toLowerCase()]=w})));IDI.map=m;IDI.loading=false;
+  }).catch(()=>{IDI.loading=false;IDI.fail=Date.now()});
+}
+const idiOf=w=>IDI.map&&IDI.map[String(w||"").toLowerCase()]||null;
+const idiPri=w=>{const e=idiOf(w);return e?e.pri:0};
+function idiFb(q){
+  try{
+    idiLoad();const r=q&&q.ref,w=r&&(r.w||r.word);if(!w)return "";
+    const e=idiOf(w);if(!e)return "";
+    const pn=["","Ưu tiên 1 · Speaking + Writing","Ưu tiên 2 · Speaking","Ưu tiên 3 · Writing"][e.pri]||"";
+    const row=(k,v)=>v?`<div class="idi-row"><span class="idi-k">${k}</span><div class="idi-v">${v}</div></div>`:"";
+    return `<div class="idi-fb"><div class="idi-hd"><b>Cách dùng</b><span class="idi-tag p${e.pri}">${esc(pn)}</span>${e.star?'<span class="idi-tag st">★ trọng tâm</span>':""}<span class="idi-tag">${esc(e.topic||"")}</span></div>
+      ${row("Khi nào dùng",esc(e.ctx))}${row("Ghép câu",`<code>${esc(e.st)}</code>`)}
+      ${row("Câu mẫu Speaking",`${hiWord(e.ex,e.w)} <button class="say" type="button" data-say="${esc(e.ex)}" aria-label="Nghe câu mẫu">${I.sound}</button>${e.exvi?`<div class="idi-vi">${esc(e.exvi)}</div>`:""}`)}
+      ${e.wr?row("Câu mẫu Writing Task 2",`${hiWord(e.wr,e.w)}${e.wrvi?`<div class="idi-vi">${esc(e.wrvi)}</div>`:""}`):""}
+      ${row("Lưu ý",esc(e.nt))}</div>`;
+  }catch(x){return ""}
+}
+function exFb(q,ok){return exFb0(q,ok)+idiFb(q)}
+function exFb0(q,ok){
   try{
     const r=q&&q.ref,w=r&&(r.w||r.word);if(!w)return "";
     exLoad();const e=exGet(w);if(!e)return "";
@@ -6328,6 +6372,7 @@ function exFb(q,ok){
   }catch(x){return ""}
 }
 setTimeout(()=>{try{exLoad()}catch(e){}},4000);
+setInterval(()=>{try{idiLoad()}catch(e){}},5000);
 /* ===== v13: bài kiểm tra tuần, bỏ từ, tự dừng từ mới khi tồn đọng ===== */
 const WK_MIN=50,WK_MAXHI=48,WK_MIX=12,WK_PAUSE=40;
 // thứ Hai của tuần chứa hôm nay (khoá "đã làm bài tuần này")
