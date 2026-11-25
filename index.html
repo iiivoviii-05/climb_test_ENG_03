@@ -1515,6 +1515,64 @@ details.why[open]>summary{margin-bottom:6px}
 .rdt{flex:1;min-width:0;font-size:13.5px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rdm{flex:none;font-size:12px;font-weight:700;color:var(--ink-3)}
 .rditem.done .rdm{color:var(--ok)}
+
+/* ===== v21: tab Phân tích ===== */
+.an-bar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.an-k{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);padding:0;overflow:hidden}
+.an-k>div{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.an-k b{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.an-k span{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.an-k small{font-size:12px;color:var(--ink-3)}
+.dl{font-style:normal;font-size:12px;font-weight:700;color:var(--ink-3);margin-top:2px}
+.dl.up{color:var(--ok)}.dl.dn{color:var(--bad)}
+@media (max-width:640px){.an-k{grid-template-columns:repeat(2,minmax(0,1fr))}.an-k b{font-size:23px}}
+.an-note{margin-top:-8px}
+.an-ins{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.an-ins li{position:relative;padding-left:16px;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.an-ins li::before{content:"";position:absolute;left:2px;top:.65em;width:6px;height:6px;border-radius:2px;background:var(--sun)}
+.an-ins b{color:var(--ink)}
+.an-g{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.an-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (min-width:900px){.an-g{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.an-wt{margin-top:10px;display:flex;flex-direction:column}
+.an-wh,.an-wr{display:grid;grid-template-columns:62px minmax(0,1fr) 44px 44px;gap:8px;align-items:center;font-size:13px;padding:7px 0}
+.an-wt.h .an-wh,.an-wt.h .an-wr{grid-template-columns:62px minmax(0,1fr) 44px 44px 58px}
+.an-wh{font-size:11.5px;font-weight:700;color:var(--ink-3);border-bottom:1px solid var(--line)}
+.an-wr{border-bottom:1px solid var(--line)}
+.an-wr:last-child{border-bottom:0}
+.an-wr small{display:block;font-size:10.5px;color:var(--sun);font-weight:700}
+.an-wr.cur{font-weight:700}
+.an-wb{position:relative;display:flex;align-items:center;height:22px;border-radius:6px;background:var(--sunk);overflow:hidden}
+.an-wb i{position:absolute;left:0;top:0;bottom:0;background:var(--link);opacity:.35;border-radius:6px}
+.an-wb b{position:relative;padding-left:8px;font-size:12.5px}
+@media (max-width:480px){.an-wh,.an-wr,.an-wt.h .an-wh,.an-wt.h .an-wr{grid-template-columns:54px minmax(0,1fr) 38px 38px}.an-wt.h span:nth-child(5){display:none}}
+.an-rows .c{grid-template-columns:minmax(0,92px) 1fr minmax(36px,auto)}
+.an-rows .c b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.an-rows .c .n{white-space:nowrap}
+.an-fcs{display:flex;flex-direction:column;margin-top:8px}
+.an-fc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.an-fc:last-child{border-bottom:0}
+.an-fc span:first-child{font-size:13px;font-weight:700;display:flex;flex-direction:column}
+.an-fc small{font-size:12px;font-weight:400;color:var(--ink-3)}
+.an-fc b{font-size:15px;text-align:right}
+.an-fc .tiny{grid-column:2;text-align:right}
+.an-h4{font-size:12.5px;font-weight:700;color:var(--ink-3);margin:16px 0 8px}
+.an-stack{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--sunk)}
+.an-stack i{display:block;min-width:0}
+.an-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px}
+.an-mini>div{background:var(--sunk);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.an-mini b{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.an-mini span{font-size:12px;color:var(--ink-2)}
+.an-cols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;align-items:end;height:92px}
+.an-cols>div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;min-width:0}
+.an-cols b{font-size:12px;font-weight:700}
+.an-cols i{display:block;width:100%;max-width:34px;border-radius:5px 5px 2px 2px;background:var(--link)}
+.an-cols span{font-size:11px;color:var(--ink-3)}
+.an-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.an-top>div{display:flex;flex-direction:column;gap:1px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);min-width:0}
+.an-top b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.an-top span{font-size:12px;color:var(--ink-3)}
+@media (max-width:380px){.an-cols span{font-size:9.5px;letter-spacing:-.02em;white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -1607,6 +1665,7 @@ details.why[open]>summary{margin-bottom:6px}
 
   <section class="view" id="v-progress" hidden></section>
   <section class="view" id="v-mind" hidden></section>
+  <section class="view" id="v-stats" hidden></section>
 </main>
 
 <nav class="bottom" aria-label="Mục chính"><div class="in" id="navbottom"></div></nav>
@@ -1767,6 +1826,7 @@ const TABS=[
  {k:"skills",n:"Kỹ năng",i:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6a2 2 0 0 1 2-2h5v15H6a2 2 0 0 0-2 0Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-5v15h5a2 2 0 0 1 2 0Z"/></svg>'},
  {k:"review",n:"Ôn tập",i:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="14" rx="2"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/><path d="M7 11h5M7 15h3"/></svg>'},
  {k:"progress",n:"Tiến độ",i:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'},
+ {k:"stats",n:"Phân tích",side:1,i:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/><circle cx="6" cy="16" r="1"/><circle cx="10" cy="11" r="1"/><circle cx="13" cy="14" r="1"/><circle cx="18" cy="7" r="1"/></svg>'},
  {k:"mind",n:"Mind map",side:1,i:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1.2"/><rect x="2.5" y="16" width="6" height="5" rx="1.2"/><rect x="15.5" y="16" width="6" height="5" rx="1.2"/><path d="M12 8v4M5.5 16v-4h13v4"/></svg>'}
 ];
 const CAMPS1=[{m:0,n:"Chân núi"},{m:2000,n:"Trại 1"},{m:5000,n:"Trại 2"},{m:9000,n:"Trại 3"},{m:15000,n:"Trại 4"},{m:25000,n:"Đỉnh"}];
@@ -2197,7 +2257,7 @@ document.addEventListener("click",e=>{
 });
 if(ls.get("ielts-sidemin","")==="1")document.documentElement.classList.add("side-min");
 
-function render(){renderShell();({home:renderHome,path:renderPath,review:renderReview,skills:renderSkills,progress:renderProgress,mind:renderMind})[tab]();clampLong()}
+function render(){renderShell();({home:renderHome,path:renderPath,review:renderReview,skills:renderSkills,progress:renderProgress,mind:renderMind,stats:renderStats})[tab]();clampLong()}
 
 /* ================= Núi (trang chủ) ================= */
 function mountainSVG(m){
@@ -5209,6 +5269,7 @@ function renderProgress(){
   const cols=PLAN.map(w=>[0,1,2,3,4].map(i=>{const d=w.days[i];if(!d)return `<i style="visibility:hidden"></i>`;const n=sessionsDone(d.k),fut=d.k>todayISO,cls=d.hol?"hol":fut?"":n===2?"h2":n===1?"h1":d.k<todayISO?"miss":"";return `<i class="${cls} ${d.k===todayISO?"today":""}" title="${DOW[d.date.getDay()]} ${dm(d.k)}: ${d.hol?(d.opt?"khởi động, "+n+"/2 ca":"nghỉ lễ"):n+"/2 ca"}"></i>`}).join("")).join("");
   $("v-progress").innerHTML=`
    <div><span class="eyebrow">Tiến độ</span><h1 class="h1">${fmt(m)} m · ${CAMPS[ci].n}</h1><p class="lead">Mét thưởng cho học thật và tiến bộ thật, không cho số lần bấm.</p><details class="why"><summary>Cách tính mét</summary><p class="hint">Mét do máy chủ tính, thưởng cho học thật và tiến bộ thật, không cho số lần bấm. Chặng mới: câu đúng +10, thẻ nhớ +2, qua chặng +30 (học lại chặng đã qua: 0) · ôn từ đến hạn +10/từ, đúng hết +10 · Reading/Listening lần đầu +5/câu đúng +20, làm lại chỉ +20 khi vượt điểm cũ · làm đúng lại câu sai sau 7 ngày +10/câu · sửa lỗi trong sổ lỗi +10, thuộc +20 · tự sửa bài sau chấm +30 · Writing +30 · Speaking +40 · band cao hơn +50 · cắm cờ trại +150 · tick ca học +20. Vượt ${fmt(goal*2)} m/ngày (2× mục tiêu) thì phần dư tính 1/4.</p></details></div>
+   <button class="card mm-entry" data-tab="stats"><span class="mm-ic">${TABS.find(t=>t.k==="stats").i}</span><span class="grow"><b>Phân tích học tập</b><span class="hint">Xu hướng, nhịp học, dự báo, từ vựng, sổ lỗi bằng số liệu.</span></span><span aria-hidden="true">›</span></button>
    <div class="card pad0"><div class="kpis">${[[st?Math.round(sd/st*100)+"%":"–","ca học đã tick"],[vDone+"/"+vTot,"chặng từ vựng"],[gDone+"/20","unit ngữ pháp"],[ans?Math.round(cor/ans*100)+"%":"–","trả lời đúng"]].map(([b,s])=>`<div class="kpi"><b class="num">${b}</b><span>${s}</span></div>`).join("")}</div></div>
    <details class="fold-plain"><summary>Chủ đề tuần này</summary>${weekHTML()}</details>
    <div class="grid2">
@@ -5233,6 +5294,185 @@ function rescueStudy(msg){
 document.addEventListener("click",e=>{if(!e.target.closest("[data-rescue]"))return;S=null;RD=null;DT=null;SP=null;SH=null;ER=null;try{lPlayerUnmount()}catch(err){}$("study").hidden=true;$("study").innerHTML="";document.body.style.overflow="";hideSelBar();render()});
 window.addEventListener("error",ev=>{setTimeout(()=>rescueStudy("Lỗi: "+((ev&&ev.message)||"không rõ")+". Bấm Thoát rồi thử lại; nếu lặp lại thì chụp màn hình gửi Claude."),0)});
 window.addEventListener("unhandledrejection",ev=>{setTimeout(()=>rescueStudy("Lỗi tải dữ liệu. Bấm Thoát rồi thử lại."),0)});
+
+
+/* ================= Phân tích học tập (v21) =================
+   Mọi số liệu tính ở trình duyệt từ dữ liệu đã có: xpLog (cả lịch sử), vocab, errLog, evLog (35 ngày gần nhất).
+   Giờ dùng web chỉ ghi trên thiết bị này, từ lúc có bản v21. */
+const AN={range:ls.get("ielts-anrange","30")};
+const AN_ACT="ielts-act";
+const anActLoad=()=>{try{return JSON.parse(ls.get(AN_ACT,"{}"))||{}}catch(e){return {}}};
+let anLast=Date.now();
+["pointerdown","keydown","scroll","touchstart"].forEach(ev=>window.addEventListener(ev,()=>{anLast=Date.now()},{passive:true,capture:true}));
+setInterval(()=>{
+  if(document.visibilityState!=="visible"||Date.now()-anLast>60000)return;
+  const a=anActLoad(),k=todayISO;a[k]=(a[k]||0)+15;
+  const ks=Object.keys(a).sort();if(ks.length>200)ks.slice(0,ks.length-200).forEach(x=>delete a[x]);
+  try{ls.set(AN_ACT,JSON.stringify(a))}catch(e){}
+},15000);
+const anDays=(a,b)=>Math.round((fromISO(b)-fromISO(a))/864e5)+1;
+const anPct=(a,b)=>b?Math.round(a/b*100):null;
+const anH=s=>{s=Math.round(s||0);if(s<60)return s>0?"<1 phút":"0 phút";const m=Math.round(s/60);return m<60?m+" phút":Math.floor(m/60)+"h"+pad(m%60)};
+const anDmy=k=>fromISO(k).getFullYear()===fromISO(todayISO).getFullYear()?dm(k):dm(k)+"/"+fromISO(k).getFullYear();
+const anMon=k=>addISO(k,-((fromISO(k).getDay()+6)%7));
+function anData(){
+  const xm={};xpLog.forEach(x=>{xm[x.date]=x});
+  const act=anActLoad(),ds=Object.keys(xm).filter(k=>(+xm[k].xp||0)>0||(+xm[k].answered||0)>0).sort();
+  return {xm,act,first:ds[0]||null};
+}
+const anXp=(D,k)=>+(D.xm[k]||{}).xp||0;
+function anAgg(D,a,b){
+  const o={len:0,active:0,xp:0,goalDays:0,ans:0,cor:0,sec:0,best:{k:"",xp:0}};
+  for(let k=a;k<=b;k=addISO(k,1)){const r=D.xm[k]||{},x=+r.xp||0;o.len++;o.xp+=x;if(x>0)o.active++;if(x>=goal)o.goalDays++;o.ans+=+r.answered||0;o.cor+=+r.correct||0;o.sec+=D.act[k]||0;if(x>o.best.xp)o.best={k,xp:x}}
+  return o;
+}
+function anSpan(D){
+  let a=AN.range==="all"?D.first:addISO(todayISO,-(+AN.range-1));
+  if(a<D.first)a=D.first;
+  const len=anDays(a,todayISO),pa=addISO(a,-len);
+  return {a,b:todayISO,len,prev:AN.range!=="all"&&pa>=D.first?{a:pa,b:addISO(a,-1)}:null};
+}
+function anDelta(c,p,pts){
+  if(c==null||p==null)return "";
+  let d;if(pts)d=c-p;else{if(!p)return "";d=Math.round((c-p)/p*100)}
+  const txt=(d>0?"+":"")+d+(pts?" điểm":"%");
+  return d===0?`<em class="dl">= kỳ trước</em>`:`<em class="dl ${d>0?"up":"dn"}">${d>0?"▲":"▼"} ${txt}</em>`;
+}
+function anStreaks(D){
+  let best=0,cur=0;
+  for(let k=D.first;k<=todayISO;k=addISO(k,1)){if(anXp(D,k)>=goal){cur++;if(cur>best)best=cur}else cur=0}
+  return {best,cur:xpStreak()};
+}
+function anNiceMax(v){const p=Math.pow(10,Math.floor(Math.log10(Math.max(v,1)))),r=v/p;return (r<=1?1:r<=2?2:r<=2.5?2.5:r<=5?5:10)*p}
+function anChart(D,s){
+  const wrap=$("v-stats"),cw=Math.max(280,Math.min(1500,(wrap&&wrap.clientWidth||360)-34)),W=cw,H=Math.round(Math.max(210,Math.min(300,cw*.2))),L=36,R=6,T=14,B=24,pw=W-L-R,ph=H-T-B;
+  const weekly=AN.range==="all"&&s.len>120;let items=[];
+  if(weekly){const ws={};for(let k=s.a;k<=s.b;k=addISO(k,1)){const m=anMon(k);ws[m]=(ws[m]||0)+anXp(D,k)}items=Object.keys(ws).sort().slice(-52).map(m=>({k:m,v:ws[m],t:"tuần "+dm(m)}))}
+  else for(let k=s.a;k<=s.b;k=addISO(k,1))items.push({k,v:anXp(D,k),t:DOW[fromISO(k).getDay()]+" "+dm(k)});
+  const n=items.length;if(!n)return "";
+  const ma=weekly?null:items.map((it,i)=>{let sum=0,c=0;for(let j=i-6;j<=i;j++){const kk=addISO(it.k,j-i);if(kk<D.first)continue;sum+=anXp(D,kk);c++}return c?sum/c:0});
+  const avg=items.reduce((t,x)=>t+x.v,0)/n;
+  const mx=anNiceMax(Math.max(weekly?avg*1.2:goal,...items.map(x=>x.v),...(ma||[0]))*1.08),y=v=>T+ph-(v/mx)*ph,bw=pw/n,gap=n>60?0.15:n>35?0.22:0.28;
+  let g="";
+  [0,.5,1].forEach(f=>{const v=mx*f;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${fmt(Math.round(v))}</text>`});
+  items.forEach((it,i)=>{const x=L+i*bw+bw*gap/2,w=Math.max(1.5,bw*(1-gap)),h=Math.max(0,T+ph-y(it.v)),ok=!weekly&&it.v>=goal;
+    g+=`<rect x="${x.toFixed(1)}" y="${y(it.v).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(3,w/2).toFixed(1)}" fill="${ok?"var(--ok)":"var(--link)"}" opacity="${it.v?1:.25}"><title>${it.t}: ${fmt(it.v)} m${ok?" · đạt mục tiêu":""}</title></rect>`});
+  if(!weekly)g+=`<line x1="${L}" x2="${W-R}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--sun)" stroke-dasharray="4 4" stroke-width="1.4"/>`;
+  else g+=`<line x1="${L}" x2="${W-R}" y1="${y(avg)}" y2="${y(avg)}" stroke="var(--sun)" stroke-dasharray="4 4" stroke-width="1.4"/>`;
+  if(ma)g+=`<polyline fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="${ma.map((v,i)=>(L+i*bw+bw/2).toFixed(1)+","+y(v).toFixed(1)).join(" ")}"/>`;
+  const lab=(i,anc)=>`<text x="${(L+i*bw+bw/2).toFixed(1)}" y="${H-6}" text-anchor="${anc}">${dm(items[i].k)}</text>`;
+  g+=lab(0,"start")+(n>8?lab(Math.floor((n-1)/2),"middle"):"")+lab(n-1,"end");
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Mét ${weekly?"theo tuần":"theo ngày"}">${g}</svg>`;
+}
+function anRows(rows,max,fmtV,cls){
+  return `<div class="crit an-rows">${rows.map(r=>`<div class="c"><b>${esc(r.l)}</b><div class="bar"><i style="width:${max?Math.max(r.v?2:0,r.v/max*100):0}%;background:${r.c||"var(--ink-3)"}"></i></div><span class="n">${fmtV?fmtV(r):fmt(r.v)}</span></div>`).join("")}</div>`;
+}
+function renderStats(){
+  const el=$("v-stats");if(!el)return;
+  const head=`<div><button class="linkbtn mm-back" data-tab="progress">← Tiến độ</button><div><span class="eyebrow">Khám phá số liệu</span></div><h1 class="h1">Phân tích học tập</h1><p class="lead">Số liệu tính từ nhật ký học của mày. Học càng đều thì số càng đáng tin.</p></div>`;
+  const D=anData();
+  if(!D.first){el.innerHTML=head+`<div class="card"><h3 class="h3">Chưa có số liệu</h3><p class="hint" style="margin-top:6px">Học vài buổi (làm bài, ôn từ, nộp bài viết) rồi quay lại đây. Mét và số câu đúng sẽ được ghi theo từng ngày.</p></div>`;return}
+  const s=anSpan(D),cur=anAgg(D,s.a,s.b),prv=s.prev?anAgg(D,s.prev.a,s.prev.b):null;
+  const m=totalXp(),acc=anPct(cor_(cur),cur.ans),pacc=prv&&prv.ans>=20&&cur.ans>=20?anPct(cor_(prv),prv.ans):null;
+  function cor_(o){return o.cor}
+  const avgD=Math.round(cur.xp/cur.len),pAvg=prv?Math.round(prv.xp/prv.len):null,actAvg=cur.active?Math.round(cur.xp/cur.active):0;
+  const sk=anStreaks(D),wk7=anAgg(D,addISO(todayISO,-6),todayISO);
+  const rangeLbl=AN.range==="all"?"toàn bộ":AN.range+" ngày";
+  const kp=(b,l,sub,dl)=>`<div><b class="num">${b}</b><span>${l}</span>${sub?`<small>${sub}</small>`:""}${dl||""}</div>`;
+  const kpis=[
+   kp(fmt(cur.xp)+" m","Tổng mét",anDays(s.a,s.b)+" ngày tính",anDelta(cur.xp,prv&&prv.xp)),
+   kp(cur.active+"/"+cur.len,"ngày có học",anPct(cur.active,cur.len)+"% số ngày",anDelta(anPct(cur.active,cur.len),prv?anPct(prv.active,prv.len):null,true)),
+   kp(fmt(avgD)+" m","TB mỗi ngày","ngày có học: "+fmt(actAvg)+" m",anDelta(avgD,pAvg)),
+   kp(cur.goalDays+"/"+cur.len,"ngày đạt mục tiêu","mục tiêu "+goal+" m · "+anPct(cur.goalDays,cur.len)+"%",anDelta(anPct(cur.goalDays,cur.len),prv?anPct(prv.goalDays,prv.len):null,true)),
+   kp(acc==null?"–":acc+"%","trả lời đúng",fmt(cur.ans)+" câu",anDelta(acc,pacc,true)),
+   kp(sk.cur+" ngày","chuỗi đạt mục tiêu","dài nhất: "+sk.best+" ngày"),
+   kp(fmt(cur.best.xp)+" m","ngày tốt nhất",cur.best.k?anDmy(cur.best.k):""),
+   kp(wk7.sec?anH(wk7.sec):"–","dùng web 7 ngày qua",wk7.sec?"tính trên máy này":"bắt đầu ghi từ bản này")
+  ].join("");
+  // ---- điểm đáng chú ý
+  const ins=[];
+  const p14=anAgg(D,addISO(todayISO,-13),todayISO),q14=D.first<=addISO(todayISO,-27)?anAgg(D,addISO(todayISO,-27),addISO(todayISO,-14)):null;
+  const pace=Math.round(p14.xp/Math.min(14,anDays(D.first,todayISO)));
+  ins.push(`14 ngày qua mày leo trung bình <b>${fmt(pace)} m/ngày</b>${q14&&q14.xp?`, ${p14.xp>=q14.xp?"tăng":"giảm"} <b>${Math.abs(Math.round((p14.xp-q14.xp)/q14.xp*100))}%</b> so với 14 ngày trước`:""}.`);
+  const wsum=Array(7).fill(0),wcnt=Array(7).fill(0);
+  for(let k=s.a;k<=s.b;k=addISO(k,1)){const i=(fromISO(k).getDay()+6)%7;wsum[i]+=anXp(D,k);wcnt[i]++}
+  const wavg=wsum.map((v,i)=>wcnt[i]?Math.round(v/wcnt[i]):0),WL=["Thứ hai","Thứ ba","Thứ tư","Thứ năm","Thứ sáu","Thứ bảy","Chủ nhật"];
+  if(cur.len>=14){const bi=wavg.indexOf(Math.max(...wavg)),wi=wavg.indexOf(Math.min(...wavg));if(wavg[bi]>wavg[wi])ins.push(`${WL[bi]} là ngày mạnh nhất (TB <b>${fmt(wavg[bi])} m</b>), ${WL[wi]} yếu nhất (TB <b>${fmt(wavg[wi])} m</b>).`)}
+  const tw=anAgg(D,anMon(todayISO),todayISO),lw=anAgg(D,addISO(anMon(todayISO),-7),addISO(anMon(todayISO),-1));
+  if(tw.ans>=20&&lw.ans>=20){const a1=anPct(tw.cor,tw.ans),a0=anPct(lw.cor,lw.ans);ins.push(`Tuần này trả lời đúng <b>${a1}%</b> (${fmt(tw.ans)} câu), tuần trước ${a0}% (${fmt(lw.ans)} câu).`)}
+  const dueN=vocab.filter(v=>v.meaning&&!isRet(v)&&v.box>0&&v.due<=todayISO),overN=dueN.filter(v=>v.due<todayISO).length;
+  if(vocab.length)ins.push(`Hôm nay có <b>${dueN.length} từ</b> đến hạn ôn${overN?` (${overN} từ đã quá hạn)`:""}.`);
+  const hw=vocab.filter(v=>(v.lapses||0)>0&&!isRet(v)).sort((a,b)=>b.lapses-a.lapses)[0];
+  if(hw&&hw.lapses>=2)ins.push(`Từ hay quên nhất: <b>${esc(hw.word)}</b> (quên ${hw.lapses} lần).`);
+  const ci=campOf(m),nx=CAMPS[ci+1];
+  let fc="";
+  if(nx){const rem=nx.m-m,rows=[["Nhịp 14 ngày qua",pace],["Nhịp cả kỳ ("+rangeLbl+")",avgD],["Đạt mục tiêu mỗi ngày",goal]].map(([l,p])=>{const dd=p>0?Math.ceil(rem/p):null;return `<div class="an-fc"><span>${l}<small>${fmt(p)} m/ngày</small></span><b>${dd==null?"chưa đủ dữ liệu":dd+" ngày"}</b><span class="tiny muted">${dd==null?"":"~ "+anDmy(addISO(todayISO,dd))}</span></div>`}).join("");
+    const pd=pace>0?Math.ceil(rem/pace):null;if(pd!=null)ins.push(`Giữ nhịp 14 ngày qua, mày tới <b>${esc(nx.n)}</b> vào khoảng <b>${anDmy(addISO(todayISO,pd))}</b> (còn ${fmt(rem)} m).`);
+    fc=`<div class="card"><div class="hd"><h3 class="h3">Dự báo tới ${esc(nx.n)}</h3><span class="tiny muted">còn ${fmt(rem)} m</span></div><div class="an-fcs">${rows}</div><p class="hint" style="margin-top:8px">Ước tính theo đường thẳng: nhịp đều từ nay, không tính ngày nghỉ lễ. Chỉ để tham khảo.</p></div>`}
+  else fc=`<div class="card"><div class="hd"><h3 class="h3">Dự báo</h3></div><p class="hint">Mày đã tới đỉnh của chặng này.</p></div>`;
+  // ---- biểu đồ chính
+  const weekly=AN.range==="all"&&s.len>120;
+  const chart=`<div class="card"><div class="hd"><h3 class="h3">${weekly?"Mét mỗi tuần":"Mét mỗi ngày"}</h3><span class="legend">${weekly?`<span><i style="background:var(--link)"></i>mét tuần</span><span><i style="background:var(--sun)"></i>TB tuần</span>`:`<span><i style="background:var(--ok)"></i>đạt mục tiêu</span><span><i style="background:var(--link)"></i>chưa đạt</span><span><i style="background:var(--ink)"></i>TB 7 ngày</span><span><i style="background:var(--sun)"></i>mục tiêu</span>`}</span></div><div style="margin-top:10px">${anChart(D,s)}</div></div>`;
+  // ---- bảng 12 tuần
+  const mon0=anMon(todayISO),W12=[];
+  for(let i=11;i>=0;i--){const mo=addISO(mon0,-7*i);if(mo>todayISO)continue;const e=addISO(mo,6)>todayISO?todayISO:addISO(mo,6);if(e<D.first)continue;W12.push({mo,e,o:anAgg(D,mo<D.first?D.first:mo,e),cur:mo===mon0})}
+  const wmax=Math.max(1,...W12.map(w=>w.o.xp)),hasH=W12.some(w=>w.o.sec>0);
+  const wtab=`<div class="card"><div class="hd"><h3 class="h3">12 tuần gần nhất</h3><span class="tiny muted">tuần bắt đầu thứ hai</span></div>
+   <div class="an-wt${hasH?" h":""}"><div class="an-wh"><span>Tuần</span><span>Mét</span><span>Ngày</span><span>Đúng</span>${hasH?"<span>Giờ</span>":""}</div>
+   ${W12.slice().reverse().map(w=>{const a=anPct(w.o.cor,w.o.ans);return `<div class="an-wr${w.cur?" cur":""}"><span>${dm(w.mo)}${w.cur?"<small>tuần này</small>":""}</span><span class="an-wb"><i style="width:${Math.max(w.o.xp?2:0,w.o.xp/wmax*100)}%"></i><b>${fmt(w.o.xp)}</b></span><span>${w.o.active}/${w.o.len}</span><span>${w.o.ans>=10?a+"%":"–"}</span>${hasH?`<span>${w.o.sec?anH(w.o.sec):"–"}</span>`:""}</div>`}).join("")}</div>
+   <p class="hint" style="margin-top:8px">“Đúng” chỉ hiện khi tuần có từ 10 câu trở lên.</p></div>`;
+  // ---- thứ trong tuần
+  const wmx=Math.max(...wavg),wd=`<div class="card"><div class="hd"><h3 class="h3">Theo thứ trong tuần</h3><span class="tiny muted">TB mét mỗi ngày · ${rangeLbl}</span></div>${anRows(WL.map((l,i)=>({l:["T2","T3","T4","T5","T6","T7","CN"][i],v:wavg[i],c:wavg[i]===wmx&&wmx>0?"var(--ok)":""})),wmx,r=>fmt(r.v))}</div>`;
+  // ---- từ vựng
+  const vs=vocab.filter(v=>v.meaning&&!isRet(v)),vc=LEVELS.map(L=>({n:L.n,c:L.c,k:vs.filter(v=>L.test(v.box)).length})),vt=vs.length;
+  let vh;
+  if(!vt)vh=`<p class="hint">Sổ ôn chưa có từ nào.</p>`;
+  else{
+    const seen=vs.reduce((t,v)=>t+(v.seen||0),0),laps=vs.reduce((t,v)=>t+(v.lapses||0),0);
+    const sched=[];for(let i=0;i<7;i++){const k=addISO(todayISO,i);sched.push({l:i===0?"Nay":i===1?"Mai":DOW[fromISO(k).getDay()],v:vs.filter(v=>v.box>0&&(i===0?v.due<=k:v.due===k)).length})}
+    const smax=Math.max(1,...sched.map(x=>x.v)),hard=vs.filter(isHard).length,top=vs.filter(v=>(v.lapses||0)>=1).sort((a,b)=>(b.lapses-a.lapses)||(a.box-b.box)).slice(0,6);
+    let cw="";const hasC=vs.some(v=>v.created);
+    if(hasC){const wc={};vs.forEach(v=>{if(v.created)wc[anMon(v.created.slice(0,10))]=(wc[anMon(v.created.slice(0,10))]||0)+1});const wsx=[];for(let i=7;i>=0;i--){const mo=addISO(mon0,-7*i);wsx.push({l:dm(mo),v:wc[mo]||0})}const mxx=Math.max(1,...wsx.map(x=>x.v));
+      cw=`<h4 class="an-h4">Từ thêm mỗi tuần</h4><div class="an-cols">${wsx.map(x=>`<div><b>${x.v}</b><i style="height:${Math.max(x.v?4:1,x.v/mxx*54)}px"></i><span>${x.l}</span></div>`).join("")}</div>`}
+    vh=`<div class="an-stack" role="img" aria-label="Phân bố mức độ nhớ">${vc.map(x=>`<i style="width:${x.k/vt*100}%;background:${x.c}" title="${x.n}: ${x.k}"></i>`).join("")}</div>
+     <div class="legend" style="margin-top:8px">${vc.map(x=>`<span><i style="background:${x.c}"></i>${x.n} ${x.k} (${anPct(x.k,vt)}%)</span>`).join("")}</div>
+     <div class="an-mini"><div><b class="num">${fmt(vt)}</b><span>từ đang ôn</span></div><div><b class="num">${dueN.length}</b><span>đến hạn hôm nay</span></div><div><b class="num">${seen?anPct(laps,seen)+"%":"–"}</b><span>tỉ lệ quên (${fmt(laps)}/${fmt(seen)} lượt)</span></div><div><b class="num">${hard}</b><span>từ khó</span></div></div>
+     <h4 class="an-h4">Lịch ôn 7 ngày tới</h4><div class="an-cols">${sched.map(x=>`<div><b>${x.v}</b><i style="height:${Math.max(x.v?4:1,x.v/smax*54)}px"></i><span>${x.l}</span></div>`).join("")}</div>${cw}
+     ${top.length?`<h4 class="an-h4">Hay quên nhất</h4><div class="an-top">${top.map(v=>`<div><b>${esc(v.word)}</b><span>quên ${v.lapses} lần · mức ${v.box}</span></div>`).join("")}</div>`:""}`;
+  }
+  const vcard=`<div class="card"><div class="hd"><h3 class="h3">Từ vựng</h3><span class="tiny muted">${vt} từ</span></div><div style="margin-top:10px">${vh}</div></div>`;
+  // ---- hoạt động 35 ngày
+  const GN=k=>{if(k.startsWith("sub:")){const t=k.slice(4);return {writing:"Viết",speaking:"Nói",listening:"Nghe"}[t]||"Bài nộp "+t}return {lesson:"Bài học",dict:"Nghe chép",read:"Đọc",wordlab:"Luyện từ",err:"Sửa lỗi",rewrite:"Viết lại câu sai",usage:"Cách dùng từ",better:"Thưởng tiến bộ",flag:"Thưởng cắm cờ"}[k]||k};
+  const from=addISO(todayISO,-34),G={};
+  evLog.filter(e=>e.d>=from&&e.d<=todayISO).forEach(e=>{const g=GN(e.k);(G[g]=G[g]||{l:g,n:0,v:0}).n++;G[g].v+=+e.x||0});
+  const gl=Object.values(G).sort((a,b)=>b.v-a.v||b.n-a.n),gt=gl.reduce((t,x)=>t+x.v,0);
+  const acard=`<div class="card"><div class="hd"><h3 class="h3">Mét đến từ đâu</h3><span class="tiny muted">35 ngày gần nhất</span></div>${gl.length?`<div style="margin-top:10px">${anRows(gl.slice(0,8).map(x=>({l:x.l,v:x.v,n:x.n,c:"var(--link)"})),gl[0].v||1,r=>fmt(r.v)+" m · "+r.n+" lượt")}</div><p class="hint" style="margin-top:8px">Tổng ${fmt(gt)} m. Thanh dài theo số mét, ghi chú bên phải là mét và số lượt.</p>`:`<p class="hint" style="margin-top:8px">Chưa có hoạt động nào trong 35 ngày gần nhất.</p>`}</div>`;
+  // ---- sổ lỗi
+  const act=errLog.filter(e=>e.state!=="mastered"),mast=errLog.length-act.length,dueE=dueErrors().length;
+  const ec={};act.forEach(e=>{ec[e.type]=(ec[e.type]||0)+1});const et=Object.entries(ec).sort((a,b)=>b[1]-a[1]).slice(0,6),emx=et.length?et[0][1]:1;
+  const ecard=`<div class="card"><div class="hd"><h3 class="h3">Sổ lỗi</h3><span class="tiny muted">${errLog.length} lỗi đã ghi</span></div>${errLog.length?`<div class="an-mini"><div><b class="num">${act.length}</b><span>đang sửa</span></div><div><b class="num">${dueE}</b><span>đến hạn</span></div><div><b class="num">${mast}</b><span>đã thuộc (${anPct(mast,errLog.length)}%)</span></div></div>${et.length?`<h4 class="an-h4">Loại lỗi đang sửa nhiều nhất</h4>${anRows(et.map(([t,n])=>({l:ERR_T[t]||t,v:n,c:"var(--sun)"})),emx,r=>String(r.v))}`:""}`:`<p class="hint" style="margin-top:8px">Chưa có lỗi nào trong sổ. Lỗi từ bài viết, bài nói và chép chính tả sẽ vào đây.</p>`}</div>`;
+  const seg=`<div class="seg" id="an-seg">${[["30","30 ngày"],["90","90 ngày"],["all","Tất cả"]].map(([k,l])=>`<button data-anrange="${k}" aria-pressed="${AN.range===k}">${l}</button>`).join("")}</div>`;
+  el.innerHTML=head+`
+   <div class="an-bar">${seg}<button class="btn sm" data-ancsv>Tải CSV theo ngày</button></div>
+   <div class="card an-k">${kpis}</div>
+   <p class="hint an-note">Kỳ đang xem: ${anDmy(s.a)} → ${anDmy(s.b)}${s.prev?`. Mũi tên so với kỳ liền trước (${anDmy(s.prev.a)} → ${anDmy(s.prev.b)}).`:". Chưa đủ dữ liệu để so với kỳ trước."}</p>
+   <div class="card"><h3 class="h3">Điểm đáng chú ý</h3><ul class="an-ins">${ins.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+   ${chart}
+   <div class="an-g"><div class="an-col">${wtab}</div><div class="an-col">${fc}${wd}</div></div>
+   <div class="an-g"><div class="an-col">${vcard}</div><div class="an-col">${acard}${ecard}</div></div>
+   <details class="why"><summary>Cách tính và giới hạn</summary><p class="hint">Mét, số câu đúng và số câu trả lời lấy từ nhật ký theo ngày (cả lịch sử). “Ngày có học” là ngày có mét lớn hơn 0. “TB mỗi ngày” chia cho tất cả ngày trong kỳ, kể cả ngày nghỉ, tính từ ngày có dữ liệu đầu tiên. Mục “Mét đến từ đâu” chỉ có 35 ngày gần nhất vì nhật ký sự kiện giữ chừng đó. Giờ dùng web là thời gian tab mở và có thao tác, ghi trên thiết bị này từ lúc có bản v21, nên chỉ là ước lượng và không cộng dồn giữa điện thoại với máy tính. Tỉ lệ quên = số lần quên chia số lượt ôn của các từ đang ôn.</p></details>`;
+}
+document.addEventListener("click",e=>{
+  const r=e.target.closest("[data-anrange]");if(r){AN.range=r.dataset.anrange;ls.set("ielts-anrange",AN.range);renderStats();return}
+  if(e.target.closest("[data-ancsv]")){
+    const D=anData();if(!D.first)return toast("Chưa có số liệu để tải.",true);
+    const rows=["date,xp,lessons,correct,answered,accuracy_pct,web_minutes_this_device"];
+    for(let k=D.first;k<=todayISO;k=addISO(k,1)){const x=D.xm[k]||{},a=+x.answered||0;rows.push([k,+x.xp||0,+x.lessons||0,+x.correct||0,a,a?Math.round((+x.correct||0)/a*100):"",D.act[k]?Math.round(D.act[k]/60):""].join(","))}
+    const url=URL.createObjectURL(new Blob(["\ufeff"+rows.join("\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");
+    a.href=url;a.download="climb-so-lieu-"+todayISO+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  }
+});
+let anRz=0;window.addEventListener("resize",()=>{clearTimeout(anRz);anRz=setTimeout(()=>{if(tab==="stats"&&!busy())renderStats()},250)});
 
 /* ================= Tải dữ liệu ================= */
 function applyState(s){
