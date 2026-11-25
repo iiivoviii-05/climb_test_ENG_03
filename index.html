@@ -1573,6 +1573,22 @@ details.why[open]>summary{margin-bottom:6px}
 .an-top b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .an-top span{font-size:12px;color:var(--ink-3)}
 @media (max-width:380px){.an-cols span{font-size:9.5px;letter-spacing:-.02em;white-space:nowrap}}
+
+/* ===== v22: ngày thi + heatmap ===== */
+.an-exam{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.an-exam .inp{flex:1 1 140px;min-width:0}
+.an-hm{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,auto);grid-template-columns:22px;grid-auto-columns:minmax(0,24px);gap:4px;margin-top:12px}
+.an-hm span{font-size:11px;color:var(--ink-3);align-self:center}
+.an-hm i,.an-hmk i{display:block;width:100%;aspect-ratio:1;border-radius:5px;background:var(--line)}
+.an-hm i.f{background:transparent}
+.an-hm i.pre{opacity:.35}
+.an-hm i.l1,.an-hmk i.l1{background:var(--link);opacity:.3}
+.an-hm i.l2,.an-hmk i.l2{background:var(--link);opacity:.6}
+.an-hm i.l3,.an-hmk i.l3{background:var(--ok);opacity:.7}
+.an-hm i.l4,.an-hmk i.l4{background:var(--ok)}
+.an-hml{margin-top:10px;align-items:center;gap:8px}
+.an-hmk{display:inline-flex;gap:3px}
+.an-hmk i{width:14px}
 </style>
 </head>
 <body>
@@ -2374,7 +2390,7 @@ function renderHome(){
        <div class="camp">${CAMPS[ci].n}${nextC?` · còn ${fmt(nextC.m-m)} m tới ${nextC.n}`:" · đã lên đỉnh"}</div>
        <div class="bar"><i style="width:${nextC?(m-CAMPS[ci].m)/(nextC.m-CAMPS[ci].m)*100:100}%"></i></div>
        ${chalBoxHTML(m)}
-       <div class="next">${go?`<button class="btn sun" data-open="${go.key}">Leo tiếp: ${esc(go.kind==="vocab"?go.title+" · "+go.topic.en:"Unit "+go.unit.n+" · "+go.unit.en)} ${I.arrow}</button>`:dueWords().length?`<button class="btn sun" data-review="start">Ôn tập hôm nay ${I.arrow}</button>`:""}<span class="lbl">🔥 ${streakDays().n} ngày liên tiếp có học · ${xpStreak()} ngày đạt mục tiêu XP</span></div>
+       <div class="next">${go?`<button class="btn sun" data-open="${go.key}">Leo tiếp: ${esc(go.kind==="vocab"?go.title+" · "+go.topic.en:"Unit "+go.unit.n+" · "+go.unit.en)} ${I.arrow}</button>`:dueWords().length?`<button class="btn sun" data-review="start">Ôn tập hôm nay ${I.arrow}</button>`:""}<span class="lbl">🔥 ${streakDays().n} ngày liên tiếp có học · ${xpStreak()} ngày đạt mục tiêu XP${examChip()}</span></div>
      </div>
      ${mountainSVG(m)}
    </section>
@@ -5338,6 +5354,36 @@ function anDelta(c,p,pts){
   const txt=(d>0?"+":"")+d+(pts?" điểm":"%");
   return d===0?`<em class="dl">= kỳ trước</em>`:`<em class="dl ${d>0?"up":"dn"}">${d>0?"▲":"▼"} ${txt}</em>`;
 }
+const AN_EXAM="ielts-exam";
+const examGet=()=>{const v=ls.get(AN_EXAM,"");return /^\d{4}-\d{2}-\d{2}$/.test(v)?v:""};
+const examLeft=()=>{const e=examGet();return e?anDays(todayISO,e)-1:null};
+function examChip(){const n=examLeft();return n==null||n<0?"":n===0?" · Hôm nay thi":" · Thi còn "+n+" ngày"}
+function anHeat(D){
+  const W=17,st=addISO(anMon(todayISO),-7*(W-1)),cells=[];
+  ["T2","","T4","","T6","","CN"].forEach(l=>cells.push(`<span>${l}</span>`));
+  let act=0,hit=0,tot=0;
+  for(let w=0;w<W;w++)for(let d=0;d<7;d++){
+    const k=addISO(st,w*7+d);
+    if(k>todayISO){cells.push(`<i class="f"></i>`);continue}
+    const x=anXp(D,k),pre=k<D.first;
+    const lv=pre?0:x<=0?0:x<goal*.5?1:x<goal?2:x<goal*1.5?3:4;
+    if(!pre){tot++;if(x>0)act++;if(x>=goal)hit++}
+    cells.push(`<i class="l${lv}${pre?" pre":""}" title="${DOW[fromISO(k).getDay()]} ${dm(k)}: ${pre?"chưa dùng":fmt(x)+" m"}"></i>`);
+  }
+  return `<div class="card"><div class="hd"><h3 class="h3">Lịch học ${W} tuần</h3><span class="tiny muted">${act}/${tot} ngày có học · ${hit} ngày đạt mục tiêu</span></div>
+   <div class="an-hm" role="img" aria-label="Lịch học ${W} tuần gần nhất">${cells.join("")}</div>
+   <div class="legend an-hml"><span>ít</span><span class="an-hmk"><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i></span><span>nhiều</span><span class="tiny muted">mỗi hàng là một thứ, mỗi cột là một tuần; ô đậm nhất = từ ${fmt(Math.round(goal*1.5))} m</span></div></div>`;
+}
+function anExamCard(pace,m){
+  const e=examGet(),n=examLeft(),inp=`<div class="an-exam"><input type="date" id="an-exam-in" class="inp" value="${e}" min="${todayISO}" aria-label="Ngày thi"><button class="btn sm primary" data-anexam="save">Lưu ngày</button>${e?`<button class="btn sm" data-anexam="clear">Xoá</button>`:""}</div>`;
+  if(!e)return `<div class="card"><div class="hd"><h3 class="h3">Ngày thi</h3></div><p class="hint" style="margin-top:6px">Đặt ngày thi để biết còn bao nhiêu ngày và mỗi ngày cần leo bao nhiêu mét. Ngày này lưu trên thiết bị đang dùng.</p>${inp}</div>`;
+  if(n<0)return `<div class="card"><div class="hd"><h3 class="h3">Ngày thi</h3><span class="tiny muted">${anDmy(e)}</span></div><p class="hint" style="margin-top:6px">Ngày thi này đã qua. Đặt ngày thi mới nếu mày còn thi tiếp.</p>${inp}</div>`;
+  const tg=[],nx=CAMPS[campOf(m)+1],fin=CAMPS[CAMPS.length-1];
+  if(nx)tg.push(nx);if(fin&&fin!==nx&&fin.m>m)tg.push(fin);
+  const rows=n===0?"":tg.map(t=>{const rem=Math.max(0,t.m-m),need=Math.ceil(rem/n),pct=pace>0&&need>0?Math.round(pace/need*100):null;
+    return `<div class="an-fc"><span>Lên ${esc(t.n)}<small>còn ${fmt(rem)} m trong ${n} ngày</small></span><b>${fmt(need)} m/ngày</b><span class="tiny muted">${need===0?"":pace>0?"nhịp 14 ngày qua đạt "+pct+"% mức cần":"chưa đủ dữ liệu nhịp"}</span></div>`}).join("");
+  return `<div class="card"><div class="hd"><h3 class="h3">Ngày thi · ${anDmy(e)}</h3><span class="tiny muted">${n===0?"hôm nay":"còn "+n+" ngày (~"+Math.round(n/7)+" tuần)"}</span></div><div class="an-fcs">${rows}</div>${rows?`<p class="hint" style="margin-top:8px">Mức cần = số mét còn thiếu chia số ngày còn lại (cả ngày nghỉ). Chỉ để tham khảo.</p>`:""}${inp}</div>`;
+}
 function anStreaks(D){
   let best=0,cur=0;
   for(let k=D.first;k<=todayISO;k=addISO(k,1)){if(anXp(D,k)>=goal){cur++;if(cur>best)best=cur}else cur=0}
@@ -5405,6 +5451,8 @@ function renderStats(){
   const hw=vocab.filter(v=>(v.lapses||0)>0&&!isRet(v)).sort((a,b)=>b.lapses-a.lapses)[0];
   if(hw&&hw.lapses>=2)ins.push(`Từ hay quên nhất: <b>${esc(hw.word)}</b> (quên ${hw.lapses} lần).`);
   const ci=campOf(m),nx=CAMPS[ci+1];
+  const exL=examLeft(),exT=CAMPS[CAMPS.length-1];
+  if(exL!=null&&exL>0&&exT&&exT.m>m){const need=Math.ceil((exT.m-m)/exL);ins.push(`Còn <b>${exL} ngày</b> tới ngày thi. Muốn lên <b>${esc(exT.n)}</b> trước đó cần <b>${fmt(need)} m/ngày</b>, nhịp 14 ngày qua của mày là ${fmt(pace)} m/ngày.`)}
   let fc="";
   if(nx){const rem=nx.m-m,rows=[["Nhịp 14 ngày qua",pace],["Nhịp cả kỳ ("+rangeLbl+")",avgD],["Đạt mục tiêu mỗi ngày",goal]].map(([l,p])=>{const dd=p>0?Math.ceil(rem/p):null;return `<div class="an-fc"><span>${l}<small>${fmt(p)} m/ngày</small></span><b>${dd==null?"chưa đủ dữ liệu":dd+" ngày"}</b><span class="tiny muted">${dd==null?"":"~ "+anDmy(addISO(todayISO,dd))}</span></div>`}).join("");
     const pd=pace>0?Math.ceil(rem/pace):null;if(pd!=null)ins.push(`Giữ nhịp 14 ngày qua, mày tới <b>${esc(nx.n)}</b> vào khoảng <b>${anDmy(addISO(todayISO,pd))}</b> (còn ${fmt(rem)} m).`);
@@ -5458,7 +5506,8 @@ function renderStats(){
    <p class="hint an-note">Kỳ đang xem: ${anDmy(s.a)} → ${anDmy(s.b)}${s.prev?`. Mũi tên so với kỳ liền trước (${anDmy(s.prev.a)} → ${anDmy(s.prev.b)}).`:". Chưa đủ dữ liệu để so với kỳ trước."}</p>
    <div class="card"><h3 class="h3">Điểm đáng chú ý</h3><ul class="an-ins">${ins.map(x=>`<li>${x}</li>`).join("")}</ul></div>
    ${chart}
-   <div class="an-g"><div class="an-col">${wtab}</div><div class="an-col">${fc}${wd}</div></div>
+   ${anHeat(D)}
+   <div class="an-g"><div class="an-col">${wtab}</div><div class="an-col">${anExamCard(pace,m)}${fc}${wd}</div></div>
    <div class="an-g"><div class="an-col">${vcard}</div><div class="an-col">${acard}${ecard}</div></div>
    <details class="why"><summary>Cách tính và giới hạn</summary><p class="hint">Mét, số câu đúng và số câu trả lời lấy từ nhật ký theo ngày (cả lịch sử). “Ngày có học” là ngày có mét lớn hơn 0. “TB mỗi ngày” chia cho tất cả ngày trong kỳ, kể cả ngày nghỉ, tính từ ngày có dữ liệu đầu tiên. Mục “Mét đến từ đâu” chỉ có 35 ngày gần nhất vì nhật ký sự kiện giữ chừng đó. Giờ dùng web là thời gian tab mở và có thao tác, ghi trên thiết bị này từ lúc có bản v21, nên chỉ là ước lượng và không cộng dồn giữa điện thoại với máy tính. Tỉ lệ quên = số lần quên chia số lượt ôn của các từ đang ôn.</p></details>`;
 }
@@ -5471,6 +5520,13 @@ document.addEventListener("click",e=>{
     const url=URL.createObjectURL(new Blob(["\ufeff"+rows.join("\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");
     a.href=url;a.download="climb-so-lieu-"+todayISO+".csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   }
+});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-anexam]");if(!b)return;
+  if(b.dataset.anexam==="clear"){ls.set(AN_EXAM,"");renderStats();return}
+  const v=(document.getElementById("an-exam-in")||{}).value||"";
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v)||v<todayISO)return toast("Chọn một ngày thi từ hôm nay trở đi.",true);
+  ls.set(AN_EXAM,v);renderStats();toast("Đã lưu ngày thi.");
 });
 let anRz=0;window.addEventListener("resize",()=>{clearTimeout(anRz);anRz=setTimeout(()=>{if(tab==="stats"&&!busy())renderStats()},250)});
 
