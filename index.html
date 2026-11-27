@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Climb</title>
 <meta name="theme-color" content="#151d47">
+<script>try{var _t=localStorage.getItem("ielts-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Climb">
@@ -1589,6 +1590,37 @@ details.why[open]>summary{margin-bottom:6px}
 .an-hml{margin-top:10px;align-items:center;gap:8px}
 .an-hmk{display:inline-flex;gap:3px}
 .an-hmk i{width:14px}
+
+/* ===== v23: nút giao diện ===== */
+.thm{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);display:grid;place-items:center;padding:0}
+.thm:hover{color:var(--ink);border-color:var(--line-2)}
+.thm svg{width:19px;height:19px}
+@media (max-width:420px){.thm{width:34px;height:34px}.thm svg{width:17px;height:17px}}
+@media (max-width:480px){.brand{min-width:0;white-space:normal;line-height:1.12;font-size:14.5px}.brand>span:last-child{min-width:0}}
+@media (max-width:340px){.brand>span:last-child{display:none}}
+
+/* ===== v24: bớt “mùi AI” ===== */
+:root{--bg:#eceeea;--surface:#f9f9f6;--sunk:#f1f2ee;--line:#d9dcd4;--line-2:#c2c7bd;--ink-2:#4f5762;--ink-3:#76808b;
+  --r-lg:16px;--r-md:12px;--r-sm:8px;--shadow:0 1px 0 rgba(22,28,38,.05)}
+/* nhãn nhóm: chữ thường, không giãn chữ */
+.nv-grp,.rtest,.mgcard .mg-vs div span,.stbl th{text-transform:none;letter-spacing:0}
+.nv-grp{font-size:12.5px;font-weight:700}
+/* mũi tên chỉ ở nút nổi bật */
+.btn:not(.sun) .ar{display:none}
+/* icon lửa */
+.fi{width:1em;height:1em;vertical-align:-.12em;color:var(--sun);margin-right:.2em;flex:none}
+.streak .fi{margin-right:.1em}
+/* tab Ôn tập: số vừa tầm, không phải 4 ô số khổng lồ giống nhau */
+.rbig{font-size:34px;line-height:1.1}
+/* mục đang chọn ở thanh bên / thanh trên: nền ngả theo chữ, không cần bóng */
+nav.side button[aria-current="page"],.navtop button[aria-current="page"]{background:color-mix(in srgb,var(--ink) 8%,transparent);box-shadow:none}
+/* bỏ vạch màu bên cạnh thẻ: dùng nền nhạt + viền */
+.rrow.done,.rrow.done.d-mid{box-shadow:none}
+.rrow.done{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.rrow.done.d-mid{border-color:color-mix(in srgb,var(--sun) 55%,var(--line))}
+.day.missed{box-shadow:none;outline:1.5px solid var(--bad);outline-offset:-1.5px}
+/* huy hiệu hạng: bỏ hào quang */
+body:not([data-rank="0"]):not([data-rank=""]) #altchip{box-shadow:0 0 0 1.5px var(--rank)}
 </style>
 </head>
 <body>
@@ -1607,6 +1639,7 @@ details.why[open]>summary{margin-bottom:6px}
     <div class="brand"><span id="logo"></span><span>Climbing the Rock<small id="me-name">Lộ trình IELTS</small></span></div>
     <nav class="navtop" aria-label="Mục chính" id="navtop"></nav>
     <div class="alt" id="altchip" role="button" tabindex="0" title="Độ cao, chuỗi ngày học, âm thanh & rung"></div>
+    <button type="button" class="thm" id="themebtn" aria-label="Đổi giao diện sáng hoặc tối"></button>
   </div>
 </header>
 
@@ -1827,12 +1860,13 @@ function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[
 const TINT=["var(--t1)","var(--t2)","var(--t3)","var(--t4)","var(--t5)","var(--t6)"];
 
 const I={
+ flame:'<svg class="fi" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.6 2.3c.4 3.2-1.2 4.6-2.7 6.3-1.4 1.6-2.7 3.2-2.7 5.6a5.3 5.3 0 0 0 10.6.2c0-1.9-.8-3.3-1.7-4.4-.1 1.3-.7 2.2-1.6 2.6.5-3.4-.1-7.4-1.9-10.3z"/></svg>',
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
  lock:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
  sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
  flip:'<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/></svg>',
- arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+ arrow:'<svg class="ar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
  peak:'<svg viewBox="0 0 24 24" fill="none"><path d="M2 20 9.5 7l4 6.5L16 10l6 10H2Z" fill="var(--sun)"/><path d="M9.5 7 11.6 10.4 10 11l-2-1.2Z" fill="#fff"/></svg>',
  logo:'<svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="var(--night)"/><path d="M5 25 13 11l4.5 7 3-4L27 25H5Z" fill="var(--sun)"/><path d="M13 11l2.3 3.6-1.6.8-2.2-1.3Z" fill="#fff"/><circle cx="21.5" cy="8" r="2" fill="#fff"/></svg>'
 };
@@ -2133,7 +2167,7 @@ function renderShell(){
    $("navside").innerHTML=g("Học mỗi ngày",TABS.filter(t=>!t.side))+g("Khám phá",TABS.filter(t=>t.side))+`<button class="side-tg" data-sidemin aria-label="Thu gọn hoặc mở rộng thanh bên"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span>Thu gọn</span></button>`}
   const m=totalXp();
   const sk=streakDays();
-  $("altchip").innerHTML=`<span class="dot">${I.peak}</span><b>${fmt(m)} m</b><span class="campn">${CAMPS[campOf(m)].n}</span>${sk.n?`<span class="streak ${sk.today?"":"cold"}" title="${sk.n} ngày học liên tiếp">🔥${sk.n}</span>`:""}`;
+  $("altchip").innerHTML=`<span class="dot">${I.peak}</span><b>${fmt(m)} m</b><span class="campn">${CAMPS[campOf(m)].n}</span>${sk.n?`<span class="streak ${sk.today?"":"cold"}" title="${sk.n} ngày học liên tiếp">${I.flame}${sk.n}</span>`:""}`;
   fxMilestones();if(typeof applyRankTheme==="function")applyRankTheme();
 }
 function setTab(t){tab=t;ls.set("ielts-tab6",t);document.querySelectorAll(".view").forEach(v=>v.hidden=v.id!=="v-"+t);render();window.scrollTo({top:0})}
@@ -2390,7 +2424,7 @@ function renderHome(){
        <div class="camp">${CAMPS[ci].n}${nextC?` · còn ${fmt(nextC.m-m)} m tới ${nextC.n}`:" · đã lên đỉnh"}</div>
        <div class="bar"><i style="width:${nextC?(m-CAMPS[ci].m)/(nextC.m-CAMPS[ci].m)*100:100}%"></i></div>
        ${chalBoxHTML(m)}
-       <div class="next">${go?`<button class="btn sun" data-open="${go.key}">Leo tiếp: ${esc(go.kind==="vocab"?go.title+" · "+go.topic.en:"Unit "+go.unit.n+" · "+go.unit.en)} ${I.arrow}</button>`:dueWords().length?`<button class="btn sun" data-review="start">Ôn tập hôm nay ${I.arrow}</button>`:""}<span class="lbl">🔥 ${streakDays().n} ngày liên tiếp có học · ${xpStreak()} ngày đạt mục tiêu XP${examChip()}</span></div>
+       <div class="next">${go?`<button class="btn sun" data-open="${go.key}">Leo tiếp: ${esc(go.kind==="vocab"?go.title+" · "+go.topic.en:"Unit "+go.unit.n+" · "+go.unit.en)} ${I.arrow}</button>`:dueWords().length?`<button class="btn sun" data-review="start">Ôn tập hôm nay ${I.arrow}</button>`:""}<span class="lbl">${I.flame} ${streakDays().n} ngày liên tiếp có học · ${xpStreak()} ngày đạt mục tiêu XP${examChip()}</span></div>
      </div>
      ${mountainSVG(m)}
    </section>
@@ -2436,8 +2470,8 @@ function buddyHTML(){
   if(!buddies.length)return "";const my=xpOn(todayISO),mine=streakDays().n;
   return `<div class="card" style="display:flex;flex-direction:column;gap:8px;padding:14px 18px"><div class="hd"><span class="tiny" style="font-weight:800;color:var(--ink-2)">BẠN HỌC</span><span class="tiny muted">cập nhật mỗi 10 phút</span></div>
    ${buddies.map(b=>`<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center"><b>${esc(b.name)}</b><span class="num"><b>${fmt(b.m)} m</b></span>
-     <span class="tiny muted">${b.err?"chưa đọc được dữ liệu":`hôm nay ${fmt(b.today)} m · 🔥${b.streak} ngày`}</span><span class="tiny ${b.today>my?"":"muted"}">${b.err?"":b.today>my?`hơn mày ${fmt(b.today-my)} m hôm nay`:b.today<my?`mày đang hơn ${fmt(my-b.today)} m`:"đang hoà"}</span></div>`).join("")}
-   <span class="tiny muted">Mày: hôm nay ${fmt(my)} m · 🔥${mine} ngày</span></div>`;
+     <span class="tiny muted">${b.err?"chưa đọc được dữ liệu":`hôm nay ${fmt(b.today)} m · ${I.flame}${b.streak} ngày`}</span><span class="tiny ${b.today>my?"":"muted"}">${b.err?"":b.today>my?`hơn mày ${fmt(b.today-my)} m hôm nay`:b.today<my?`mày đang hơn ${fmt(my-b.today)} m`:"đang hoà"}</span></div>`).join("")}
+   <span class="tiny muted">Mày: hôm nay ${fmt(my)} m · ${I.flame}${mine} ngày</span></div>`;
 }
 function focusHTML(){const f=dailyFocus();if(!f)return "";
   return `<div class="card focus"><div class="grow"><span class="k">Hôm nay nên tập trung</span><b>${esc(f.t)}</b><span class="why">${esc(f.why)}</span></div><span class="row" style="gap:8px;flex:none"><button class="btn sm ghost" data-focusskip>Bỏ qua</button><button class="btn sm primary" ${f.btn}>${esc(f.label)}</button></span></div>`}
@@ -2816,16 +2850,16 @@ function renderReview(){
   $("v-review").innerHTML=`
    <div><h1 class="h1">Ôn tập</h1><p class="lead">Nhắc lại đúng lúc sắp quên.</p><details class="why"><summary>Cách ôn hoạt động thế nào</summary><p class="hint">Từ qua bài kiểm tra tự vào sổ này. Nhớ thì lần ôn sau giãn ra 1 → 3 → 9 → 20 → 36 → 63 → 120 ngày. Quên thì tụt mốc: từ đã quen (mốc 4 trở lên) quên lần đầu chỉ tụt về mốc 2, quên nữa là từ trọng yếu về mốc 1.</p></details></div>
    <div class="grid2">
-    <div class="card cont"><div class="kicker">Từ vựng đến hạn</div><div class="ttl num" style="font-size:44px">${due.length}</div>
+    <div class="card cont"><div class="kicker">Từ vựng đến hạn</div><div class="ttl num rbig">${due.length}</div>
       <div class="mastery">${LEVELS.map(l=>`<i style="width:${vocab.filter(v=>l.test(v.box)).length/tot*100}%;background:${l.c}"></i>`).join("")}</div>
       <div class="legend">${LEVELS.map(l=>`<span><i style="background:${l.c}"></i>${l.n}: ${vocab.filter(v=>l.test(v.box)).length}</span>`).join("")}</div>
       <button class="btn primary" data-review="start" ${usable.length<4||!due.length?"disabled":""}>${due.length?"Ôn "+Math.min(12,due.length)+" từ":"Hôm nay đã ôn xong"} ${I.arrow}</button>
       ${usable.length<4?`<p class="hint">Cần ít nhất 4 từ trong sổ. Học một bài ở Lộ trình hoặc thêm từ bên dưới.</p>`:""}</div>
-    <div class="card cont"><div class="kicker">Từ khó · đã quên hoặc chưa vững</div><div class="ttl num" style="font-size:44px">${hardWords().length}</div><p class="hint">Từ mày đã trả lời sai. Hỏi 2 kiểu, lịch ôn ngắn hơn cho tới khi vững.</p>
-      <button class="btn primary" data-review="hard" ${hardWords().length&&usable.length>=4?"":"disabled"}>Ôn kỹ ${Math.min(10,hardWords().length)} từ khó ${I.arrow}</button></div>
+    <div class="card cont"><div class="kicker">Từ khó · đã quên hoặc chưa vững</div><div class="ttl num rbig">${hardWords().length}</div><p class="hint">Từ mày đã trả lời sai. Hỏi 2 kiểu, lịch ôn ngắn hơn cho tới khi vững.</p>
+      <button class="btn" data-review="hard" ${hardWords().length&&usable.length>=4?"":"disabled"}>Ôn kỹ ${Math.min(10,hardWords().length)} từ khó ${I.arrow}</button></div>
     ${typeof wkCardHTML==="function"?wkCardHTML():""}
-    <div class="card cont"><div class="kicker">Câu ngữ pháp làm sai</div><div class="ttl num" style="font-size:44px">${gw.length}</div><p class="hint">Câu sai ở lần làm gần nhất của mỗi unit. Làm lại cho đến khi đúng hết.</p>
-      <button class="btn primary" data-review="grammar" ${gw.length?"":"disabled"}>Làm lại câu sai ${I.arrow}</button></div>
+    <div class="card cont"><div class="kicker">Câu ngữ pháp làm sai</div><div class="ttl num rbig">${gw.length}</div><p class="hint">Câu sai ở lần làm gần nhất của mỗi unit. Làm lại cho đến khi đúng hết.</p>
+      <button class="btn" data-review="grammar" ${gw.length?"":"disabled"}>Làm lại câu sai ${I.arrow}</button></div>
    </div>
    <button class="card mm-entry" data-tab="mind"><span class="mm-ic">${TABS.find(t=>t.k==="mind").i}</span><span class="grow"><b>Mind map từ vựng</b><span class="hint">Một từ nối với đồng nghĩa, trái nghĩa và họ từ.</span></span><span aria-hidden="true">›</span></button>
    ${errBookHTML()}
@@ -5530,6 +5564,33 @@ document.addEventListener("click",e=>{
 });
 let anRz=0;window.addEventListener("resize",()=>{clearTimeout(anRz);anRz=setTimeout(()=>{if(tab==="stats"&&!busy())renderStats()},250)});
 
+
+/* ================= Giao diện sáng / tối (v23) ================= */
+const THEME_K="ielts-theme";
+const THEME_I={
+  auto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16" /><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/></svg>',
+  light:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>',
+  dark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>'
+};
+const THEME_N={auto:"Tự động (theo máy)",light:"Sáng",dark:"Tối"};
+const themeGet=()=>{const v=ls.get(THEME_K,"");return v==="light"||v==="dark"?v:"auto"};
+function themeApply(){
+  const t=themeGet(),r=document.documentElement;
+  if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t);
+  const dark=t==="dark"||(t==="auto"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=dark?"#0e1320":"#151d47";
+  const b=document.getElementById("themebtn");
+  if(b){b.innerHTML=THEME_I[t];b.title="Giao diện: "+THEME_N[t]+". Bấm để đổi.";b.setAttribute("aria-label","Giao diện hiện tại: "+THEME_N[t]+". Bấm để đổi.")}
+}
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#themebtn"))return;
+  const nx={auto:"light",light:"dark",dark:"auto"}[themeGet()];
+  if(nx==="auto")ls.del(THEME_K);else ls.set(THEME_K,nx);
+  themeApply();toast("Giao diện: "+THEME_N[nx]);
+});
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(themeGet()==="auto")themeApply()})}catch(e){}
+themeApply();
+
 /* ================= Tải dữ liệu ================= */
 function applyState(s){
   odsApply(s.mode!=="gen");
@@ -5911,7 +5972,7 @@ function puShow(){
      <div class="opts">${q.opts.map((o,i)=>`<button class="opt" type="button" data-pumc="${i}"><span class="k">${"ABCD"[i]}</span><span>${esc(o)}</span></button>`).join("")}</div><div id="pu-fb"></div>`);
     return}
   const w=t.x.w;
-  if(t.k==="see"){studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Từ mới của tuần${w.src?" · từ "+w.src:""} · ${S.ti+1}/${n}</div><div class="qtext"><b>${esc(w.w)}</b> ${w.pos?`<span class="muted">(${esc(w.pos)})</span>`:""}</div><div class="hint">${esc(w.vi)}</div></div></div>${S.pute?"":`<div><button class="btn primary" type="button" data-say="${esc(w.w)}">${I.sound} Nghe</button></div>`}${w.ex[0]?`<div class="soft small">Ví dụ: “…${esc(w.ex[0])}…”</div>`:""}${w.syn?`<div class="soft small">Đồng nghĩa: ${esc(w.syn)}</div>`:""}<div id="pu-fb"><div class="fbk good"><span class="ic">${I.check}</span><div><b>Đọc nghĩa và câu trong bài, rồi sang phần luyện.</b></div><button class="btn primary" id="pu-next">Đã xem, tiếp →</button></div></div>`);S.answered=true;const nb=$("pu-next");if(nb)nb.focus();return}
+  if(t.k==="see"){studyFrame("quiz",`<div class="qhd"><div><div class="tiny">Từ mới của tuần${w.src?" · từ "+w.src:""} · ${S.ti+1}/${n}</div><div class="qtext"><b>${esc(w.w)}</b> ${w.pos?`<span class="muted">(${esc(w.pos)})</span>`:""}</div><div class="hint">${esc(w.vi)}</div></div></div>${S.pute?"":`<div><button class="btn primary" type="button" data-say="${esc(w.w)}">${I.sound} Nghe</button></div>`}${w.ex[0]?`<div class="soft small">Ví dụ: “…${esc(w.ex[0])}…”</div>`:""}${w.syn?`<div class="soft small">Đồng nghĩa: ${esc(w.syn)}</div>`:""}<div id="pu-fb"><div class="fbk good"><span class="ic">${I.check}</span><div><b>Đọc nghĩa và câu trong bài, rồi sang phần luyện.</b></div><button class="btn primary" id="pu-next">Đã xem, tiếp</button></div></div>`);S.answered=true;const nb=$("pu-next");if(nb)nb.focus();return}
   const lab={type:"Gõ từ theo nghĩa",cloze:"Điền từ vào câu",dict:"Nghe và chép lại",own:"Viết hoặc nói một câu"}[t.k];
   let prompt="",hint="",area=false;
   if(t.k==="type"){prompt=`Từ tiếng Anh có nghĩa: <b>${esc(w.vi)}</b>`;hint=`${w.pos?esc(w.pos)+" · ":""}${w.w.length} ký tự, bắt đầu bằng “${esc(w.w[0])}”`}
@@ -6050,7 +6111,7 @@ function weekHTML(){
   const reads=wtReads(th),wp=wtPrompts(th),sg=wtSpeak(th);
   const chips=th.words.map(x=>{const u=U.used.includes(x);return `<button class="wt-chip ${u?"used":""}" title="${esc(x.vi)}"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small>${u?"<i>✓</i>":""}</button>`}).join("");
   return `<div class="wt-nav"><button class="btn sm" data-wtgo="-1" ${w<=1?"disabled":""}>← Tuần trước</button><b>Tuần ${w}/12 · ${dm(mon)} – ${dm(sun)}${w===curW?" · tuần này":""}</b><button class="btn sm" data-wtgo="1" ${w>=12?"disabled":""}>Tuần sau →</button></div>
-   <div class="card wt-hero"><div class="tiny muted" style="font-weight:700">CHỦ ĐỀ TRỌNG ĐIỂM · COLLINS READING UNIT ${w}</div><div class="h2">${esc(th.name)}</div>
+   <div class="card wt-hero"><div class="tiny muted" style="font-weight:700">Chủ đề trọng điểm · Collins Reading unit ${w}</div><div class="h2">${esc(th.name)}</div>
     <p class="hint">Từ vựng của tuần lấy thẳng từ bài đọc Collins Reading unit ${w}, cùng bài mà lịch học đã xếp trong tuần. Cuối tuần mày ôn lại các từ này bằng bài đọc cùng chủ đề, bài viết và bài nói.</p>
     <div class="bar"><i style="width:${doneDays/5*100}%"></i></div><div class="tiny muted">${doneDays}/5 nhiệm vụ từ vựng của tuần đã xong</div>
     <div class="lbl" style="margin-top:6px">Từ mục tiêu của tuần (${th.words.length})${U.has?` · đã dùng trong bài nộp tuần này: <b>${U.used.length}/${th.words.length}</b>`:""}</div><div class="wt-chips">${th.loaded?chips:`<span class="hint">Đang tải…</span>`}</div></div>
@@ -6300,7 +6361,7 @@ function gbSetup(){
    ${gbPromptHTML()}${GB.type==="t1"?(GB.pack?`<div><button class="btn sm" data-gbana="1">${GB.ana?"Ẩn":"Xem"} phân tích bài mẫu</button></div>${GB.ana?gbT1Analysis(GB.pack):""}`:""):`<div><button class="btn sm" data-gbnew="1">Đổi đề khác</button></div>`}
    <div><div class="lbl">Mức độ</div><div class="lvl-row">${[1,2,3].map(l=>`<button class="lvl ${GB.level===l?"on":""}" data-gblvl="${l}"><b>Mức ${l}</b><small>${lvN[l-1]}</small></button>`).join("")}</div></div>
    ${gbThemeWords().length&&GB.type!=="t1"?`<div><div class="lbl">Từ mục tiêu của tuần (cố gắng dùng)</div><div class="wt-chips">${gbThemeWords().slice(0,12).map(x=>`<span class="wt-chip"><b>${esc(x.w)}</b><small>${esc(x.vi)}</small></span>`).join("")}</div></div>`:""}
-   <div class="row" style="justify-content:flex-end"><button class="btn primary" data-gbstart="1" ${GB.type==="t1"&&!GB.pack?"disabled":""}>Bắt đầu →</button></div>`);
+   <div class="row" style="justify-content:flex-end"><button class="btn primary" data-gbstart="1" ${GB.type==="t1"&&!GB.pack?"disabled":""}>Bắt đầu</button></div>`);
 }
 function gbSteps(){
   if(GB.steps)return GB.steps;
@@ -6317,7 +6378,7 @@ function gbStart(){
    ${gbPromptHTML()}
    <div class="gb-map">${st.map((x,i)=>`<div class="gb-row"><span class="n">${i+1}</span><span><b>${esc(x.label)}</b><small>${esc(x.para)}${x.use.length?" · nên dùng: "+x.use.map(u=>GB_ST[u].n).join(", "):""}</small></span></div>`).join("")}</div>
    <p class="hint">Mỗi bước viết đúng một câu (hoặc nói một câu) rồi bấm Kiểm tra. ${GB.level===1?"Ở mức 1 mày có gợi ý mở câu, cấu trúc nên dùng và câu mẫu (ẩn tới khi mày bấm).":"Ở mức 2 chỉ còn nhãn và mục tiêu của mỗi câu."}</p>
-   <div class="row" style="justify-content:flex-end"><button class="btn primary" data-gbgo="1">Vào bước 1 →</button></div>`);
+   <div class="row" style="justify-content:flex-end"><button class="btn primary" data-gbgo="1">Vào bước 1</button></div>`);
 }
 function gbCheck(text,step){
   const w=gbWc(text),res=[];
@@ -7014,9 +7075,9 @@ function startWeekTest(){
 }
 function wkCardHTML(){
   const W=wkWords(),rds=wkReadings(),ok=W.all.length>=8;
-  return `<div class="card cont"><div class="kicker">Bài kiểm tra tuần${wkDone()?" · tuần này đã làm":""}</div><div class="ttl num" style="font-size:44px">${W.all.length}</div>
+  return `<div class="card cont"><div class="kicker">Bài kiểm tra tuần${wkDone()?" · tuần này đã làm":""}</div><div class="ttl num rbig">${W.all.length}</div>
    <p class="hint">${W.hi.length} từ mốc 4 trở lên sắp đến hạn (bài này thay phần ôn của chúng) + ${W.mix.length} từ mốc 1–3 xen kẽ. Mỗi từ hỏi 2 chiều trắc nghiệm (từ → nghĩa và nghĩa → từ), chỉ tính nhớ khi đúng cả hai. Khoảng ${WK_MIN} phút.</p>
-   <button class="btn primary" data-wktest="1" ${ok?"":"disabled"}>${ok?"Làm bài kiểm tra tuần":"Chưa đủ từ"} ${I.arrow}</button>
+   <button class="btn" data-wktest="1" ${ok?"":"disabled"}>${ok?"Làm bài kiểm tra tuần":"Chưa đủ từ"} ${I.arrow}</button>
    ${rds.length?`<div class="rdlist"><div class="rdl-hd">Bài đọc tuần</div>${rds.map(rd=>{const dn=wkReadingDone(rd);return `<button type="button" class="rditem${dn?" done":""}" data-ropen="${esc(rd.id)}"><span class="rdt">${esc(rd.title)}</span><span class="rdm">${dn?"✓ Đã làm":"Mở bài"}</span></button>`}).join("")}</div>`:""}</div>`;
 }
 // bỏ ôn / cho ôn lại một từ
@@ -7115,9 +7176,9 @@ function prEarMenu(){
   const weakIds=D.sounds.filter(s=>{const w=prWeak(s.id);return w!=null&&w<.7}).map(s=>s.id);
   return `<div class="card cont"><div class="kicker">Nghe phân biệt · 10 câu</div><div class="ttl">Nghe một âm, chọn đúng ký hiệu</div>
     <p class="hint" style="margin:6px 0 12px">Máy phát âm riêng lẻ (giọng Oxford). Chọn ký hiệu mày vừa nghe. Luyện tai trước thì miệng mới nói đúng.</p>
-    ${weakIds.length?`<button class="btn sun" data-prearstart="weak" style="margin-bottom:10px">Ôn ${weakIds.length} âm hay nhầm →</button>`:""}
+    ${weakIds.length?`<button class="btn sun" data-prearstart="weak" style="margin-bottom:10px">Ôn ${weakIds.length} âm hay nhầm</button>`:""}
     <div class="pr-menu">${D.groups.map((g,i)=>{const done=g.ids.reduce((a,id)=>{const r=st[id];return a+(r?r.n:0)},0);return `<div class="pr-mrow"><button class="btn" data-prearstart="g${i}"><b>${esc(g.n)}</b><span class="hint">${g.ids.map(id=>"/"+esc(prSnd(id).ipa)+"/").join(" ")}${done?` · đã nghe ${done} lượt`:""}</span></button><button class="btn sm ghost" data-prearstart="p${i}" title="Nghe hai âm, chọn giống hay khác">Giống hay khác</button></div>`}).join("")}</div>
-    <button class="btn primary" data-prearstart="all" style="margin-top:12px">Trộn tất cả nhóm →</button></div>`;
+    <button class="btn primary" data-prearstart="all" style="margin-top:12px">Trộn tất cả nhóm</button></div>`;
 }
 function prEarHTML(){
   const E=PR.ear;if(!E)return prEarMenu();
